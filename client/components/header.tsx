@@ -13,10 +13,14 @@ import {
   LogIn,
   LogOut,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
+import { Moon, Sun } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -69,6 +73,16 @@ const Header = () => {
                   </Link>
                 </li>
               ))}
+              <li className="flex items-center gap-2">
+                <Sun className="h-4 w-4" />
+                <Switch
+                  checked={theme !== "light"}
+                  onCheckedChange={() =>
+                    setTheme(theme === "light" ? "dark" : "light")
+                  }
+                />
+                <Moon className="h-4 w-4" />
+              </li>
             </ul>
           </nav>
           <div className="md:hidden">
@@ -107,6 +121,16 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
+            <div className="flex items-center gap-2 px-3 py-2">
+              <Sun className="h-4 w-4" />
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={() =>
+                  setTheme(theme === "dark" ? "light" : "dark")
+                }
+              />
+              <Moon className="h-4 w-4" />
+            </div>
           </div>
         </div>
       )}

@@ -31,9 +31,9 @@ export type Building = {
   name: string;
   level: number;
   type: keyof Castle["buildings"];
+  link?: string;
   cost: number;
   description: string;
-  effect: string;
 };
 
 export type HeroType = {
@@ -51,10 +51,12 @@ export type UnitTypeUserFacing = {
   earth: number;
   fire: number;
   water: number;
+  name: string;
   specialExplanation: string;
   evolutions: UnitTypeUserFacing[];
   howManyPeopleHaveIt: number;
   level: number;
+  image: string;
 };
 
 export type Unit = {
@@ -80,6 +82,7 @@ export type Hero = {
   y: number | null;
   units: Unit[];
   level: number;
+  isAlive: boolean;
   player: string;
   experienceTillLevelUp: number;
   mission: Mission | null;

@@ -16,6 +16,7 @@ export const mockHeroes: Hero[] = [
     level: 5,
     x: 10,
     y: 20,
+    isAlive: true,
     units: [],
     player: "123e4567-e89b-12d3-a456-426614174003",
     experienceTillLevelUp: 1000,
@@ -37,6 +38,7 @@ export const mockHeroes: Hero[] = [
     x: 10,
     y: 20,
     units: [],
+    isAlive: true,
     player: "123e4567-e89b-12d3-a456-426614174000",
     experienceTillLevelUp: 1000,
     mission: null,
@@ -58,6 +60,7 @@ export const mockHeroes: Hero[] = [
     y: 40,
     units: [],
     player: "123e4567-e89b-12d3-a456-426614174001",
+    isAlive: false,
     experienceTillLevelUp: 500,
     mission: null,
     alive: true,
@@ -81,6 +84,7 @@ export const mockHeroes: Hero[] = [
     experienceTillLevelUp: 750,
     mission: null,
     alive: false,
+    isAlive: true,
   },
   {
     type: {
@@ -101,6 +105,7 @@ export const mockHeroes: Hero[] = [
     experienceTillLevelUp: 1000,
     mission: null,
     alive: true,
+    isAlive: false,
   },
   {
     type: {
@@ -117,6 +122,7 @@ export const mockHeroes: Hero[] = [
     x: 10,
     y: 20,
     units: [],
+    isAlive: false,
     player: "123e4567-e89b-12d3-a456-426614174003",
     experienceTillLevelUp: 1000,
     mission: null,

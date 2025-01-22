@@ -16,39 +16,45 @@ export default function HeroCard({ hero }: { hero: Hero }) {
           />
 
           {/* Dark gradient overlay that's always visible at the top and bottom */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90">
             {/* Top content */}
             <div className="absolute top-0 left-0 right-0 p-4">
-              <h2 className="text-3xl font-bold text-white flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-white flex items-center justify-between">
                 {hero.type.name}
-                <Badge className="bg-green-500/20 text-green-300 hover:bg-green-500/30">
-                  Active
+                <Badge
+                  className={`${
+                    hero.isAlive
+                      ? "bg-green-500/20 text-green-300 hover:bg-green-500/30"
+                      : "bg-red-500/20 text-red-300 hover:bg-red-500/30"
+                  }`}
+                >
+                  {hero.isAlive ? "Active" : "Dead"}
                 </Badge>
               </h2>
               {/* Level and status */}
-              <div className="text-lg text-white font-medium">
+              <div className="text-sm text-white font-medium">
                 Level: {hero.level}
               </div>
             </div>
             {/* Bottom content */}
             <div className="absolute bottom-0 left-0 right-0 p-4 space-y-4">
               {/* Stats grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-4 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-white">
-                  <Wind className="w-5 h-5 text-gray-300" />
-                  <span className="font-medium">wind: {hero.type.wind}</span>
+                  <Wind className="w-4 h-4 text-gray-300" />
+                  <span className="font-medium ">{hero.type.wind}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white">
-                  <Droplets className="w-5 h-5 text-blue-300" />
-                  <span className="font-medium">water: {hero.type.water}</span>
+                  <Droplets className="w-4 h-4 text-blue-300" />
+                  <span className="font-medium">{hero.type.water}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white">
-                  <Mountain className="w-5 h-5 text-green-300" />
-                  <span className="font-medium">earth: {hero.type.earth}</span>
+                  <Mountain className="w-4 h-4 text-green-300" />
+                  <span className="font-medium">{hero.type.earth}</span>
                 </div>
                 <div className="flex items-center gap-2 text-white">
-                  <Flame className="w-5 h-5 text-orange-300" />
-                  <span className="font-medium">fire: {hero.type.fire}</span>
+                  <Flame className="w-4 h-4 text-orange-300" />
+                  <span className="font-medium">{hero.type.fire}</span>
                 </div>
               </div>
             </div>
