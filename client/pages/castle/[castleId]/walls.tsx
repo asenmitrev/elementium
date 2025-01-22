@@ -4,14 +4,26 @@ import CastleLayout from "./layout";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BuildingHeader from "@/components/building-header";
+import { useRouter } from "next/router";
+import { getBuildingImage } from "@/components/building";
+import useCastle from "@/hooks/useCastle";
 
 export default function HeroGuild() {
+  const router = useRouter();
+  const castleId = router.query.castleId as string;
+  const castle = useCastle(castleId);
+
+  if (!castle) return <div>Castle not found</div>;
   return (
     <CastleLayout>
       <div className="space-y-6">
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <BuildingHeader imageUrl="/images/wall-fire.jpg" title="Walls" />
+            <BuildingHeader
+              imageUrl={getBuildingImage(castle.buildings.walls, castle.type)}
+              title="Walls"
+              castleId={castle._id}
+            />
 
             <div className="space-y-6 w-full">
               {/* Castle Progress */}

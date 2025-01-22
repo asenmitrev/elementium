@@ -1,30 +1,29 @@
 export type Castle = {
+  _id: string;
   isCapital: boolean; //(if it is it cannot be attacked)
   x: number;
   y: number;
+  type: "fire" | "water" | "earth";
+  image: string;
   heroesStationed: Hero[];
   buildings: {
-    walls: { level: number; cost: number }; //(+str if attacked)
-    moat: { level: number; cost: number }; //(+agi if attacked)
-    magicShield: { level: number; cost: number }; //(+int if attacked)
-    towers: { level: number; cost: number }; //(how many defenders can you have)
-    mine: { level: number; cost: number }; //( how much gold city generates per unit of time )
-    soldierGuild: { level: number; cost: number }; //( how many different cards the city offers a day )
-    heroGuild: { level: number; cost: number }; //( how many different cards the city offers a day )
-    spyGuild: { level: number; cost: number }; //( Allows sending spy missions which might tell you order + army in a position)
-    counterEspionageGuild: { level: number; cost: number }; //( prevents enemis from spying on this castle )
-    altar: { level: number; cost: number }; //(summons hero + army it get's cheaper at higher level)
-    buildingOrder: {
-      buildingOrdered: Omit<keyof Castle["buildings"], "buildingOrder">; //(one of the possible buildings)
-      dateOfCompletion: Date;
-    };
+    walls: Building; //(+str if attacked)
+    moat: Building; //(+agi if attacked)
+    magicShield: Building; //(+int if attacked)
+    towers: Building; //(how many defenders can you have)
+    mine: Building; //( how much gold city generates per unit of time )
+    soldierGuild: Building; //( how many different cards the city offers a day )
+    heroGuild: Building; //( how many different cards the city offers a day )
+    spyGuild: Building; //( Allows sending spy missions which might tell you order + army in a position)
+    counterEspionageGuild: Building; //( prevents enemis from spying on this castle )
+    altar: Building; //(summons hero + army it get's cheaper at higher level)
   };
   heroGuild: Hero[]; //(Size of the array is at maximum of heroGuildLevel but if you buy a hero it will not refresh till tomorrow)
   soldierGuild: Unit[]; //(Same as heroGuild)
   buildingOrder: {
-    buildingOrdered: keyof Castle["buildings"]; //(one of the possible buildings)
+    buildingOrdered: Omit<keyof Castle["buildings"], "buildingOrder">; //(one of the possible buildings)
     dateOfCompletion: Date;
-  };
+  }[];
 };
 
 export type Building = {

@@ -3,36 +3,43 @@ import { Card } from "@/components/ui/card";
 import { Building } from "@/types";
 import { Building as BuildingIcon } from "lucide-react";
 import Link from "next/link";
-
-export default function BuildingCard({ building }: { building: Building }) {
-  const getBuildingImage = (building: Building) => {
-    switch (building.type) {
-      case "walls":
-        return "/images/wall-fire.jpg";
-      case "magicShield":
-        return "/images/shield-fire.jpg";
-      case "moat":
-        return "/images/moat-fire.jpg";
-      case "towers":
-        return "/images/tower-fire.jpg";
-      case "altar":
-        return "/images/altar-fire.jpg";
-      case "spyGuild":
-        return "/images/spy-fire.jpg";
-      case "mine":
-        return "/images/mine-fire.jpg";
-      case "counterEspionageGuild":
-        return "/images/counterspy-fire.jpg";
-      case "heroGuild":
-        return "/images/hero-guild-fire.jpg";
-      default:
-        return "/images/wall-fire.jpg";
-    }
-  };
+export const getBuildingImage = (building: Building, type: string) => {
+  switch (building.type) {
+    case "walls":
+      return `/images/wall-${type}.jpg`;
+    case "magicShield":
+      return `/images/shield-${type}.jpg`;
+    case "moat":
+      return `/images/moat-${type}.jpg`;
+    case "towers":
+      return `/images/tower-${type}.jpg`;
+    case "altar":
+      return `/images/altar-${type}.jpg`;
+    case "spyGuild":
+      return `/images/spy-${type}.jpg`;
+    case "mine":
+      return `/images/mine-${type}.jpg`;
+    case "counterEspionageGuild":
+      return `/images/counterspy-${type}.jpg`;
+    case "heroGuild":
+      return `/images/hero-guild-${type}.jpg`;
+    default:
+      return `/images/wall-${type}.jpg`;
+  }
+};
+export default function BuildingCard({
+  building,
+  castleId,
+  type,
+}: {
+  building: Building;
+  castleId: string;
+  type: "fire" | "water" | "earth";
+}) {
   const cardContent = (
     <div className="relative aspect-video">
       <img
-        src={getBuildingImage(building)}
+        src={getBuildingImage(building, type)}
         alt={`${building.type} image`}
         className="object-cover w-full h-full"
       />
@@ -67,7 +74,7 @@ export default function BuildingCard({ building }: { building: Building }) {
       <div className="relative group">
         {/* Image container with all content */}
         {building.link ? (
-          <Link href={`/castle/${building.link}`} className="block">
+          <Link href={`/castle/${castleId}/${building.link}`} className="block">
             {cardContent}
           </Link>
         ) : (

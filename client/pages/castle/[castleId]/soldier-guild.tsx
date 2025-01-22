@@ -1,23 +1,32 @@
-import { mockHeroes } from "@/mocks/heroes";
-import HeroList from "@/components/hero-list";
+import { mockSoldiers } from "@/mocks/soldiers";
+import SoldierList from "@/components/soldier-list";
 import CastleLayout from "./layout";
-
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import BuildingHeader from "@/components/building-header";
+import { getBuildingImage } from "@/components/building";
+import useCastle from "@/hooks/useCastle";
+import { useRouter } from "next/router";
 
 export default function HeroGuild() {
+  const router = useRouter();
+  const castleId = router.query.castleId as string;
+  const castle = useCastle(castleId);
+
+  if (!castle) return <div>Castle not found</div>;
   return (
     <CastleLayout>
       <div className="space-y-6">
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <BuildingHeader
-              imageUrl="/images/altar-fire.jpg"
-              title="Hero Altar"
+              imageUrl={getBuildingImage(
+                castle.buildings.soldierGuild,
+                castle.type
+              )}
+              title="Soldier Guild"
+              castleId={castle._id}
             />
-
             <div className="space-y-6 w-full">
               {/* Castle Progress */}
               <Card>
@@ -31,11 +40,8 @@ export default function HeroGuild() {
             </div>
           </div>
         </div>
-        <h2 className="text-xl text-white">
-          These heroes have died, you can revive them
-        </h2>
 
-        <HeroList heroes={mockHeroes.filter((hero) => !hero.alive)} />
+        <SoldierList soldiers={mockSoldiers} />
       </div>
     </CastleLayout>
   );

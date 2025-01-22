@@ -27,7 +27,7 @@ const Header = () => {
   const menuItems = isLoggedIn
     ? [
         { name: "Map", icon: MapPin, href: "/map" },
-        { name: "Castle", icon: Castle, href: "/castle" },
+        { name: "Castles", icon: Castle, href: "/castles" },
         { name: "Heroes", icon: Users, href: "/heroes" },
         {
           name: "Sign out",
@@ -47,13 +47,15 @@ const Header = () => {
       ];
 
   return (
-    <header className="bg-gray-800 text-white shadow-lg">
+    <header className=" shadow-lg">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-24">
+        <div className="flex items-center justify-between py-2">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
               <img
-                src="/images/elementium-logo.png"
+                src={`/elementium-logo${
+                  theme === "dark" ? "-dark" : "-light"
+                }.png`}
                 alt="Elementium Logo"
                 className="h-8"
               />
@@ -66,7 +68,7 @@ const Header = () => {
                   <Link
                     href={item.href}
                     onClick={item.onClick}
-                    className="flex items-center text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-500 transition duration-150 ease-in-out"
+                    className="flex items-center text-primary px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-500 transition duration-150 ease-in-out"
                   >
                     <item.icon className="w-5 h-5 mr-2" />
                     {item.name}
@@ -88,7 +90,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="inline-flex items-center justify-center p-2 rounded-md text-primary hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
             >
               <span className="sr-only">Open main menu</span>
               {isMenuOpen ? (
