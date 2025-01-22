@@ -96,8 +96,6 @@ export default function Castle({ children }: { children: React.ReactNode }) {
   });
   return (
     <CastleLayout>
-      <h1 className="text-3xl font-bold mb-6">Your Castle</h1>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div className="relative w-full h-64">
           <Image
@@ -107,8 +105,12 @@ export default function Castle({ children }: { children: React.ReactNode }) {
             className="object-cover rounded-lg"
             priority
           />
-        </div>
 
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent rounded-lg" />
+          <h1 className="text-2xl font-bold mb-4 absolute top-4 left-6 ">
+            Your Castle
+          </h1>
+        </div>
         <div className="space-y-6 w-full">
           {/* Castle Progress */}
           <Card>

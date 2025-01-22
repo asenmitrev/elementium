@@ -77,12 +77,12 @@ export type HeroTypeUserFacing = {
 };
 
 export type Hero = {
+  _id: string;
   type: HeroType;
   x: number | null;
   y: number | null;
-  units: Unit[];
+  units: UnitTypeUserFacing[];
   level: number;
-  isAlive: boolean;
   player: string;
   experienceTillLevelUp: number;
   mission: Mission | null;

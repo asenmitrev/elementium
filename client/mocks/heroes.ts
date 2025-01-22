@@ -1,4 +1,5 @@
 import { Hero } from "@/types";
+import { mockSoldiers } from "./soldiers";
 
 // Mock data for heroes
 export const mockHeroes: Hero[] = [
@@ -13,11 +14,11 @@ export const mockHeroes: Hero[] = [
       slots: 3,
       evolutions: [],
     },
+    _id: "123e4567-e89b-12d3-a456-426614174000",
     level: 5,
     x: 10,
     y: 20,
-    isAlive: true,
-    units: [],
+    units: mockSoldiers.slice(0, 3),
     player: "123e4567-e89b-12d3-a456-426614174003",
     experienceTillLevelUp: 1000,
     mission: null,
@@ -36,9 +37,9 @@ export const mockHeroes: Hero[] = [
     },
     level: 6,
     x: 10,
+    _id: "123e4567-e89b-12d3-a456-426614174001",
     y: 20,
     units: [],
-    isAlive: true,
     player: "123e4567-e89b-12d3-a456-426614174000",
     experienceTillLevelUp: 1000,
     mission: null,
@@ -58,9 +59,9 @@ export const mockHeroes: Hero[] = [
     level: 7,
     x: 30,
     y: 40,
-    units: [],
+    _id: "123e4567-e89b-12d3-a456-426614174002",
+    units: mockSoldiers.slice(2, 6),
     player: "123e4567-e89b-12d3-a456-426614174001",
-    isAlive: false,
     experienceTillLevelUp: 500,
     mission: null,
     alive: true,
@@ -79,12 +80,12 @@ export const mockHeroes: Hero[] = [
     level: 8,
     x: null,
     y: null,
-    units: [],
+    units: mockSoldiers.slice(0, 3),
+    _id: "123e4567-e89b-12d3-a456-426614174003",
     player: "123e4567-e89b-12d3-a456-426614174002",
     experienceTillLevelUp: 750,
     mission: null,
     alive: false,
-    isAlive: true,
   },
   {
     type: {
@@ -102,10 +103,10 @@ export const mockHeroes: Hero[] = [
     y: 20,
     units: [],
     player: "123e4567-e89b-12d3-a456-426614174003",
+    _id: "123e4567-e89b-12d3-a456-426614174004",
     experienceTillLevelUp: 1000,
     mission: null,
     alive: true,
-    isAlive: false,
   },
   {
     type: {
@@ -122,7 +123,7 @@ export const mockHeroes: Hero[] = [
     x: 10,
     y: 20,
     units: [],
-    isAlive: false,
+    _id: "123e4567-e89b-12d3-a456-426614174005",
     player: "123e4567-e89b-12d3-a456-426614174003",
     experienceTillLevelUp: 1000,
     mission: null,
