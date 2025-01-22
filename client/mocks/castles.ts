@@ -126,6 +126,10 @@ export const mockCastles: Castle[] = [
         buildingOrdered: "altar",
         dateOfCompletion: new Date(Date.now() + 5400000), // 1.5 hours from now
       },
+      {
+        buildingOrdered: "moat",
+        dateOfCompletion: new Date(Date.now() + 3600000), // 1 hour from now
+      },
     ],
   },
 ];
