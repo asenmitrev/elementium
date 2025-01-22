@@ -40,7 +40,10 @@ export default function CastlePage({
             buildingOrder.dateOfCompletion > new Date() ? true : false,
         };
       })
-      .filter((building) => building !== null)
+      .filter(
+        (building): building is Building & { isUpgrading: boolean } =>
+          building !== null
+      )
       .sort(
         (
           a: Building & { isUpgrading: boolean },
