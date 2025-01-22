@@ -38,7 +38,7 @@ export default function BuildingCard({ building }: { building: Building }) {
       />
 
       {/* Dark gradient overlay that's always visible at the top and bottom */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90 touch-none">
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90">
         {/* Top content */}
         <div className="absolute top-0 left-0 right-0 p-4">
           <h2 className="text-xl font-bold text-white">{building.name}</h2>
