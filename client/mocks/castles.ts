@@ -89,7 +89,12 @@ export const mockCastles: Castle[] = [
     },
     heroGuild: [], // Will be populated with water-based heroes
     soldierGuild: [], // Will be
-    buildingOrder: [],
+    buildingOrder: [
+      {
+        buildingOrdered: "moat",
+        dateOfCompletion: new Date(Date.now() + 3600000), // 1 hour from now
+      },
+    ],
   },
   {
     _id: "3",
