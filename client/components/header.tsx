@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSession, signOut } from "next-auth/react";
 import {
   Menu,
   X,
@@ -17,11 +16,11 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const menuItems = session
+  const menuItems = isLoggedIn
     ? [
         { name: "Map", icon: MapPin, href: "/map" },
         { name: "Castle", icon: Castle, href: "/castle" },
@@ -30,7 +29,7 @@ const Header = () => {
         {
           name: "Sign out",
           icon: LogOut,
-          onClick: () => signOut(),
+          onClick: () => setIsLoggedIn(false),
           href: "#",
         },
       ]
@@ -39,6 +38,7 @@ const Header = () => {
           name: "Sign In",
           icon: LogIn,
           href: "/login",
+          onClick: () => setIsLoggedIn(true),
         },
         { name: "Sign Up", icon: User, href: "/register" },
       ];

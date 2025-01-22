@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 
 type SignInFormValues = {
@@ -31,17 +30,7 @@ export default function SignInForm() {
   const onSubmit = async (data: SignInFormValues) => {
     setIsSubmitting(true);
     try {
-      const result = await signIn("credentials", {
-        username: data.username,
-        password: data.password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setSignInResult({ success: false, message: "Invalid credentials" });
-      } else {
-        router.push("/castles");
-      }
+      router.push("/castles");
     } catch (error) {
       setSignInResult({ success: false, message: "An error occurred" });
     } finally {

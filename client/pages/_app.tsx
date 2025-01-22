@@ -1,16 +1,13 @@
 import Header from "@/components/header";
 import "../styles/global.css";
 import { AppProps } from "next/app";
-import { SessionProvider } from "next-auth/react";
-import AuthWrapper from "../components/AuthWrapper";
+import AuthWrapper from "../components/auth-wrapper";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <AuthWrapper>
-        <Header />
-        <Component {...pageProps} />
-      </AuthWrapper>
-    </SessionProvider>
+    <AuthWrapper>
+      <Header />
+      <Component {...pageProps} />
+    </AuthWrapper>
   );
 }

@@ -131,6 +131,8 @@ export default function CastleView() {
         return "/images/altar-fire.jpg";
       case "spyGuild":
         return "/images/spy-fire.jpg";
+      case "heroGuild":
+        return "/images/hero-guild-fire.jpg";
       default:
         return "/images/wall-fire.jpg";
     }
