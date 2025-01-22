@@ -20,7 +20,7 @@ export default function HeroGuild() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="relative w-full h-64">
               <Image
-                src="/images/hero-guild-fire.jpg"
+                src="/images/wall-fire.jpg"
                 alt="Castle Banner"
                 fill
                 className="object-cover rounded-lg"
