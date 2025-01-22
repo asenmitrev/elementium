@@ -1,0 +1,88 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+
+type FormData = {
+  username: string;
+  email: string;
+  password: string;
+};
+export default function SignUpForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formMethods = useForm<FormData>();
+  const router = useRouter();
+
+  const handleSubmit = (data: FormData) => {
+    setIsSubmitting(true);
+    router.push("/castles");
+    setIsSubmitting(false);
+  };
+
+  return (
+    <form
+      onSubmit={formMethods.handleSubmit(handleSubmit)}
+      className="space-y-6 w-full max-w-md mx-auto pt-10"
+      noValidate
+    >
+      <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
+      <div>
+        <Label htmlFor="username">Username</Label>
+        <Input
+          id="username"
+          required
+          {...formMethods.register("username", {
+            required: "Username is required",
+          })}
+        />
+        {formMethods.formState.errors.username && (
+          <p className="text-sm text-red-500">
+            {formMethods.formState.errors.username.message}
+          </p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          required
+          {...formMethods.register("email", {
+            required: "Email is required",
+          })}
+        />
+        <p className="text-sm text-muted-foreground mt-1">
+          Your email will only be used for account recovery purposes.
+        </p>
+        {formMethods.formState.errors.email && (
+          <p className="text-sm text-red-500">
+            {formMethods.formState.errors.email.message}
+          </p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          required
+          {...formMethods.register("password", {
+            required: "Password is required",
+          })}
+        />
+        {formMethods.formState.errors.password && (
+          <p className="text-sm text-red-500">
+            {formMethods.formState.errors.password.message}
+          </p>
+        )}
+      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Signing up..." : "Sign Up"}
+      </Button>
+    </form>
+  );
+}
