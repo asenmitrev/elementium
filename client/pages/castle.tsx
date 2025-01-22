@@ -27,6 +27,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { Building } from "@/types";
+import BuildingCard from "@/components/building";
 
 interface Unit {
   name: string;
@@ -117,27 +118,6 @@ export default function CastleView() {
     elementium: 1000,
   });
 
-  const getBuildingImage = (building: Building) => {
-    switch (building.type) {
-      case "walls":
-        return "/images/wall-fire.jpg";
-      case "magicShield":
-        return "/images/shield-fire.jpg";
-      case "moat":
-        return "/images/moat-fire.jpg";
-      case "towers":
-        return "/images/tower-fire.jpg";
-      case "altar":
-        return "/images/altar-fire.jpg";
-      case "spyGuild":
-        return "/images/spy-fire.jpg";
-      case "heroGuild":
-        return "/images/hero-guild-fire.jpg";
-      default:
-        return "/images/wall-fire.jpg";
-    }
-  };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Your Castle</h1>
@@ -181,45 +161,11 @@ export default function CastleView() {
 
       <h1 className="text-2xl font-bold mb-4">Buildings</h1>
       {/* Buildings List */}
-      <Carousel className="w-full mb-6" opts={{ slidesToScroll: 1 }}>
-        <CarouselContent>
-          {buildings.map((building, index) => (
-            <CarouselItem
-              key={index}
-              className="md:basis-1/3 lg:basis-1/3 xl:basis-1/4"
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle>{building.name}</CardTitle>
-                  <CardDescription>Level {building.level}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <img
-                    src={getBuildingImage(building)}
-                    alt={building.name}
-                    className="w-full object-cover rounded-md"
-                  />
-                  <p className="text-sm text-gray-600 mt-2">
-                    {building.description}
-                  </p>
-                  <p className="text-xs text-gray-600">{building.effect}</p>
-                  <div className="mt-2 flex justify-between items-center">
-                    <Button variant="outline" size="sm">
-                      Upgrade ({building.cost} gold)
-                    </Button>
-                    <div className="flex items-center">
-                      <BuildingIcon className="mr-2 h-4 w-4" />
-                      <span>Level {building.level}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {buildings.map((building, index) => (
+          <BuildingCard key={index} building={building} />
+        ))}
+      </div>
       <h1 className="text-2xl font-bold mb-4">Heroes</h1>
 
       <HeroList heroes={mockHeroes} />

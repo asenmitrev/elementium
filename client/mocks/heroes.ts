@@ -4,6 +4,7 @@ import { Hero } from "@/types";
 export const mockHeroes: Hero[] = [
   {
     type: {
+      name: "Witch",
       wind: 90,
       water: 90,
       earth: 60,
@@ -11,8 +12,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/witch-water.jpg",
       slots: 3,
       evolutions: [],
-      level: 5,
     },
+    level: 5,
     x: 10,
     y: 20,
     units: [],
@@ -23,6 +24,7 @@ export const mockHeroes: Hero[] = [
   },
   {
     type: {
+      name: "Mage",
       wind: 80,
       water: 70,
       earth: 90,
@@ -30,8 +32,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/mage-fire.png",
       slots: 3,
       evolutions: [],
-      level: 5,
     },
+    level: 6,
     x: 10,
     y: 20,
     units: [],
@@ -42,6 +44,7 @@ export const mockHeroes: Hero[] = [
   },
   {
     type: {
+      name: "Warrior",
       wind: 65,
       water: 85,
       earth: 75,
@@ -49,8 +52,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/elemental-water.jpg",
       slots: 4,
       evolutions: [],
-      level: 7,
     },
+    level: 7,
     x: 30,
     y: 40,
     units: [],
@@ -61,6 +64,7 @@ export const mockHeroes: Hero[] = [
   },
   {
     type: {
+      name: "Archer",
       wind: 90,
       water: 90,
       earth: 60,
@@ -68,8 +72,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/earth-forest-creature.png",
       slots: 3,
       evolutions: [],
-      level: 6,
     },
+    level: 8,
     x: null,
     y: null,
     units: [],
@@ -80,6 +84,7 @@ export const mockHeroes: Hero[] = [
   },
   {
     type: {
+      name: "Warrior",
       wind: 90,
       water: 90,
       earth: 60,
@@ -87,8 +92,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/warrior-fire.jpg",
       slots: 3,
       evolutions: [],
-      level: 5,
     },
+    level: 9,
     x: 10,
     y: 20,
     units: [],
@@ -99,6 +104,7 @@ export const mockHeroes: Hero[] = [
   },
   {
     type: {
+      name: "Elemental",
       wind: 90,
       water: 90,
       earth: 60,
@@ -106,8 +112,8 @@ export const mockHeroes: Hero[] = [
       image: "/images/elemental-water-1.jpg",
       slots: 3,
       evolutions: [],
-      level: 5,
     },
+    level: 10,
     x: 10,
     y: 20,
     units: [],

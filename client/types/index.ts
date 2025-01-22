@@ -9,6 +9,7 @@ export type Castle = {
     magicShield: { level: number; cost: number }; //(+int if attacked)
     towers: { level: number; cost: number }; //(how many defenders can you have)
     mine: { level: number; cost: number }; //( how much gold city generates per unit of time )
+    soldierGuild: { level: number; cost: number }; //( how many different cards the city offers a day )
     heroGuild: { level: number; cost: number }; //( how many different cards the city offers a day )
     spyGuild: { level: number; cost: number }; //( Allows sending spy missions which might tell you order + army in a position)
     counterEspionageGuild: { level: number; cost: number }; //( prevents enemis from spying on this castle )
@@ -36,6 +37,7 @@ export type Building = {
 };
 
 export type HeroType = {
+  name: string;
   image: string;
   wind: number;
   earth: number;
@@ -43,7 +45,6 @@ export type HeroType = {
   water: number;
   slots: number;
   evolutions: HeroType[];
-  level: number;
 };
 
 export type UnitTypeUserFacing = {
@@ -78,6 +79,7 @@ export type Hero = {
   x: number | null;
   y: number | null;
   units: Unit[];
+  level: number;
   player: string;
   experienceTillLevelUp: number;
   mission: Mission | null;

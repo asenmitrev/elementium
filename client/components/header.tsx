@@ -25,7 +25,6 @@ const Header = () => {
         { name: "Map", icon: MapPin, href: "/map" },
         { name: "Castle", icon: Castle, href: "/castle" },
         { name: "Heroes", icon: Users, href: "/heroes" },
-        { name: "Profile", icon: User, href: "/profile" },
         {
           name: "Sign out",
           icon: LogOut,

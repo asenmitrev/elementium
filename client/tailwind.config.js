@@ -9,6 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        "2xs": "0.6rem",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
