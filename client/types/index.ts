@@ -1,3 +1,5 @@
+import { Effect } from "./battle/effectUtils";
+
 export type Castle = {
   _id: string;
   isCapital: boolean; //(if it is it cannot be attacked)
@@ -47,6 +49,7 @@ export type HeroType = {
 };
 
 export type UnitTypeUserFacing = {
+  effect:Effect | null;
   earth: number;
   fire: number;
   water: number;
@@ -93,3 +96,5 @@ export type Mission = {
   destinationY: number;
   travelTime: Date; ///(Different type of event executes depending on what is in the destination square at the time of arrival)
 };
+
+export type Land ='water' | 'fire' | 'earth'; 
