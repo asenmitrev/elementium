@@ -9,6 +9,6 @@ interface AuthWrapperProps {
 
 export default function AuthWrapper({ children }: AuthWrapperProps) {
   const router = useRouter();
-
+  console.log("Asen e gei")
   return <>{children}</>;
 }
