@@ -31,10 +31,7 @@ export type BattleEvaluationArgs = {
     land: Land;
 }
 
-export type BattleEvaluation = {
-    winner:UnitTypeUserFacing | null,
-    text: string
-}
+
 
 export type KillCardArgs = {
     graveyard:UnitTypeUserFacing[];
