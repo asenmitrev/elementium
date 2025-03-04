@@ -1,6 +1,7 @@
 import { Land } from ".."
 import { EffectMethods, EffectNarration } from "./effectUtils"
 
+
 export type BuffMeEffectMethod = EffectMethods  & {
     methodArgs:[
         land:Land,
@@ -23,6 +24,10 @@ export type DebuffEnemyEffectMethod = EffectMethods  & {methodArgs:[
 
 export type RemoveEnemyEffectEffectMethod = EffectMethods  & {methodArgs:[]}
 
+
+export const priceEffectMethods = {
+    
+}
 
 export const effectMethods = {
     removeEnemyEffectEffect: function(EffectMethods: RemoveEnemyEffectEffectMethod):EffectNarration {
