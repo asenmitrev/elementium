@@ -23,7 +23,7 @@ export default function Home({
       <section className={utilStyles.headingMd}>
         <p>[Your Self Introduction]</p>
         <p>
-          <Link href="/castle">Castle View</Link>
+          <Link href="/castles">Castle View</Link>
         </p>
         <p>
           <Link href="/heroes">Heroes View</Link>
