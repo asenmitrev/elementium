@@ -1,11 +1,25 @@
 
-function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
-  }
-
 const pointsPerLevel = 5;
 const startingPoints = 15;
-const unitPointAnnotator = function(level,type){
+
+export const generalPointAnnotator = function(
+    points: number,
+    weights: Record<string, number>
+) {
+
+    // Normalize the weights so that they sum to 1
+    const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0) || 1;
+    const normalizedWeights = Object.fromEntries(
+        Object.entries(weights).map(([key, weight]) => [key, weight / totalWeight])
+    );
+
+    // Distribute the points based on the normalized weights
+    const distributedPoints = spreadWithWeights(points, normalizedWeights);
+
+    return distributedPoints;
+};
+
+export const unitPointAnnotator = function(level: number,type: "water"|"earth"|"fire"){
     //How much points would the card spent
     const points = startingPoints + pointsPerLevel*level;
     const weightForType = {
@@ -16,15 +30,15 @@ const unitPointAnnotator = function(level,type){
     }
     Object.keys(weightForType).forEach((innerType) => {
         if(innerType === type){
-            weightForType[innerType] = 0.4
+            weightForType[innerType as keyof typeof weightForType] = 0.4
         }
         else{
-            weightForType[innerType]= 0.2
+            weightForType[innerType as keyof typeof weightForType] = 0.2
         }
     })
 
     //1st Water 2nd Earth 3rd Fire
-    const [water, earth, fire, special] =spreadWithWeights(points, weightForType)
+    const [water, earth, fire, special] = generalPointAnnotator(points, weightForType);
     return {
         water,
         earth,
@@ -33,7 +47,7 @@ const unitPointAnnotator = function(level,type){
     }
 }
 
-const heroPointAnnotator = function(level,type){
+export const heroPointAnnotator = function(level: number,type: "water"|"earth"|"fire"|"leadership"|"speed"){
     //How much points would the card spent
     const points = startingPoints + pointsPerLevel*level;
     const weightForType = {
@@ -45,15 +59,15 @@ const heroPointAnnotator = function(level,type){
     }
     Object.keys(weightForType).forEach((innerType) => {
         if(innerType === type){
-            weightForType[innerType] = 0.4
+            weightForType[innerType as keyof typeof weightForType] = 0.4
         }
         else{
-            weightForType[innerType]= 0.15
+            weightForType[innerType as keyof typeof weightForType] = 0.2
         }
     })
 
     //1st Water 2nd Earth 3rd Fire
-    const [water, earth, fire, leadership, speed] =spreadWithWeights(points, weightForType)
+    const [water, earth, fire, leadership, speed] =generalPointAnnotator(points, weightForType)
     return {
         water,
         earth,
@@ -65,7 +79,7 @@ const heroPointAnnotator = function(level,type){
 
 
 
-function spreadWithWeights(total, weights:Object = { water: 0.3, earth: 0.3, fire: 0.3, special: 0.1 }) {
+function spreadWithWeights(total:number, weights: Record<string, number> = { water: 0.3, earth: 0.3, fire: 0.3, special: 0.1 }) {
     total = Math.round(total);
 
     const weightSum = Object.values(weights).reduce((sum, w) => sum + w, 0);
@@ -76,8 +90,8 @@ function spreadWithWeights(total, weights:Object = { water: 0.3, earth: 0.3, fir
     const variation = 0.2; // 20% maximum variation
     const getRandomVariation = () => (Math.random() * 2 - 1) * variation;
 
-    const categories = Object.keys(weights);
-    const values = {};
+    const categories: string[] = Object.keys(weights);
+    const values: Record<string, number> = {};
 
     // Calculate initial values with random variation
     let remainingTotal = total;
@@ -101,6 +115,3 @@ function spreadWithWeights(total, weights:Object = { water: 0.3, earth: 0.3, fir
 
     return Object.values(values);
 }
-
-console.log(unitPointAnnotator(5,"water"))
-console.log(heroPointAnnotator(5,"water"))
