@@ -1,5 +1,6 @@
 import { HeroTypeUserFacing, Land, UnitTypeUserFacing } from "@/types";
-import { BattleEvaluationArgs, KillCardArgs, RoundArgs } from "@/types/battle/effectUtils";
+import { GeneralArguments } from "@/types/battle/effects";
+import { BattleEvaluationArgs, EffectMethods, EffectNarration, KillCardArgs, RoundArgs } from "@/types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "@/types/battle/main";
 
 function Round(args:RoundArgs):RoundNarration{
@@ -62,7 +63,7 @@ function Round(args:RoundArgs):RoundNarration{
     return roundNarration
 }
 
-function battle(args: {
+export function battle(args: {
     attackerDeck: UnitTypeUserFacing[];
     defenderDeck: UnitTypeUserFacing[];
     attackerGraveyard: UnitTypeUserFacing[];
@@ -173,26 +174,24 @@ function effectExecutor(args:RoundArgs,perspective:'attacker' | 'defender'){
         enemy = args['attacker']
     }
     const methodFunk:string | undefined = me.effect?.method;
-    const methodArgs:unknown[] | undefined = me.effect?.args;
+    const methodArgs:unknown[] = me.effect?.methodArgs ? me.effect.methodArgs : [];
     if(methodFunk){
         // Import or define effectMethods before using it
-        const effectMethods: Record<string, Function> = {}; // Define your effect methods here
-        
-        if (methodFunk in effectMethods) {
-            return effectMethods[methodFunk]({
-                me, 
-                perspective, 
-                methodArgs, 
-                args,
-                activeLand: args.land,
-                enemy
-            });
+        const effectMethods: Record<string, (methods: EffectMethods, generalArguments: GeneralArguments) => EffectNarration> = {}; // Define your effect methods here
+        const generalArguments:GeneralArguments = {
+            me,
+            perspective,
+            ActiveLand: args.land,
+            enemy
+        }
+        if (methodFunk in effectMethods && me.effect) {
+            return effectMethods[methodFunk](me.effect, generalArguments);
         }
         return undefined;
     }
 }
 
-function battleEvaluation(battleArgs:BattleEvaluationArgs): BattleEvaluation{
+export function battleEvaluation(battleArgs:BattleEvaluationArgs): BattleEvaluation{
     const {attacker, defender, land} = battleArgs;
 
     if(attacker[land] > defender[land]){

@@ -1,10 +1,5 @@
 import { Land, UnitTypeUserFacing } from "..";
 
-export type Effect = {
-    method:string;
-    args:unknown[];
-    stage:'pre'|'after';
-}
 
 export type RoundArgs = {
     attacker:UnitTypeUserFacing;
@@ -17,12 +12,9 @@ export type RoundArgs = {
 }
 
 export type EffectMethods = {
-    me:UnitTypeUserFacing,
-    enemy:UnitTypeUserFacing,
-    perspective:'attacker' | 'defender',
-    activeLand: Land,
-    args: RoundArgs,
-    methodArgs: unknown[] | undefined
+    stage: 'pre' | 'after'
+    methodArgs: unknown[] | undefined,
+    method: string
 }
 
 export type BattleEvaluationArgs = {

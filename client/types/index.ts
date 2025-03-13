@@ -1,4 +1,4 @@
-import { Effect } from "./battle/effectUtils";
+import { EffectMethods } from "./battle/effectUtils";
 
 export type Castle = {
   _id: string;
@@ -49,7 +49,7 @@ export type HeroType = {
 };
 
 export type UnitTypeUserFacing = {
-  effect:Effect | null;
+  effect:EffectMethods | null;
   earth: number;
   fire: number;
   water: number;
@@ -96,5 +96,12 @@ export type Mission = {
   destinationY: number;
   travelTime: Date; ///(Different type of event executes depending on what is in the destination square at the time of arrival)
 };
+
+export type UnitWeights = {
+  water: number;
+  earth: number;
+  fire: number;
+  special: number;
+}
 
 export type Land ='water' | 'fire' | 'earth'; 

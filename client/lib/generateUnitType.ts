@@ -1,10 +1,13 @@
+import { UnitTypeUserFacing, UnitWeights } from "@/types";
+import { effectCostsDictionary, effectGeneration, getRandomEffectCost } from "@/types/battle/effects";
+import { EffectMethods } from "@/types/battle/effectUtils";
 
 const pointsPerLevel = 5;
 const startingPoints = 15;
 
 export const generalPointAnnotator = function(
     points: number,
-    weights: Record<string, number>
+    weights: Record<string, number> | UnitWeights
 ) {
 
     // Normalize the weights so that they sum to 1
@@ -19,25 +22,31 @@ export const generalPointAnnotator = function(
     return distributedPoints;
 };
 
-export const unitPointAnnotator = function(level: number,type: "water"|"earth"|"fire"){
-    //How much points would the card spent
+export const unitPointAnnotator = function(
+    level: number,
+    type: "water"|"earth"|"fire",
+    customWeights?: UnitWeights
+):{water:number,earth:number,fire:number,special:number} {
     const points = startingPoints + pointsPerLevel*level;
-    const weightForType = {
-        "water":0,
-        "earth":0,
-        "fire":0,
-        "special":0
+    
+    const weightForType:UnitWeights = customWeights || {
+        "water": 0,
+        "earth": 0,
+        "fire": 0,
+        "special": 0
     }
-    Object.keys(weightForType).forEach((innerType) => {
-        if(innerType === type){
-            weightForType[innerType as keyof typeof weightForType] = 0.4
-        }
-        else{
-            weightForType[innerType as keyof typeof weightForType] = 0.2
-        }
-    })
 
-    //1st Water 2nd Earth 3rd Fire
+    if (!customWeights) {
+        Object.keys(weightForType).forEach((innerType) => {
+            if(innerType === type){
+                weightForType[innerType as keyof typeof weightForType] = 0.4
+            }
+            else{
+                weightForType[innerType as keyof typeof weightForType] = 0.2
+            }
+        })
+    }
+
     const [water, earth, fire, special] = generalPointAnnotator(points, weightForType);
     return {
         water,
@@ -45,6 +54,54 @@ export const unitPointAnnotator = function(level: number,type: "water"|"earth"|"
         fire,
         special
     }
+}
+
+export const nameGeneration = function():string{
+    return "random name"
+}
+
+
+
+export const createUnitType = function():UnitTypeUserFacing {
+    const level = 1;
+    let {water, earth, fire, special} = unitPointAnnotator(level,"water")
+    
+    const {effect, remainder} = effectGeneration(special);
+    
+    if(remainder > 0){
+        const [water2, earth2, fire2] = generalPointAnnotator(remainder, {
+            "water2": 0.33,
+            "earth2": 0.33,
+            "fire2": 0.33
+        });
+        water += water2;
+        earth += earth2;
+        fire  += fire2;
+        
+        // Use the distributed points here if needed
+    }
+    /*
+        Weights Generation,
+        Name Generation,
+        Image Generation,
+        Effect Generation,
+        Evolutions Generation
+    */
+    
+    const newUnitType:UnitTypeUserFacing = {
+        water,
+        earth,
+        fire,
+        name:nameGeneration(),
+        howManyPeopleHaveIt:0,
+        level:0,
+        effect:effect,
+        specialExplanation:'',
+        image:'',
+        evolutions:[]
+    }
+
+    return newUnitType
 }
 
 export const heroPointAnnotator = function(level: number,type: "water"|"earth"|"fire"|"leadership"|"speed"){
@@ -67,7 +124,7 @@ export const heroPointAnnotator = function(level: number,type: "water"|"earth"|"
     })
 
     //1st Water 2nd Earth 3rd Fire
-    const [water, earth, fire, leadership, speed] =generalPointAnnotator(points, weightForType)
+    const [water, earth, fire, leadership, speed] = generalPointAnnotator(points, weightForType)
     return {
         water,
         earth,

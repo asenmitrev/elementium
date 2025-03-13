@@ -1,88 +1,158 @@
-import { Land } from ".."
+import { Land, UnitTypeUserFacing } from ".."
 import { EffectMethods, EffectNarration } from "./effectUtils"
 
 
-export type BuffMeEffectMethod = EffectMethods  & {
-    methodArgs:[
-        land:Land,
-        value:number
+export interface BuffMeEffectMethod extends EffectMethods {
+    method:'buffMeEffect';
+    methodArgs: [
+        land: Land,
+        value: number
     ]
 }
 
-export type BuffActiveEffectMethod = EffectMethods  & {methodArgs:[
-    value:number
-]}
+export interface BuffActiveEffectMethod extends EffectMethods {
+    merhod:'buffActiveEffect';
+    methodArgs: [
+        value: number
+    ]
+}
 
-export type DebuffActiveEffectMethod = EffectMethods  & {methodArgs:[
-    value:number
-]}
+export interface DebuffActiveEffectMethod extends EffectMethods {
+    method:'debuffActiveEffect'
+    methodArgs: [
+        value: number
+    ]
+}
 
-export type DebuffEnemyEffectMethod = EffectMethods  & {methodArgs:[
-    land:Land,
-    value:number
-] }
+export interface DebuffEnemyEffectMethod extends EffectMethods {
+    method:'debuffEnemyEffect'
+    methodArgs: [
+        land: Land,
+        value: number
+    ]
+}
+export interface RemoveEnemyEffectEffectMethod extends EffectMethods {
+    method:'removeEnemyEffectEffect'
+    methodArgs:[]
+} 
 
-export type RemoveEnemyEffectEffectMethod = EffectMethods  & {methodArgs:[]}
+export type EffectMethodMap = {
+    'removeEnemyEffectEffect': RemoveEnemyEffectEffectMethod;
+    'debuffActiveEffect': DebuffActiveEffectMethod;
+    'buffActiveEffect': BuffActiveEffectMethod;
+    'buffMeEffect': BuffMeEffectMethod;
+    'debuffEnemyEffect': DebuffEnemyEffectMethod;
+}
 
 
-export const priceEffectMethods = {
-    
+
+export type GeneralArguments = {
+    me:UnitTypeUserFacing,
+    enemy:UnitTypeUserFacing,
+    perspective:'attacker' | 'defender',
+    ActiveLand: Land
 }
 
 export const effectMethods = {
-    removeEnemyEffectEffect: function(EffectMethods: RemoveEnemyEffectEffectMethod):EffectNarration {
-        const me=  EffectMethods.me;
-        const enemy=  EffectMethods.enemy;
+    
+    removeEnemyEffectEffect: function(EMethods: RemoveEnemyEffectEffectMethod, generalArguments: GeneralArguments):EffectNarration {
+        const { me, enemy } = generalArguments;
         enemy.effect = null;
         return {
-         text:`${me.name} removed ${enemy.name}'s special effect.`,
-         stat:null,
-         value:0,
-         effect:'debuff'
+            text:`${me.name} removed ${enemy.name}'s special effect.`,
+            stat:null,
+            value:0,
+            effect:'debuff'
         } 
     },
-    debuffActiveEffect: function(EffectMethods: DebuffActiveEffectMethod):EffectNarration {
-        const enemy=  EffectMethods.enemy;
-        const methodArgs = EffectMethods.methodArgs;
-        enemy[EffectMethods.activeLand]+=methodArgs[0];
+    debuffActiveEffect: function(EMethods: DebuffActiveEffectMethod, generalArguments: GeneralArguments):EffectNarration {
+        const { enemy, ActiveLand } = generalArguments;
+        const methodArgs = EMethods.methodArgs;
+        enemy[ActiveLand]+=methodArgs[0];
         return {
-         text:`${enemy.name} got it's ${EffectMethods.activeLand} stat debuffed by ${methodArgs[0]}.`,
-         value:methodArgs[0],
-         stat: EffectMethods.activeLand,
-         effect:'debuff'
+            text:`${enemy.name} got it's ${ActiveLand} stat debuffed by ${methodArgs[0]}.`,
+            value:methodArgs[0],
+            stat: ActiveLand,
+            effect:'debuff'
         } 
     },
-    buffActiveEffect: function(EffectMethods: BuffActiveEffectMethod):EffectNarration {
-        const me=  EffectMethods.me;
-        const methodArgs = EffectMethods.methodArgs;
-        me[EffectMethods.activeLand]+=methodArgs[0];
+    buffActiveEffect: function(EMethods: BuffActiveEffectMethod, generalArguments: GeneralArguments):EffectNarration {
+        const { me, ActiveLand } = generalArguments;
+        const methodArgs = EMethods.methodArgs;
+        me[ActiveLand]+=methodArgs[0];
         return {
-         text:`${me.name} got it's ${EffectMethods.activeLand} stat buffed by ${methodArgs[0]}.`,
-         value:methodArgs[0],
-         stat: EffectMethods.activeLand,
-         effect:'buff'
+            text:`${me.name} got it's ${ActiveLand} stat buffed by ${methodArgs[0]}.`,
+            value:methodArgs[0],
+            stat: ActiveLand,
+            effect:'buff'
         } 
     },
-    buffMe: function(EffectMethods:BuffMeEffectMethod):EffectNarration{
-        const me=  EffectMethods.me;
-        const methodArgs = EffectMethods.methodArgs;
+    buffMeEffect: function(EMethods:BuffMeEffectMethod, generalArguments: GeneralArguments):EffectNarration {
+        const { me } = generalArguments;
+        const methodArgs = EMethods.methodArgs;
         me[methodArgs[0]]+=methodArgs[1];
         return {
-         text:`${me.name} got it's ${methodArgs[0]} stat buffed by ${methodArgs[1]}.`,
-         value:methodArgs[1],
-         stat: methodArgs[0],
-         effect:'buff'
+            text:`${me.name} got it's ${methodArgs[0]} stat buffed by ${methodArgs[1]}.`,
+            value:methodArgs[1],
+            stat: methodArgs[0],
+            effect:'buff'
         }
     },
-    debuffEnemy: function(EffectMethods:DebuffEnemyEffectMethod):EffectNarration{
-        const enemy=  EffectMethods.enemy;
-        const methodArgs = EffectMethods.methodArgs;
+    debuffEnemyEffect: function(EMethods:DebuffEnemyEffectMethod, generalArguments: GeneralArguments):EffectNarration {
+        const { enemy } = generalArguments;
+        const methodArgs = EMethods.methodArgs;
         enemy[methodArgs[0]]-=methodArgs[1];
         return {
-         text:`${enemy.name} got it's ${methodArgs[0]} stat debuffed by ${methodArgs[1]}.`,
-         value:methodArgs[1],
-         stat: methodArgs[0],
-         effect: 'debuff'
+            text:`${enemy.name} got it's ${methodArgs[0]} stat debuffed by ${methodArgs[1]}.`,
+            value:methodArgs[1],
+            stat: methodArgs[0],
+            effect: 'debuff'
         }
     }
 }
+
+
+
+export const effectCostsDictionary = new Map<string, {methodArgs: unknown[], stages: {pre: number, post: number}}>([
+    ['removeEnemyEffectEffect', {methodArgs:[], stages:{
+        'pre':4,
+        'post':0
+    }}],
+    ['debuffActiveEffect', {methodArgs:[3], stages:{
+        'pre':3,
+        'post':1
+    }}],
+    ['buffActiveEffect', {
+        methodArgs:[3], stages:{
+            'pre':3,
+            'post':1
+        }
+    }],
+    ['buffMe', {
+        methodArgs:[0, 2], stages:{
+            'pre':2,
+            'post':0
+        }
+    }],
+    ['debuffEnemy', {
+        methodArgs:[0, 2], stages:{
+            'pre':2,
+            'post':0
+        }
+    }]
+])
+
+export const effectGeneration = function(points:number):{effect:EffectMethods | null, remainder:number}{
+    let remainder = points;
+    return {
+        remainder: remainder,
+        effect: null
+    };
+}
+
+export function getRandomEffectCost(): [string, {methodArgs: unknown[], stages: {pre: number, post: number}}] {
+    const effects = Array.from(effectCostsDictionary.entries());
+    const randomIndex = Math.floor(Math.random() * effects.length);
+    return effects[randomIndex];
+}
+
