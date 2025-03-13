@@ -8,11 +8,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     fire: 80,
     specialExplanation: "Delets other units",
     image: "/images/witch-water.jpg",
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null,
     evolutions: [],
     howManyPeopleHaveIt: 100,
     level: 1,
@@ -27,11 +23,8 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 85,
     level: 1,
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null,
+
   },
   {
     name: "Earth Golem",
@@ -43,11 +36,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 120,
     level: 1,
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null
   },
   {
     name: "Golem Earth 2",
@@ -59,11 +48,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 75,
     level: 1,
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null
   },
   {
     name: "Earth Golem 2",
@@ -75,11 +60,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 90,
     level: 1,
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null
   },
   {
     name: "Storm Shaman",
@@ -91,10 +72,6 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 95,
     level: 1,
-    effect: {
-      method: "DELETES_OTHER_UNITS",
-      args: [],
-      stage: "pre",
-    },
+    effect: null
   },
 ];

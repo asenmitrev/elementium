@@ -1,4 +1,4 @@
-const unitRaces = new Map([
+export const unitRaces = new Map([
     ['earth-goat', {
         maxNumber:1,
         weights: {
