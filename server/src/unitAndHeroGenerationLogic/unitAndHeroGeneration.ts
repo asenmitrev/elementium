@@ -1,4 +1,4 @@
-import { UnitTypeUserFacing, UnitWeights } from "types";
+import { UnitType, UnitWeights } from "types";
 import {
   effectCostsDictionary,
   effectGeneration,
@@ -66,7 +66,7 @@ export const nameGeneration = function (): string {
   return "random name";
 };
 
-export const createUnitType = function (): UnitTypeUserFacing {
+export const createUnitType = function (): UnitType {
   const level = 1;
   let { water, earth, fire, special } = unitPointAnnotator(level, "water");
 
@@ -92,7 +92,7 @@ export const createUnitType = function (): UnitTypeUserFacing {
         Evolutions Generation
     */
 
-  const newUnitType: UnitTypeUserFacing = {
+  const newUnitType: UnitType = {
     water,
     earth,
     fire,

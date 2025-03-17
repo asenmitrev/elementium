@@ -38,41 +38,31 @@ export type Building = {
   description: string;
 };
 
-export type HeroType = {
-  name: string;
-  image: string;
-  wind: number;
-  earth: number;
-  fire: number;
-  water: number;
-  slots: number;
-  evolutions: HeroType[];
-};
-
-export type UnitTypeUserFacing = {
+export type UnitType = {
   effect: EffectMethods | null;
   earth: number;
   fire: number;
   water: number;
   name: string;
   specialExplanation: string;
-  evolutions: UnitTypeUserFacing[];
+  evolutions: UnitType[];
   howManyPeopleHaveIt: number;
   level: number;
   image: string;
 };
 
 export type Unit = {
-  type: UnitTypeUserFacing;
+  type: UnitType;
   holder: Castle | Hero;
   experienceTillLevelUp: number;
 };
-export type HeroTypeUserFacing = {
+export type HeroType = {
   wind: number;
   earth: number;
   fire: number;
   water: number;
   slots: number;
+  image: string;
   evolutions: HeroType[];
   howManyPeopleHaveIt: number;
   level: number;
@@ -81,10 +71,11 @@ export type HeroTypeUserFacing = {
 
 export type Hero = {
   _id: string;
+  name: string;
   type: HeroType;
   x: number | null;
   y: number | null;
-  units: UnitTypeUserFacing[];
+  units: UnitType[];
   level: number;
   player: string;
   experienceTillLevelUp: number;

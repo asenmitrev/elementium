@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Wind, Droplets, Mountain, Flame } from "lucide-react";
-import { Hero, UnitTypeUserFacing } from "types";
+import { Hero, UnitType } from "types";
 import Image from "next/image";
 import Link from "next/link";
 export default function HeroCard({
@@ -30,7 +30,7 @@ export default function HeroCard({
               {/* Top content */}
               <div className="absolute top-0 left-0 right-0 p-4">
                 <h2 className="text-2xl font-bold text-white flex items-center justify-between">
-                  {hero.type.name}
+                  {hero.name}
                   <Badge
                     className={`${
                       hero.alive
@@ -97,7 +97,7 @@ function SoldierItem({
   unit,
   moreUnitsCount = 0,
 }: {
-  unit: UnitTypeUserFacing;
+  unit: UnitType;
   moreUnitsCount?: number;
 }) {
   return (

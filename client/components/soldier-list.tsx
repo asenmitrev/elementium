@@ -1,9 +1,9 @@
 import type React from "react";
-import type { UnitTypeUserFacing } from "types";
+import type { UnitType } from "types";
 
 import Soldier from "./soldier";
 interface SoldierListProps {
-  soldiers: UnitTypeUserFacing[];
+  soldiers: UnitType[];
 }
 
 const SoldierList: React.FC<SoldierListProps> = ({ soldiers }) => {

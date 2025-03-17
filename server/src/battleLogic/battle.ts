@@ -1,4 +1,4 @@
-import { HeroTypeUserFacing, Land, UnitTypeUserFacing } from "types";
+import { HeroType, Land, UnitType } from "types";
 import { GeneralArguments } from "types/battle/effects";
 import {
   BattleEvaluationArgs,
@@ -78,18 +78,18 @@ function Round(args: RoundArgs): RoundNarration {
 }
 
 export function battle(args: {
-  attackerDeck: UnitTypeUserFacing[];
-  defenderDeck: UnitTypeUserFacing[];
-  attackerGraveyard: UnitTypeUserFacing[];
-  defenderGraveyard: UnitTypeUserFacing[];
-  attackerHeroTypeUserFacing: HeroTypeUserFacing | undefined;
-  defenderHeroTypeUserFacing: HeroTypeUserFacing | undefined;
-  defenderCastle: HeroTypeUserFacing | undefined;
+  attackerDeck: UnitType[];
+  defenderDeck: UnitType[];
+  attackerGraveyard: UnitType[];
+  defenderGraveyard: UnitType[];
+  attackerHeroTypeUserFacing: HeroType | undefined;
+  defenderHeroTypeUserFacing: HeroType | undefined;
+  defenderCastle: HeroType | undefined;
   land: Land;
 }): {
   winner: "attacker" | "defender" | "draw";
-  remainingAttackerDeck: UnitTypeUserFacing[];
-  remainingDefenderDeck: UnitTypeUserFacing[];
+  remainingAttackerDeck: UnitType[];
+  remainingDefenderDeck: UnitType[];
   HeroTypeUserFacingCastleNarrations: string[];
   rounds: RoundNarration[];
 } {
@@ -106,7 +106,7 @@ export function battle(args: {
   const defenderHeroTypeUserFacing = args.defenderHeroTypeUserFacing;
   const defenderCastle = args.defenderCastle;
   if (attackerHeroTypeUserFacing) {
-    attackerDeck.forEach((UnitTypeUserFacing: UnitTypeUserFacing) => {
+    attackerDeck.forEach((UnitTypeUserFacing: UnitType) => {
       UnitTypeUserFacing.water += attackerHeroTypeUserFacing.water;
       UnitTypeUserFacing.earth += attackerHeroTypeUserFacing.earth;
       UnitTypeUserFacing.fire += attackerHeroTypeUserFacing.fire;
@@ -117,7 +117,7 @@ export function battle(args: {
                                     +${attackerHeroTypeUserFacing.earth} for earth`);
   }
   if (defenderHeroTypeUserFacing) {
-    defenderDeck.forEach((UnitTypeUserFacing: UnitTypeUserFacing) => {
+    defenderDeck.forEach((UnitTypeUserFacing: UnitType) => {
       UnitTypeUserFacing.water += defenderHeroTypeUserFacing.water;
       UnitTypeUserFacing.earth += defenderHeroTypeUserFacing.earth;
       UnitTypeUserFacing.fire += defenderHeroTypeUserFacing.fire;
@@ -129,7 +129,7 @@ export function battle(args: {
   }
 
   if (defenderCastle) {
-    defenderDeck.forEach((UnitTypeUserFacing: UnitTypeUserFacing) => {
+    defenderDeck.forEach((UnitTypeUserFacing: UnitType) => {
       UnitTypeUserFacing.water += defenderCastle.water;
       UnitTypeUserFacing.earth += defenderCastle.earth;
       UnitTypeUserFacing.fire += defenderCastle.fire;
@@ -187,8 +187,8 @@ export function battle(args: {
 }
 
 function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
-  const me: UnitTypeUserFacing = args[perspective];
-  let enemy: UnitTypeUserFacing;
+  const me: UnitType = args[perspective];
+  let enemy: UnitType;
   if (perspective === "attacker") {
     enemy = args["defender"];
   } else {
@@ -251,8 +251,8 @@ function killCard(killCardArgs: KillCardArgs) {
   for (let i = 0; i < deck.length; i++) {
     const isMatch = Object.keys(UnitTypeUserFacing).every((key) => {
       return (
-        deck[i][key as keyof UnitTypeUserFacing] ===
-        UnitTypeUserFacing[key as keyof UnitTypeUserFacing]
+        deck[i][key as keyof UnitType] ===
+        UnitTypeUserFacing[key as keyof UnitType]
       );
     });
     if (isMatch) {

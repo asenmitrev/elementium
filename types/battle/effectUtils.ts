@@ -1,39 +1,36 @@
-import { Land, UnitTypeUserFacing } from "..";
-
+import { Land, UnitType } from "..";
 
 export type RoundArgs = {
-    attacker:UnitTypeUserFacing;
-    defender:UnitTypeUserFacing;
-    attackerDeck:UnitTypeUserFacing[];
-    defenderDeck:UnitTypeUserFacing[],
-    attackerGraveyard:UnitTypeUserFacing[];
-    defenderGraveyard:UnitTypeUserFacing[];
-    land : Land;
-}
+  attacker: UnitType;
+  defender: UnitType;
+  attackerDeck: UnitType[];
+  defenderDeck: UnitType[];
+  attackerGraveyard: UnitType[];
+  defenderGraveyard: UnitType[];
+  land: Land;
+};
 
 export type EffectMethods = {
-    stage: 'pre' | 'after'
-    methodArgs: unknown[] | undefined,
-    method: string
-}
+  stage: "pre" | "after";
+  methodArgs: unknown[] | undefined;
+  method: string;
+};
 
 export type BattleEvaluationArgs = {
-    attacker:UnitTypeUserFacing;
-    defender:UnitTypeUserFacing;
-    land: Land;
-}
-
-
+  attacker: UnitType;
+  defender: UnitType;
+  land: Land;
+};
 
 export type KillCardArgs = {
-    graveyard:UnitTypeUserFacing[];
-    deck:UnitTypeUserFacing[];
-    UnitTypeUserFacing:UnitTypeUserFacing
-}
+  graveyard: UnitType[];
+  deck: UnitType[];
+  UnitTypeUserFacing: UnitType;
+};
 
 export type EffectNarration = {
-    text:string;
-    value: number;
-    stat: Land | null;
-    effect: 'buff' | 'debuff';
-}
+  text: string;
+  value: number;
+  stat: Land | null;
+  effect: "buff" | "debuff";
+};

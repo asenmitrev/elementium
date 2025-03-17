@@ -1,6 +1,6 @@
-import { UnitTypeUserFacing } from "types";
+import { UnitType } from "types";
 
-export const mockSoldiers: UnitTypeUserFacing[] = [
+export const mockSoldiers: UnitType[] = [
   {
     name: "Witch",
     water: 90,
