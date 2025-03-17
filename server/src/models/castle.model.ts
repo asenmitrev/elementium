@@ -10,19 +10,6 @@ const BuildingSchema = new Schema({
   description: String,
 });
 
-const UnitTypeSchema = new Schema({
-  effect: Schema.Types.Mixed,
-  earth: Number,
-  fire: Number,
-  water: Number,
-  name: String,
-  specialExplanation: String,
-  evolutions: [Schema.Types.Mixed],
-  howManyPeopleHaveIt: Number,
-  level: Number,
-  image: String,
-});
-
 const CastleSchema = new Schema(
   {
     isCapital: {

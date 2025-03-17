@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Hero as IHero } from "../../../types";
+import { Hero as IHero } from "types";
 
 const HeroTypeSchema = new Schema({
   name: String,

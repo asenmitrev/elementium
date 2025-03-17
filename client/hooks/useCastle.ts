@@ -1,6 +1,17 @@
-import { mockCastles } from "@/mocks/castles";
+import { useQuery } from "@tanstack/react-query";
+import { CastleService } from "@/services/castle.service";
+import type { Castle } from "types";
 
 export default function useCastle(castleId: string) {
-  const castle = mockCastles.find((castle) => castle._id === castleId);
-  return castle;
+  const {
+    data: castle,
+    error,
+    isLoading,
+  } = useQuery<Castle>({
+    queryKey: ["castle", castleId],
+    queryFn: () => CastleService.getCastle(castleId),
+    enabled: !!castleId,
+  });
+
+  return { castle, error, isLoading };
 }

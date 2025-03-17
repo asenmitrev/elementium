@@ -12,7 +12,7 @@ import useCastle from "@/hooks/useCastle";
 export default function HeroGuild() {
   const router = useRouter();
   const castleId = router.query.castleId as string;
-  const castle = useCastle(castleId);
+  const { castle } = useCastle(castleId);
 
   if (!castle) return <div>Castle not found</div>;
   return (

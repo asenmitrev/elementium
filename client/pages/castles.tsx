@@ -1,7 +1,7 @@
 import { Castle, Component } from "lucide-react";
 import Link from "next/link";
-import { mockCastles } from "@/mocks/castles";
 import ProtectedRoute from "@/components/protected-route";
+import useCastles from "@/hooks/useCastles";
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -11,6 +11,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Castles() {
+  const { castles, error, isLoading } = useCastles();
+
+  if (isLoading) {
+    return (
+      <ProtectedRoute>
+        <div className="container mx-auto px-4 py-8">
+          <p>Loading castles...</p>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-red-500">Error loading castles</p>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto px-4 py-8">
@@ -20,7 +42,7 @@ export default function Castles() {
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockCastles.map((castle) => (
+          {castles?.map((castle) => (
             <div
               key={castle._id}
               className="border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"

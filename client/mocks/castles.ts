@@ -9,6 +9,7 @@ export const mockCastles: Castle[] = [
     y: 100,
     type: "fire",
     image: "/images/castle-fire.jpg",
+    owner: "1",
     heroesStationed: [], // Will be populated with heroes later
     buildings: {
       walls: createBuilding("walls", 3, 1000),
@@ -73,6 +74,7 @@ export const mockCastles: Castle[] = [
     x: 200,
     y: 150,
     type: "water",
+    owner: "1",
     image: "/images/castle-water.jpg",
     heroesStationed: [],
     buildings: {
@@ -101,6 +103,7 @@ export const mockCastles: Castle[] = [
     isCapital: false,
     x: 150,
     y: 250,
+    owner: "1",
     type: "earth",
     image: "/images/castle-earth.jpg",
     heroesStationed: [],

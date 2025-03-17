@@ -5,6 +5,9 @@ import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -83,10 +86,12 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem={true}
         themes={["light", "dark", "system"]}
       >
-        <AuthProvider>
-          <Header />
-          <Component {...pageProps} />
-        </AuthProvider>
+        <QueryClientProvider client={new QueryClient()}>
+          <AuthProvider>
+            <Header />
+            <Component {...pageProps} />
+          </AuthProvider>
+        </QueryClientProvider>
         <Toaster />
       </ThemeProvider>
     </>
