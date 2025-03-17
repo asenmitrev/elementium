@@ -6,8 +6,8 @@ import {
   ReactNode,
 } from "react";
 import { AuthService } from "@/services/auth.service";
-import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
+import axios from "axios";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -28,19 +28,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if there's a token in cookies on mount
-    const token = Cookies.get("accessToken");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
+    const checkAuth = async () => {
+      try {
+        const isAuthed = await AuthService.checkAuth();
+        setIsAuthenticated(isAuthed);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (username: string, password: string) => {
-    const response = await AuthService.login(username, password);
-    // Set cookies with appropriate expiry
-    Cookies.set("accessToken", response.accessToken, { expires: 7 }); // expires in 7 days
-    Cookies.set("refreshToken", response.refreshToken, { expires: 30 }); // expires in 30 days
+    await AuthService.login(username, password);
     setIsAuthenticated(true);
   };
 
@@ -50,12 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string
   ) => {
     await AuthService.register(username, email, password);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    // Remove cookies
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
+    // We'll need a logout endpoint on the server to clear cookies
+    AuthService.logout();
     setIsAuthenticated(false);
     redirect("/login");
   };

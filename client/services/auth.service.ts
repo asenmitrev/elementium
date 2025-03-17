@@ -13,16 +13,18 @@ export interface AuthError {
 }
 
 export class AuthService {
-  static async login(
-    username: string,
-    password: string
-  ): Promise<LoginResponse> {
+  static async login(username: string, password: string): Promise<void> {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        username, // Currently the backend expects email
-        password,
-      });
-      return response.data;
+      await axios.post(
+        `${API_URL}/auth/login`,
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw {
@@ -41,11 +43,17 @@ export class AuthService {
     password: string
   ): Promise<void> {
     try {
-      await axios.post(`${API_URL}/auth/register`, {
-        username,
-        email,
-        password,
-      });
+      await axios.post(
+        `${API_URL}/auth/register`,
+        {
+          username,
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw {
@@ -56,6 +64,19 @@ export class AuthService {
         } as AuthError;
       }
       throw error;
+    }
+  }
+
+  static async logout(): Promise<void> {
+    await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
+  }
+
+  static async checkAuth(): Promise<boolean> {
+    try {
+      await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }

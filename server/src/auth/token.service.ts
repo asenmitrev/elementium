@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
 import { User } from "types/user";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export class TokenService {
   private readonly secretKey: string;

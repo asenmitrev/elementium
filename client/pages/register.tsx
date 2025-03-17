@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 import { AuthService, AuthError } from "@/services/auth.service";
 import Link from "next/link";
 import { toast } from "sonner";
+import axios from "axios";
+import { CastleService } from "@/services/castle.service";
 
 type FormData = {
   username: string;
@@ -24,8 +26,15 @@ export default function SignUpForm() {
     setIsSubmitting(true);
     try {
       await AuthService.register(data.username, data.email, data.password);
-      toast.success("Registration successful! Please sign in.");
-      router.push("/login?registered=true");
+
+      // Check if user has any castles
+      const castlesResponse = await CastleService.getCastles();
+
+      if (castlesResponse.length === 0) {
+        router.push("/choose-element");
+      } else {
+        router.push("/");
+      }
     } catch (error) {
       const authError = error as AuthError;
       toast.error(authError.message || "An error occurred during registration");
