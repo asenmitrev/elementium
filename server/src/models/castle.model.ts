@@ -1,6 +1,16 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { Castle as ICastle } from "types";
 
+const castleImagePaths = {
+  water: [
+    "/images/castle-water-2.jpg",
+    "/images/castle-water-3.jpg",
+    "/images/castle-water.jpg",
+  ],
+  earth: ["/images/castle-earth.jpg"],
+  fire: ["/images/castle-fire.jpg"],
+};
+
 const BuildingSchema = new Schema({
   name: String,
   level: Number,
@@ -77,6 +87,17 @@ const CastleSchema = new Schema(
     timestamps: true,
   }
 );
+
+// Add pre-validate middleware to set random image only for new documents
+CastleSchema.pre("validate", function (next) {
+  if (this.isNew && !this.image) {
+    const type = this.type;
+    const images = castleImagePaths[type];
+    const randomIndex = Math.floor(Math.random() * images.length);
+    this.image = images[randomIndex];
+  }
+  next();
+});
 
 // Create indexes for faster queries
 CastleSchema.index({ x: 1, y: 1 }, { unique: true });

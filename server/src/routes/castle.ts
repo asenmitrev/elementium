@@ -103,7 +103,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       });
       return;
     }
-    console.log(req.user);
+
     const castle = new Castle({
       x: coordinates.x,
       y: coordinates.y,

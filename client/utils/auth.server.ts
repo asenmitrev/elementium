@@ -1,6 +1,6 @@
 import type { GetServerSidePropsContext } from "next";
 import type { NextPageContext } from "next";
-const API_URL = process.env.API_URL;
+const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
 type ServerContext = GetServerSidePropsContext | NextPageContext;
 
 export async function checkAuthServer(context: ServerContext) {
