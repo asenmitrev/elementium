@@ -11,10 +11,19 @@ export class CastleService {
     return response.data;
   }
 
-  static async getCastles(): Promise<Castle[]> {
-    const response = await axios.get(`${API_URL}/castles`, {
-      withCredentials: true,
-    });
+  static async getCastles(cookie?: string): Promise<Castle[]> {
+    const response = await axios.get(
+      `${API_URL}/castles`,
+      cookie
+        ? {
+            headers: {
+              Cookie: cookie || "",
+            },
+          }
+        : {
+            withCredentials: true,
+          }
+    );
     return response.data;
   }
 

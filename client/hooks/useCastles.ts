@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CastleService } from "@/services/castle.service";
 import type { Castle } from "types";
 
-export default function useCastles() {
+export default function useCastles(initialData?: Castle[]) {
   const {
     data: castles,
     error,
@@ -10,6 +10,7 @@ export default function useCastles() {
   } = useQuery<Castle[]>({
     queryKey: ["castles"],
     queryFn: () => CastleService.getCastles(),
+    initialData,
   });
 
   return { castles, error, isLoading };

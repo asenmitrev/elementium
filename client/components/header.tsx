@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -21,6 +21,11 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -45,19 +50,17 @@ const Header = () => {
         { name: "Sign Up", icon: User, href: "/register" },
       ];
 
+  const logoSrc = mounted
+    ? `/elementium-logo${theme === "dark" ? "-dark" : "-light"}.png`
+    : "/elementium-logo-light.png";
+
   return (
     <header className=" shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-2">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
-              <img
-                src={`/elementium-logo${
-                  theme === "dark" ? "-dark" : "-light"
-                }.png`}
-                alt="Elementium Logo"
-                className="h-8"
-              />
+              <img src={logoSrc} alt="Elementium Logo" className="h-8" />
             </Link>
           </div>
           <nav className="hidden md:block">

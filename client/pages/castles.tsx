@@ -4,11 +4,53 @@ import ProtectedRoute from "@/components/protected-route";
 import useCastles from "@/hooks/useCastles";
 import { GetServerSideProps } from "next";
 import { requireAuth } from "@/utils/auth.server";
+import { CastleService } from "@/services/castle.service";
+import type { Castle as ICastle } from "types";
 
-export const getServerSideProps: GetServerSideProps = requireAuth;
+interface CastlesProps {
+  initialCastles: ICastle[];
+}
 
-export default function Castles() {
-  const { castles, error, isLoading } = useCastles();
+export const getServerSideProps: GetServerSideProps<CastlesProps> = async (
+  context
+) => {
+  // First run the auth check
+  const authResult = await requireAuth(context);
+  if ("redirect" in authResult) {
+    return authResult;
+  }
+
+  try {
+    // Fetch castles on the server - cookies will be automatically included
+    const castles = await CastleService.getCastles(context.req?.headers.cookie);
+
+    if (!castles || castles.length === 0) {
+      return {
+        redirect: {
+          destination: "/choose-element",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        initialCastles: castles,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching castles:", error);
+    return {
+      redirect: {
+        destination: "/error",
+        permanent: false,
+      },
+    };
+  }
+};
+
+export default function Castles({ initialCastles }: CastlesProps) {
+  const { castles, error, isLoading } = useCastles(initialCastles);
 
   if (isLoading) {
     return (
