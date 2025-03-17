@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import castleRoutes from "./routes/castle";
 import heroRoutes from "./routes/hero";
 import unitRoutes from "./routes/unit";
-
+import heroTypeRoutes from "./routes/heroType.routes";
 dotenv.config();
 
 const app: Express = express();
@@ -39,6 +39,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/castles", castleRoutes);
 app.use("/heroes", heroRoutes);
+app.use("/heroTypes", heroTypeRoutes);
 app.use("/units", unitRoutes);
 
 // Basic route

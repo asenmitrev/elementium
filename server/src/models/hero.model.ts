@@ -20,7 +20,11 @@ const MissionSchema = new Schema({
 
 const HeroSchema = new Schema(
   {
-    type: HeroTypeSchema,
+    type: {
+      type: Schema.Types.ObjectId,
+      ref: "HeroType",
+      required: true,
+    },
     x: {
       type: Number,
       default: null,

@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin: boolean;
 }
 
 const UserSchema = new Schema(
@@ -26,6 +27,10 @@ const UserSchema = new Schema(
     password: {
       type: String,
       required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   {
