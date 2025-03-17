@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import authRoutes from "./routes/auth";
 import dotenv from "dotenv";
+import castleRoutes from "./routes/castle";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.use(express.json());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/castles", castleRoutes);
 
 // Basic route
 app.get("/", (req: Request, res: Response) => {
