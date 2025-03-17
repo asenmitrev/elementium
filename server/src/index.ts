@@ -4,6 +4,8 @@ import cors from "cors";
 import authRoutes from "./routes/auth";
 import dotenv from "dotenv";
 import castleRoutes from "./routes/castle";
+import heroRoutes from "./routes/hero";
+import unitRoutes from "./routes/unit";
 
 dotenv.config();
 
@@ -36,6 +38,8 @@ app.use(express.json());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/castles", castleRoutes);
+app.use("/heroes", heroRoutes);
+app.use("/units", unitRoutes);
 
 // Basic route
 app.get("/", (req: Request, res: Response) => {

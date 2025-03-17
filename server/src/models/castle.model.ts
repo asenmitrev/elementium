@@ -23,34 +23,6 @@ const UnitTypeSchema = new Schema({
   image: String,
 });
 
-const HeroTypeSchema = new Schema({
-  name: String,
-  image: String,
-  wind: Number,
-  earth: Number,
-  fire: Number,
-  water: Number,
-  slots: Number,
-  evolutions: [Schema.Types.Mixed],
-});
-
-const HeroSchema = new Schema({
-  _id: String,
-  type: HeroTypeSchema,
-  x: Number,
-  y: Number,
-  units: [UnitTypeSchema],
-  level: Number,
-  player: String,
-  experienceTillLevelUp: Number,
-  mission: {
-    destinationX: Number,
-    destinationY: Number,
-    travelTime: Date,
-  },
-  alive: Boolean,
-});
-
 const CastleSchema = new Schema(
   {
     isCapital: {
@@ -72,7 +44,12 @@ const CastleSchema = new Schema(
       required: true,
     },
     image: String,
-    heroesStationed: [HeroSchema],
+    heroesStationed: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Hero",
+      },
+    ],
     buildings: {
       walls: BuildingSchema,
       moat: BuildingSchema,
@@ -85,8 +62,18 @@ const CastleSchema = new Schema(
       counterEspionageGuild: BuildingSchema,
       altar: BuildingSchema,
     },
-    heroGuild: [HeroSchema],
-    soldierGuild: [UnitTypeSchema],
+    heroGuild: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Hero",
+      },
+    ],
+    soldierGuild: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Unit",
+      },
+    ],
     buildingOrder: [
       {
         buildingOrdered: String,

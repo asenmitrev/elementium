@@ -26,6 +26,7 @@ export type Castle = {
     buildingOrdered: Omit<keyof Castle["buildings"], "buildingOrder">; //(one of the possible buildings)
     dateOfCompletion: Date;
   }[];
+  owner: string;
 };
 
 export type Building = {
