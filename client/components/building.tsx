@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Building } from "types";
 import { Building as BuildingIcon } from "lucide-react";
 import Link from "next/link";
+import { BUILDING_CONFIGS } from "@/config/buildings";
 export const getBuildingImage = (building: Building, type: string) => {
   switch (building.type) {
     case "walls":
@@ -35,11 +36,12 @@ export default function BuildingCard({
   castleId: string;
   type: "fire" | "water" | "earth";
 }) {
+  const buildingConfig = BUILDING_CONFIGS[building.type];
   const cardContent = (
     <div className="relative aspect-video">
       <img
         src={getBuildingImage(building, type)}
-        alt={`${building.type} image`}
+        alt={`${buildingConfig.name} image`}
         className="object-cover w-full h-full"
       />
 
@@ -47,7 +49,9 @@ export default function BuildingCard({
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/90">
         {/* Top content */}
         <div className="absolute top-0 left-0 right-0 p-4">
-          <h2 className="text-xl font-bold text-white">{building.name}</h2>
+          <h2 className="text-xl font-bold text-white">
+            {buildingConfig.name}
+          </h2>
           <p className="text-2xs text-zinc-300">Level {building.level}</p>
         </div>
 
@@ -56,7 +60,7 @@ export default function BuildingCard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-white shadow-md">
-                {building.description}
+                {buildingConfig.description}
               </p>
             </div>
             <div className="flex text-xs items-center gap-2 text-zinc-300">
@@ -72,8 +76,11 @@ export default function BuildingCard({
     <Card className="w-full max-w-md overflow-hidden">
       <div className="relative group">
         {/* Image container with all content */}
-        {building.link ? (
-          <Link href={`/castle/${castleId}/${building.link}`} className="block">
+        {buildingConfig.link ? (
+          <Link
+            href={`/castle/${castleId}/${buildingConfig.link}`}
+            className="block"
+          >
             {cardContent}
           </Link>
         ) : (

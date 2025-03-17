@@ -12,12 +12,9 @@ const castleImagePaths = {
 };
 
 const BuildingSchema = new Schema({
-  name: String,
   level: Number,
   type: String,
-  link: String,
   cost: Number,
-  description: String,
 });
 
 const CastleSchema = new Schema(

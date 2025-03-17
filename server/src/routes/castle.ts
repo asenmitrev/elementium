@@ -21,7 +21,7 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
     const castle = await Castle.findOne({
       _id: req.params.id,
-      owner: req.user!.id,
+      owner: req.user!.userId,
     });
 
     if (!castle) {
@@ -111,16 +111,20 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
       isCapital: true,
       owner: req.user!.userId,
       buildings: {
-        walls: { level: 1 },
-        moat: { level: 1 },
-        magicShield: { level: 1 },
-        towers: { level: 1 },
-        mine: { level: 1 },
-        soldierGuild: { level: 1 },
-        heroGuild: { level: 1 },
-        spyGuild: { level: 1 },
-        counterEspionageGuild: { level: 1 },
-        altar: { level: 1 },
+        walls: { level: 1, type: "walls", cost: 100 },
+        moat: { level: 1, type: "moat", cost: 100 },
+        magicShield: { level: 1, type: "magicShield", cost: 100 },
+        towers: { level: 1, type: "towers", cost: 100 },
+        mine: { level: 1, type: "mine", cost: 100 },
+        soldierGuild: { level: 1, type: "soldierGuild", cost: 100 },
+        heroGuild: { level: 1, type: "heroGuild", cost: 100 },
+        spyGuild: { level: 1, type: "spyGuild", cost: 100 },
+        counterEspionageGuild: {
+          level: 1,
+          type: "counterEspionageGuild",
+          cost: 100,
+        },
+        altar: { level: 1, type: "altar", cost: 100 },
       },
     });
 

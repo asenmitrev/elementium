@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { Component } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -9,56 +7,80 @@ import { Building, Castle } from "types";
 import BuildingCard from "@/components/building";
 import CastleLayout from "./layout";
 import { useRouter } from "next/router";
-import { mockCastles } from "@/mocks/castles";
 import ProtectedRoute from "@/components/protected-route";
+import useCastle from "@/hooks/useCastle";
+import { GetServerSidePropsContext } from "next";
+import { requireAuth } from "@/utils/auth.server";
+import { CastleService } from "@/services/castle.service";
 
 interface Resources {
   elementium: number;
 }
 
+interface CastleProps {
+  initialCastle: Castle;
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // First run the auth check
+  const authResult = await requireAuth(context);
+  if ("redirect" in authResult) {
+    return authResult;
+  }
+
+  try {
+    const castleId = context.params?.castleId as string;
+    // Fetch castle on the server - cookies will be automatically included
+    const castle = await CastleService.getCastle(
+      castleId,
+      context.req?.headers.cookie
+    );
+
+    if (!castle) {
+      return {
+        redirect: {
+          destination: "/castles",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        initialCastle: castle,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching castle:", error);
+    return {
+      redirect: {
+        destination: "/error",
+        permanent: false,
+      },
+    };
+  }
+}
+
 export default function CastlePage({
+  initialCastle,
   children,
-}: {
+}: CastleProps & {
   children: React.ReactNode;
 }) {
   const router = useRouter();
   const castleId = router.query.castleId as string;
-  const castle = mockCastles.find((castle) => castle._id === castleId);
+  const { castle } = useCastle(castleId, initialCastle);
 
   const buildings: Building[] = useMemo(() => {
     if (!castle?.buildings) return [];
 
-    return Object.entries(castle.buildings)
-      .map(([key, building]) => {
-        const buildingOrder = castle.buildingOrder.find(
-          (order) => order.buildingOrdered === key
-        );
-        if (!buildingOrder) return null;
-        return {
-          ...building,
-          type: key as keyof Omit<Castle["buildings"], "buildingOrder">,
-          isUpgrading:
-            buildingOrder.dateOfCompletion > new Date() ? true : false,
-        };
-      })
-      .filter(
-        (building): building is Building & { isUpgrading: boolean } =>
-          building !== null
-      )
-      .sort(
-        (
-          a: Building & { isUpgrading: boolean },
-          b: Building & { isUpgrading: boolean }
-        ) => {
-          // Put upgrading building first
-          if (a.isUpgrading) return -1;
-          if (b.isUpgrading) return 1;
-
-          // Then sort by level (highest first)
-          return b.level - a.level;
-        }
-      ) as Building[];
+    return Object.entries(castle.buildings).map(([key, building]) => ({
+      ...building,
+      type: key as keyof Omit<Castle["buildings"], "buildingOrder">,
+    }));
   }, [castle]);
+
+  console.log(buildings);
 
   const [resources, setResources] = useState<Resources>({
     elementium: 1000,

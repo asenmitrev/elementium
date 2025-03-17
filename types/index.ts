@@ -30,12 +30,9 @@ export type Castle = {
 };
 
 export type Building = {
-  name: string;
   level: number;
   type: keyof Castle["buildings"];
-  link?: string;
   cost: number;
-  description: string;
 };
 
 export type UnitType = {
