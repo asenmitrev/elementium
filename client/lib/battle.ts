@@ -1,7 +1,7 @@
-import { HeroTypeUserFacing, Land, UnitTypeUserFacing } from "@/types";
-import { GeneralArguments } from "@/types/battle/effects";
-import { BattleEvaluationArgs, EffectMethods, EffectNarration, KillCardArgs, RoundArgs } from "@/types/battle/effectUtils";
-import { BattleEvaluation, RoundNarration } from "@/types/battle/main";
+import { HeroTypeUserFacing, Land, UnitTypeUserFacing } from "../../types/index";
+import { GeneralArguments } from "../../types/battle/effects";
+import { BattleEvaluationArgs, EffectMethods, EffectNarration, KillCardArgs, RoundArgs } from "../../types/battle/effectUtils";
+import { BattleEvaluation, RoundNarration } from "../../types/battle/main";
 
 function Round(args:RoundArgs):RoundNarration{
     const {attacker, defender, attackerDeck,defenderDeck,attackerGraveyard,defenderGraveyard, land} = args;

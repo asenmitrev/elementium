@@ -1,4 +1,4 @@
-import { Building } from "@/types";
+import { Building } from "../../types";
 
 export const buildingConfigs: Record<
   string,

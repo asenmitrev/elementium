@@ -1,4 +1,4 @@
-import { Hero } from "@/types";
+import { Hero } from "../../types";
 import { mockSoldiers } from "./soldiers";
 
 // Mock data for heroes

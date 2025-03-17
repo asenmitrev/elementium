@@ -5,7 +5,7 @@ import { Component } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import { Building, Castle } from "@/types";
+import { Building, Castle } from "../../../../types";
 import BuildingCard from "@/components/building";
 import CastleLayout from "./layout";
 import { useRouter } from "next/router";

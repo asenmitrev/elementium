@@ -1,4 +1,4 @@
-import { UnitTypeUserFacing } from "@/types";
+import { UnitTypeUserFacing } from "../../types";
 
 export const mockSoldiers: UnitTypeUserFacing[] = [
   {

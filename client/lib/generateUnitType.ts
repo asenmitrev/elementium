@@ -1,6 +1,6 @@
-import { UnitTypeUserFacing, UnitWeights } from "@/types";
-import { effectCostsDictionary, effectGeneration, getRandomEffectCost } from "@/types/battle/effects";
-import { EffectMethods } from "@/types/battle/effectUtils";
+import { UnitTypeUserFacing, UnitWeights } from "../../types";
+import { effectCostsDictionary, effectGeneration, getRandomEffectCost } from "../../types/battle/effects";
+import { EffectMethods } from "../../types/battle/effectUtils";
 
 const pointsPerLevel = 5;
 const startingPoints = 15;

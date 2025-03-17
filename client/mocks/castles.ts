@@ -1,4 +1,4 @@
-import { Castle } from "@/types";
+import { Castle } from "../../types";
 import { createBuilding } from "./buildings";
 
 export const mockCastles: Castle[] = [

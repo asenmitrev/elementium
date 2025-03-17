@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Wind, Droplets, Mountain, Flame } from "lucide-react";
-import { Hero, UnitTypeUserFacing } from "@/types";
+import { Hero, UnitTypeUserFacing } from "../../types";
 import Image from "next/image";
 import Link from "next/link";
 export default function HeroCard({

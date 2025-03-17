@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Hero as IHero } from "@/types";
+import { Hero as IHero } from "../../../types";
 import { mockHeroes } from "@/mocks/heroes";
 
 import SoldierList from "@/components/soldier-list";
