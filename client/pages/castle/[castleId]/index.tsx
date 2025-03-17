@@ -134,7 +134,7 @@ export default function CastlePage({
 
         <h1 className="text-2xl font-bold mb-4">Buildings</h1>
         {/* Buildings List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mb-6">
           {buildings.map((building, index) => (
             <BuildingCard
               key={index}
