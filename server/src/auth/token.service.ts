@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "shared/types";
+import { User } from "types/user";
 
 export class TokenService {
   private readonly secretKey: string;

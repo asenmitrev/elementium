@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Droplets, Mountain, Flame } from "lucide-react";
-import { UnitTypeUserFacing } from "../../types";
+import { UnitTypeUserFacing } from "types";
 
 export default function SoldierCard({ unit }: { unit: UnitTypeUserFacing }) {
   return (

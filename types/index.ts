@@ -49,7 +49,7 @@ export type HeroType = {
 };
 
 export type UnitTypeUserFacing = {
-  effect:EffectMethods | null;
+  effect: EffectMethods | null;
   earth: number;
   fire: number;
   water: number;
@@ -102,6 +102,6 @@ export type UnitWeights = {
   earth: number;
   fire: number;
   special: number;
-}
+};
 
-export type Land ='water' | 'fire' | 'earth'; 
+export type Land = "water" | "fire" | "earth";

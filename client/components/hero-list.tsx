@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Hero as IHero } from "../../types";
+import type { Hero as IHero } from "types";
 
 import Hero from "./hero";
 interface HeroListProps {

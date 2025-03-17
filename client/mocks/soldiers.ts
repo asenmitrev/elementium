@@ -1,4 +1,4 @@
-import { UnitTypeUserFacing } from "../../types";
+import { UnitTypeUserFacing } from "types";
 
 export const mockSoldiers: UnitTypeUserFacing[] = [
   {
@@ -24,7 +24,6 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     howManyPeopleHaveIt: 85,
     level: 1,
     effect: null,
-
   },
   {
     name: "Earth Golem",
@@ -36,7 +35,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 120,
     level: 1,
-    effect: null
+    effect: null,
   },
   {
     name: "Golem Earth 2",
@@ -48,7 +47,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 75,
     level: 1,
-    effect: null
+    effect: null,
   },
   {
     name: "Earth Golem 2",
@@ -60,7 +59,7 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 90,
     level: 1,
-    effect: null
+    effect: null,
   },
   {
     name: "Storm Shaman",
@@ -72,6 +71,6 @@ export const mockSoldiers: UnitTypeUserFacing[] = [
     evolutions: [],
     howManyPeopleHaveIt: 95,
     level: 1,
-    effect: null
+    effect: null,
   },
 ];

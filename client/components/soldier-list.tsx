@@ -1,5 +1,5 @@
 import type React from "react";
-import type { UnitTypeUserFacing } from "../../types";
+import type { UnitTypeUserFacing } from "types";
 
 import Soldier from "./soldier";
 interface SoldierListProps {

@@ -2,7 +2,7 @@
   "private": true,
   "workspaces": [
     "server",
-    "shared",
+    "types",
     "client"
   ],
   "scripts": {
