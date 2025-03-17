@@ -1,15 +1,24 @@
 import Head from "next/head";
 import Header from "@/components/header";
 import "../styles/global.css";
-import { AppProps } from "next/app";
+import { AppProps, AppContext } from "next/app";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { checkAuthServer } from "@/utils/auth.server";
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+interface CustomAppProps extends AppProps {
+  isAuthenticated: boolean;
+}
+
+export default function App({
+  Component,
+  pageProps,
+  isAuthenticated,
+}: CustomAppProps) {
   return (
     <>
       <Head>
@@ -86,8 +95,8 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem={true}
         themes={["light", "dark", "system"]}
       >
-        <QueryClientProvider client={new QueryClient()}>
-          <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider initialAuthState={isAuthenticated}>
             <Header />
             <Component {...pageProps} />
           </AuthProvider>
@@ -97,3 +106,17 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+App.getInitialProps = async (appContext: AppContext) => {
+  // Call the page's getInitialProps if it exists
+  const appProps =
+    (await appContext.Component.getInitialProps?.(appContext.ctx)) || {};
+
+  // Get auth state
+  const authCheck = await checkAuthServer(appContext.ctx);
+
+  return {
+    ...appProps,
+    isAuthenticated: authCheck.props.isAuthenticated,
+  };
+};

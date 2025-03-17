@@ -3,12 +3,9 @@ import Link from "next/link";
 import ProtectedRoute from "@/components/protected-route";
 import useCastles from "@/hooks/useCastles";
 import { GetServerSideProps } from "next";
+import { requireAuth } from "@/utils/auth.server";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {}, // will be passed to the page component as props
-  };
-};
+export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default function Castles() {
   const { castles, error, isLoading } = useCastles();

@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { checkAuthServer } from "@/utils/auth.server";
+import type { GetServerSideProps } from "next";
 
 type SignInFormValues = {
   username: string;
@@ -87,3 +89,18 @@ export default function SignInForm() {
     </FormProvider>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const authCheck = await checkAuthServer(context);
+
+  if (authCheck.props.isAuthenticated) {
+    return {
+      redirect: {
+        destination: "/castles",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};

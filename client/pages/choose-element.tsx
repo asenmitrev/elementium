@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { requireAuth } from "@/utils/auth.server";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CastleService } from "@/services/castle.service";
 import axios from "axios";
+import type { GetServerSideProps } from "next";
 
 const elements = [
   {
@@ -25,6 +27,8 @@ const elements = [
     color: "bg-green-500",
   },
 ];
+
+export const getServerSideProps: GetServerSideProps = requireAuth;
 
 export default function ChooseElement() {
   const [selectedElement, setSelectedElement] = useState<

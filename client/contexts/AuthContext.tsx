@@ -23,26 +23,26 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+  initialAuthState: boolean;
+}
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const isAuthed = await AuthService.checkAuth();
-        setIsAuthenticated(isAuthed);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+export function AuthProvider({
+  children,
+  initialAuthState,
+}: AuthProviderProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(initialAuthState);
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (username: string, password: string) => {
-    await AuthService.login(username, password);
-    setIsAuthenticated(true);
+    setIsLoading(true);
+    try {
+      await AuthService.login(username, password);
+      setIsAuthenticated(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const register = async (
@@ -58,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // We'll need a logout endpoint on the server to clear cookies
     AuthService.logout();
     setIsAuthenticated(false);
-    redirect("/login");
   };
 
   return (
