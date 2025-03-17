@@ -16,15 +16,16 @@ import {
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const menuItems = isLoggedIn
+  const menuItems = isAuthenticated
     ? [
         { name: "Map", icon: MapPin, href: "/map" },
         { name: "Castles", icon: Castle, href: "/castles" },
@@ -32,7 +33,7 @@ const Header = () => {
         {
           name: "Sign out",
           icon: LogOut,
-          onClick: () => setIsLoggedIn(false),
+          onClick: () => logout(),
           href: "#",
         },
       ]
@@ -41,7 +42,6 @@ const Header = () => {
           name: "Sign In",
           icon: LogIn,
           href: "/login",
-          onClick: () => setIsLoggedIn(true),
         },
         { name: "Sign Up", icon: User, href: "/register" },
       ];

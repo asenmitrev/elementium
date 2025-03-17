@@ -10,6 +10,7 @@ import BuildingCard from "@/components/building";
 import CastleLayout from "./layout";
 import { useRouter } from "next/router";
 import { mockCastles } from "@/mocks/castles";
+import ProtectedRoute from "@/components/protected-route";
 
 interface Resources {
   elementium: number;
@@ -66,60 +67,62 @@ export default function CastlePage({
     return <div>Castle not found</div>;
   }
   return (
-    <CastleLayout>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="relative w-full h-64">
-          <Image
-            src={castle.image}
-            alt={castle.type + " castle"}
-            fill
-            className="object-cover rounded-lg"
-            priority
-          />
+    <ProtectedRoute>
+      <CastleLayout>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="relative w-full h-64">
+            <Image
+              src={castle.image}
+              alt={castle.type + " castle"}
+              fill
+              className="object-cover rounded-lg"
+              priority
+            />
 
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent rounded-lg" />
-          <h1 className="text-2xl capitalize font-bold mb-4 absolute top-4 left-6 ">
-            {castle.type} Castle
-          </h1>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent rounded-lg" />
+            <h1 className="text-2xl capitalize font-bold mb-4 absolute top-4 left-6 ">
+              {castle.type} Castle
+            </h1>
+          </div>
+          <div className="space-y-6 w-full">
+            {/* Castle Progress */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Upgrade Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Progress value={33} className="w-full" />
+              </CardContent>
+            </Card>
+
+            {/* Resources Display */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <div className="flex items-center">
+                  <Component className="mr-2" />
+                  <span>{resources.elementium} Elementium</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-        <div className="space-y-6 w-full">
-          {/* Castle Progress */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Upgrade Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Progress value={33} className="w-full" />
-            </CardContent>
-          </Card>
 
-          {/* Resources Display */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Resources</CardTitle>
-            </CardHeader>
-            <CardContent className="flex justify-between">
-              <div className="flex items-center">
-                <Component className="mr-2" />
-                <span>{resources.elementium} Elementium</span>
-              </div>
-            </CardContent>
-          </Card>
+        <h1 className="text-2xl font-bold mb-4">Buildings</h1>
+        {/* Buildings List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          {buildings.map((building, index) => (
+            <BuildingCard
+              key={index}
+              building={building}
+              type={castle.type}
+              castleId={castleId}
+            />
+          ))}
         </div>
-      </div>
-
-      <h1 className="text-2xl font-bold mb-4">Buildings</h1>
-      {/* Buildings List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {buildings.map((building, index) => (
-          <BuildingCard
-            key={index}
-            building={building}
-            type={castle.type}
-            castleId={castleId}
-          />
-        ))}
-      </div>
-    </CastleLayout>
+      </CastleLayout>
+    </ProtectedRoute>
   );
 }

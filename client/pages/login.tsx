@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 type SignInFormValues = {
   username: string;
@@ -15,10 +17,6 @@ type SignInFormValues = {
 
 export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [signInResult, setSignInResult] = useState<{
-    success: boolean;
-    message?: string;
-  } | null>(null);
   const router = useRouter();
   const formMethods = useForm<SignInFormValues>({
     defaultValues: {
@@ -26,13 +24,17 @@ export default function SignInForm() {
       password: "",
     },
   });
+  const { login } = useAuth();
 
   const onSubmit = async (data: SignInFormValues) => {
     setIsSubmitting(true);
     try {
+      await login(data.username, data.password);
+      toast.success("Successfully signed in!");
       router.push("/castles");
     } catch (error) {
-      setSignInResult({ success: false, message: "An error occurred" });
+      const authError = error as Error;
+      toast.error(authError.message || "Failed to sign in");
     } finally {
       setIsSubmitting(false);
     }

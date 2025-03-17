@@ -2,8 +2,9 @@ import Head from "next/head";
 import Header from "@/components/header";
 import "../styles/global.css";
 import { AppProps } from "next/app";
-import AuthWrapper from "../components/auth-wrapper";
 import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -82,10 +83,11 @@ export default function App({ Component, pageProps }: AppProps) {
         enableSystem={true}
         themes={["light", "dark", "system"]}
       >
-        <AuthWrapper>
+        <AuthProvider>
           <Header />
           <Component {...pageProps} />
-        </AuthWrapper>
+        </AuthProvider>
+        <Toaster />
       </ThemeProvider>
     </>
   );
