@@ -8,7 +8,7 @@ export const unitRaces = new Map([
             'special':0.3
         },
         specialWeights: {
-            //Tuka trqq ima weightvane na specialite i koi speciali mogat mu se padat
+            //Koi kakvi speciali mogat da mu se padat
         }
     }],
     ['earth-golem', {
