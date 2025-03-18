@@ -1,5 +1,19 @@
 import { Land, UnitType } from "..";
 
+export type AdditiveArg = {
+  type: "additive";
+  costPerValue: number;
+};
+
+export type SelectableArg = {
+  type: "selectable";
+  options: Record<string, { cost: number }>;
+};
+
+export type MethodArgument = AdditiveArg | SelectableArg;
+
+export type MethodArgsConfig = Record<string, MethodArgument>;
+
 export type RoundArgs = {
   attacker: UnitType;
   defender: UnitType;

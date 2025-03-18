@@ -1,3 +1,4 @@
+import {AdditiveArg, MethodArgsConfig, MethodArgument } from "./effectUtils";
 /*
 Example
 
@@ -24,7 +25,7 @@ const methodArgs = {
 };
 */
 
-function distributePoints(points, methodArgs) {
+function distributePoints(points, methodArgs:MethodArgsConfig) {
     // Create a copy of the points to avoid modifying the original value
     let remainingPoints = points;
 
@@ -35,13 +36,19 @@ function distributePoints(points, methodArgs) {
     let args = Object.keys(methodArgs);
 
     let smallestCost = Infinity;
-    args.forEach((arg) => {
-        if(smallestCost > methodArgs[arg].costPerValue){
-            smallestCost = methodArgs[arg].costPerValue;
+    args.forEach((arg:string) => {
+        const methodArgument:MethodArgument = methodArgs[arg];
+        if(methodArgument.type === 'additive'){
+            if(smallestCost >methodArgument.costPerValue){
+                smallestCost = methodArgument.costPerValue;
+            }
         }
+        else{
+            //To be added
+        }
+
     })
     
-    console.log(smallestCost)
     // Shuffle the array of methodArgs keys to introduce randomness
     for (let i = args.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -54,11 +61,16 @@ function distributePoints(points, methodArgs) {
         // Iterate over the shuffled methodArgs
         // console.log(remainingPoints, smallestCost)
         args = args.filter((arg) => {
-            return methodArgs[arg].costPerValue < remainingPoints;
+            if(methodArgs[arg].type === 'additive'){
+                return methodArgs[arg].costPerValue < remainingPoints;
+            }
+            else{
+                //To be added
+            }
         })
         for (const arg of args) {
             // Calculate the maximum number of values that can be bought for the current argument
-            const maxValues = Math.floor(remainingPoints / methodArgs[arg].costPerValue);
+            const maxValues = Math.floor(remainingPoints / (methodArgs[arg] as AdditiveArg).costPerValue);
 
             // If maxValues is 0, skip this argument
             if (maxValues === 0) {
@@ -73,7 +85,7 @@ function distributePoints(points, methodArgs) {
             effectValueDistribution[arg] = chosenValues;
 
             // Update the remaining points
-            remainingPoints -= chosenValues * methodArgs[arg].costPerValue;
+            remainingPoints -= chosenValues * (methodArgs[arg] as AdditiveArg).costPerValue;
         }
     }
 

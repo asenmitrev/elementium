@@ -110,7 +110,7 @@ export const createUnitType = function (): UnitType {
 
 export const heroPointAnnotator = function (
   level: number,
-  type: "water" | "earth" | "fire" | "leadership" | "speed"
+  type: "water" | "earth" | "fire" | "leadership" | "speed" | "counterEspionage"
 ) {
   //How much points would the card spent
   const points = startingPoints + pointsPerLevel * level;
@@ -120,17 +120,18 @@ export const heroPointAnnotator = function (
     fire: 0,
     leadership: 0,
     speed: 0,
+    counterEspionage:0 
   };
   Object.keys(weightForType).forEach((innerType) => {
     if (innerType === type) {
-      weightForType[innerType as keyof typeof weightForType] = 0.4;
+      weightForType[innerType as keyof typeof weightForType] = 0.25;
     } else {
-      weightForType[innerType as keyof typeof weightForType] = 0.2;
+      weightForType[innerType as keyof typeof weightForType] = 0.15;
     }
   });
 
   //1st Water 2nd Earth 3rd Fire
-  const [water, earth, fire, leadership, speed] = generalPointAnnotator(
+  const [water, earth, fire, leadership, speed, counterEspionage] = generalPointAnnotator(
     points,
     weightForType
   );
@@ -140,6 +141,7 @@ export const heroPointAnnotator = function (
     fire,
     leadership,
     speed,
+    counterEspionage
   };
 };
 

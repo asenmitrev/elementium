@@ -1,5 +1,5 @@
 import { Land, UnitType } from "..";
-import { EffectMethods, EffectNarration } from "./effectUtils";
+import { EffectMethods, EffectNarration, MethodArgsConfig } from "./effectUtils";
 
 export interface BuffMeEffectMethod extends EffectMethods {
   method: "buffMeEffect";
@@ -114,12 +114,12 @@ export const effectMethods = {
 
 export const effectCostsDictionary = new Map<
   string,
-  { methodArgs: unknown[]; stages: { pre: number; post: number } }
+  { methodArgs: MethodArgsConfig; stages: { pre: number; post: number } }
 >([
   [
     "removeEnemyEffectEffect",
     {
-      methodArgs: [],
+      methodArgs: {},
       stages: {
         pre: 4,
         post: 0,
@@ -129,7 +129,12 @@ export const effectCostsDictionary = new Map<
   [
     "debuffActiveEffect",
     {
-      methodArgs: [3],
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 3
+        }
+      },
       stages: {
         pre: 3,
         post: 1,
@@ -139,7 +144,12 @@ export const effectCostsDictionary = new Map<
   [
     "buffActiveEffect",
     {
-      methodArgs: [3],
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 3
+        }
+      },
       stages: {
         pre: 3,
         post: 1,
@@ -149,7 +159,26 @@ export const effectCostsDictionary = new Map<
   [
     "buffMe",
     {
-      methodArgs: [0, 2],
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 2
+        },
+        land:{
+          type:"selectable",
+          options:{
+            water:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            }
+          }
+        }
+      },
       stages: {
         pre: 2,
         post: 0,
@@ -159,7 +188,26 @@ export const effectCostsDictionary = new Map<
   [
     "debuffEnemy",
     {
-      methodArgs: [0, 2],
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 2
+        },
+        land:{
+          type:"selectable",
+          options:{
+            water:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            }
+          }
+        }
+      },
       stages: {
         pre: 2,
         post: 0,
@@ -172,6 +220,7 @@ export const effectGeneration = function (points: number): {
   effect: EffectMethods | null;
   remainder: number;
 } {
+  console.log(JSON.stringify(getRandomEffectCost()));
   let remainder = points;
   return {
     remainder: remainder,
@@ -179,11 +228,37 @@ export const effectGeneration = function (points: number): {
   };
 };
 
+/*
+
+const methodArgs = {
+    "arg1": {
+        "type": "additive",
+        "costPerValue": 8
+    },
+    "arg2": {
+        "type": "additive",
+        "costPerValue": 3
+    },
+
+    "arg3": {
+        "type": "selectable",
+        "options": {
+            "option1": {
+                "cost": 5
+            },
+            "option2": {
+                "cost": 10
+                } 
+        }
+};
+*/
 export function getRandomEffectCost(): [
   string,
-  { methodArgs: unknown[]; stages: { pre: number; post: number } }
+  { methodArgs: MethodArgsConfig; stages: { pre: number; post: number } }
 ] {
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
   return effects[randomIndex];
 }
+
+effectGeneration(20)
