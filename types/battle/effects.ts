@@ -1,28 +1,28 @@
 import { Land, UnitType } from "..";
 import { EffectMethods, EffectNarration, MethodArgsConfig } from "./effectUtils";
-
+import { distributePoints } from "./distributeEffectPoints";
 export interface BuffMeEffectMethod extends EffectMethods {
   method: "buffMeEffect";
-  methodArgs: [land: Land, value: number];
+  methodArgs: {land: Land, value: number};
 }
 
 export interface BuffActiveEffectMethod extends EffectMethods {
   merhod: "buffActiveEffect";
-  methodArgs: [value: number];
+  methodArgs: {value: number};
 }
 
 export interface DebuffActiveEffectMethod extends EffectMethods {
   method: "debuffActiveEffect";
-  methodArgs: [value: number];
+  methodArgs: {value: number};
 }
 
 export interface DebuffEnemyEffectMethod extends EffectMethods {
   method: "debuffEnemyEffect";
-  methodArgs: [land: Land, value: number];
+  methodArgs: {land: Land, value: number};
 }
 export interface RemoveEnemyEffectEffectMethod extends EffectMethods {
   method: "removeEnemyEffectEffect";
-  methodArgs: [];
+  methodArgs: {};
 }
 
 export type EffectMethodMap = {
@@ -60,10 +60,10 @@ export const effectMethods = {
   ): EffectNarration {
     const { enemy, ActiveLand } = generalArguments;
     const methodArgs = EMethods.methodArgs;
-    enemy[ActiveLand] += methodArgs[0];
+    enemy[ActiveLand] += methodArgs.value;
     return {
-      text: `${enemy.name} got it's ${ActiveLand} stat debuffed by ${methodArgs[0]}.`,
-      value: methodArgs[0],
+      text: `${enemy.name} got it's ${ActiveLand} stat debuffed by ${methodArgs.value}.`,
+      value: methodArgs.value,
       stat: ActiveLand,
       effect: "debuff",
     };
@@ -74,10 +74,10 @@ export const effectMethods = {
   ): EffectNarration {
     const { me, ActiveLand } = generalArguments;
     const methodArgs = EMethods.methodArgs;
-    me[ActiveLand] += methodArgs[0];
+    me[ActiveLand] += methodArgs.value;
     return {
-      text: `${me.name} got it's ${ActiveLand} stat buffed by ${methodArgs[0]}.`,
-      value: methodArgs[0],
+      text: `${me.name} got it's ${ActiveLand} stat buffed by ${methodArgs.value}.`,
+      value: methodArgs.value,
       stat: ActiveLand,
       effect: "buff",
     };
@@ -88,11 +88,11 @@ export const effectMethods = {
   ): EffectNarration {
     const { me } = generalArguments;
     const methodArgs = EMethods.methodArgs;
-    me[methodArgs[0]] += methodArgs[1];
+    me[methodArgs.land] += methodArgs.value;
     return {
-      text: `${me.name} got it's ${methodArgs[0]} stat buffed by ${methodArgs[1]}.`,
-      value: methodArgs[1],
-      stat: methodArgs[0],
+      text: `${me.name} got it's ${methodArgs.land} stat buffed by ${methodArgs.value}.`,
+      value: methodArgs.value,
+      stat: methodArgs.land,
       effect: "buff",
     };
   },
@@ -102,11 +102,11 @@ export const effectMethods = {
   ): EffectNarration {
     const { enemy } = generalArguments;
     const methodArgs = EMethods.methodArgs;
-    enemy[methodArgs[0]] -= methodArgs[1];
+    enemy[methodArgs.land] -= methodArgs.value;
     return {
-      text: `${enemy.name} got it's ${methodArgs[0]} stat debuffed by ${methodArgs[1]}.`,
-      value: methodArgs[1],
-      stat: methodArgs[0],
+      text: `${enemy.name} got it's ${methodArgs.land} stat debuffed by ${methodArgs.value}.`,
+      value: methodArgs.value,
+      stat: methodArgs.land,
       effect: "debuff",
     };
   },
@@ -220,10 +220,27 @@ export const effectGeneration = function (points: number): {
   effect: EffectMethods | null;
   remainder: number;
 } {
-  console.log(JSON.stringify(getRandomEffectCost()));
-  let remainder = points;
+  let chosenEffect = getRandomEffectCost();
+  let possibleStages = [];
+  if(points >= chosenEffect.stages.pre){
+    possibleStages.push('pre');
+  }
+  if(points>= chosenEffect.stages.post){
+    possibleStages.push('post');
+  }
+
+  const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
+  const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'post';
+  points -= chosenEffect.stages[chosenStage];
+  const {remainderPoints, effectValueDistribution  } = distributePoints(
+    points,
+    chosenEffect.methodArgs
+  );
+
+  console.log(JSON.stringify(effectValueDistribution), chosenStage, chosenEffect.key);
+  
   return {
-    remainder: remainder,
+    remainder: remainderPoints,
     effect: null,
   };
 };
@@ -252,13 +269,11 @@ const methodArgs = {
         }
 };
 */
-export function getRandomEffectCost(): [
-  string,
-  { methodArgs: MethodArgsConfig; stages: { pre: number; post: number } }
-] {
+export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: string, stages: { pre: number; post: number } } {
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
-  return effects[randomIndex];
+  const [key, { methodArgs, stages }] = effects[randomIndex];
+  return { key, methodArgs, stages };
 }
 
 effectGeneration(20)

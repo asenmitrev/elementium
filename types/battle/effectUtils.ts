@@ -26,7 +26,7 @@ export type RoundArgs = {
 
 export type EffectMethods = {
   stage: "pre" | "after";
-  methodArgs: unknown[] | undefined;
+  methodArgs: Record<string, number | string> | undefined;
   method: string;
 };
 

@@ -25,12 +25,12 @@ const methodArgs = {
 };
 */
 
-function distributePoints(points, methodArgs:MethodArgsConfig) {
+export function distributePoints(points:number, methodArgs:MethodArgsConfig):{remainderPoints:number, effectValueDistribution:Record<string, number>} {
     // Create a copy of the points to avoid modifying the original value
     let remainingPoints = points;
 
     // Initialize the effectValueDistribution object
-    const effectValueDistribution = {};
+    const effectValueDistribution:Record<string, number> = {};
 
     // Create an array of methodArgs keys
     let args = Object.keys(methodArgs);
