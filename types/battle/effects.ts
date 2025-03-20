@@ -114,7 +114,7 @@ export const effectMethods = {
 
 export const effectCostsDictionary = new Map<
   string,
-  { methodArgs: MethodArgsConfig; stages: { pre: number; post: number } }
+  { methodArgs: MethodArgsConfig; stages: { pre: number; after: number } }
 >([
   [
     "removeEnemyEffectEffect",
@@ -122,7 +122,7 @@ export const effectCostsDictionary = new Map<
       methodArgs: {},
       stages: {
         pre: 4,
-        post: 0,
+        after: 0,
       },
     },
   ],
@@ -137,7 +137,7 @@ export const effectCostsDictionary = new Map<
       },
       stages: {
         pre: 3,
-        post: 1,
+        after: 1,
       },
     },
   ],
@@ -152,7 +152,7 @@ export const effectCostsDictionary = new Map<
       },
       stages: {
         pre: 3,
-        post: 1,
+        after: 1,
       },
     },
   ],
@@ -181,7 +181,7 @@ export const effectCostsDictionary = new Map<
       },
       stages: {
         pre: 2,
-        post: 0,
+        after: 0,
       },
     },
   ],
@@ -210,7 +210,7 @@ export const effectCostsDictionary = new Map<
       },
       stages: {
         pre: 2,
-        post: 0,
+        after: 0,
       },
     },
   ],
@@ -225,12 +225,12 @@ export const effectGeneration = function (points: number): {
   if(points >= chosenEffect.stages.pre){
     possibleStages.push('pre');
   }
-  if(points>= chosenEffect.stages.post){
-    possibleStages.push('post');
+  if(points>= chosenEffect.stages.after){
+    possibleStages.push('after');
   }
 
   const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
-  const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'post';
+  const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'after';
   points -= chosenEffect.stages[chosenStage];
   const {remainderPoints, effectValueDistribution  } = distributePoints(
     points,
@@ -241,7 +241,11 @@ export const effectGeneration = function (points: number): {
   
   return {
     remainder: remainderPoints,
-    effect: null,
+    effect: {
+      stage: chosenStage,
+      method: chosenEffect.key,
+      methodArgs: effectValueDistribution,
+    },
   };
 };
 
@@ -269,7 +273,7 @@ const methodArgs = {
         }
 };
 */
-export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: string, stages: { pre: number; post: number } } {
+export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: string, stages: { pre: number; after: number } } {
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
   const [key, { methodArgs, stages }] = effects[randomIndex];

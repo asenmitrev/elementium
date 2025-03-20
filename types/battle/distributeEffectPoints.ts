@@ -1,4 +1,4 @@
-import {AdditiveArg, MethodArgsConfig, MethodArgument } from "./effectUtils";
+import {AdditiveArg, MethodArgsConfig, MethodArgument, SelectableArg } from "./effectUtils";
 /*
 Example
 
@@ -43,8 +43,9 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
                 smallestCost = methodArgument.costPerValue;
             }
         }
-        else{
+        else if(methodArgument.type === 'selectable'){
             //To be added
+            
         }
 
     })
@@ -62,10 +63,7 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
         // console.log(remainingPoints, smallestCost)
         args = args.filter((arg) => {
             if(methodArgs[arg].type === 'additive'){
-                return methodArgs[arg].costPerValue < remainingPoints;
-            }
-            else{
-                //To be added
+                return methodArgs[arg].costPerValue <= remainingPoints;
             }
         })
         for (const arg of args) {
