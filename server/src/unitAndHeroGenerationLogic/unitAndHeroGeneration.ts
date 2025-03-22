@@ -91,7 +91,7 @@ export const createUnitType = function (): UnitType {
         Effect Generation,
         Evolutions Generation
     */
-
+  // console.log('i tuk?')
   const newUnitType: UnitType = {
     water,
     earth,
@@ -104,7 +104,8 @@ export const createUnitType = function (): UnitType {
     image: "",
     evolutions: [],
   };
-
+  // console.log(" i tuk daje?")
+//  console.log(newUnitType,  water, earth)
   return newUnitType;
 };
 
@@ -195,3 +196,6 @@ function spreadWithWeights(
 
   return Object.values(values);
 }
+
+
+console.log(createUnitType(), ' tuka?');

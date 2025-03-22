@@ -1,6 +1,7 @@
 import { Land, UnitType } from "..";
 import { EffectMethods, EffectNarration, MethodArgsConfig } from "./effectUtils";
 import { distributePoints } from "./distributeEffectPoints";
+import { buyOptions, BuyOptionsResult } from "../../server/src/unitAndHeroGenerationLogic/buyOptions";
 export interface BuffMeEffectMethod extends EffectMethods {
   method: "buffMeEffect";
   methodArgs: {land: Land, value: number};
@@ -229,22 +230,41 @@ export const effectGeneration = function (points: number): {
     possibleStages.push('after');
   }
 
+  //Pick stage and pay
   const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
   const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'after';
   points -= chosenEffect.stages[chosenStage];
+
+  let boughtOptions = buyOptions(points, chosenEffect.methodArgs);
+
+  if(boughtOptions === undefined){
+    //vurni ot funkciqta shtoto ne stigat parite
+    return {
+      remainder: points,
+      effect: null
+    };
+  }
+  //Pick options and pay
+  const {selectedOptionsRecord, remainingPoints} = buyOptions(points, chosenEffect.methodArgs) as BuyOptionsResult;
+
+
   const {remainderPoints, effectValueDistribution  } = distributePoints(
-    points,
+    remainingPoints,
     chosenEffect.methodArgs
   );
 
-  console.log(JSON.stringify(effectValueDistribution), chosenStage, chosenEffect.key);
+const combinedMethodArgs = {
+  ...selectedOptionsRecord,
+  ...effectValueDistribution
+};
+
   
   return {
     remainder: remainderPoints,
     effect: {
       stage: chosenStage,
       method: chosenEffect.key,
-      methodArgs: effectValueDistribution,
+      methodArgs: combinedMethodArgs,
     },
   };
 };

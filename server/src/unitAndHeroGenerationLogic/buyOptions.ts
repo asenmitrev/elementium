@@ -1,6 +1,12 @@
 import { MethodArgsConfig, SelectableArg } from "../../../types/battle/effectUtils";
+export interface BuyOptionsResult {
+    selectedOptions: {cost: number}[] | null;
+    remainingPoints: number;
+    selectedOptionKeys: string[] | null;
+    selectedOptionsRecord: Record<string, string>;
+}
 
-function buyOptions(points:number, methodArgs:MethodArgsConfig){
+export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOptionsResult | undefined {
     let remainingPoints = points;
     //Filter all non additive
     const filteredArgs = Object.keys(methodArgs).filter((arg) => {
@@ -35,7 +41,7 @@ function buyOptions(points:number, methodArgs:MethodArgsConfig){
 
     if(points<cheapestCost){
         console.log("You can't afford any full set of args");
-        return;
+        return undefined;
     }
     //Attempt 10 times to find random set of options that fits the price.
 
@@ -78,7 +84,20 @@ function buyOptions(points:number, methodArgs:MethodArgsConfig){
         })
         mainSelectedOptionKeys = cheapestOptionsKeys;
     }
-    return {selectedOptions:mainSelectedOption, remainingPoints:remainingPoints, selectedOptionKeys:mainSelectedOptionKeys};
+
+    const theRecord:Record<string,string> = {};
+    filteredArgs.forEach((arg, index) => {
+        if (mainSelectedOptionKeys) {
+            theRecord[arg] = mainSelectedOptionKeys[index];
+        }
+    })
+
+    return {
+        selectedOptions: mainSelectedOption,
+        remainingPoints: remainingPoints,
+        selectedOptionKeys: mainSelectedOptionKeys,
+        selectedOptionsRecord: theRecord
+    };
 }
 
 // Example usage
@@ -117,4 +136,3 @@ const methodArgs = {
 
 const points = 20;
 const result = buyOptions(points, methodArgs as MethodArgsConfig);
-console.log(result);

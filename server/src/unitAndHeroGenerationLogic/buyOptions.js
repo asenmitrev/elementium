@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.buyOptions = buyOptions;
 function buyOptions(points, methodArgs) {
     var remainingPoints = points;
     //Filter all non additive
@@ -31,41 +32,44 @@ function buyOptions(points, methodArgs) {
     });
     if (points < cheapestCost) {
         console.log("You can't afford any full set of args");
-        return;
+        return undefined;
     }
     //Attempt 10 times to find random set of options that fits the price.
     var maxCounterForRandom = 10;
     var mainSelectedOption = null;
     var mainSelectedOptionKeys = null;
-    // while(maxCounterForRandom > 0 && mainSelectedOption === null ){
-    //     let tempPoints = points;
-    //     let tempBoughtOptions: {cost: number}[] = [];
-    //     let tempBoughtOptionKeys: string[] = [];
-    //     filteredArgs.forEach((arg, index) => {
-    //         const theArg = methodArgs[arg] as SelectableArg
-    //         const options = Object.keys(theArg.options);
-    //         const selectedOptionKey = options[Math.floor(Math.random() * options.length)];
-    //         // Randomly select an option
-    //         const selectedOption: {cost:number} =  theArg.options[selectedOptionKey];
-    //         //If the cost is bigger than the tempPoints go to next attempt
-    //         if(selectedOption.cost > tempPoints){
-    //             maxCounterForRandom++;
-    //             return;
-    //         }
-    //         //Else remove the cost from the tempPoints and add into the temporary bought options
-    //         else{
-    //             tempPoints-=selectedOption.cost;
-    //             tempBoughtOptions.push(selectedOption);
-    //             tempBoughtOptionKeys.push(selectedOptionKey);
-    //             if(index === filteredArgs.length - 1){
-    //                 mainSelectedOption = tempBoughtOptions;
-    //                 remainingPoints = tempPoints
-    //                 mainSelectedOptionKeys = tempBoughtOptionKeys;
-    //                 return
-    //             }
-    //         }
-    //     })
-    // }
+    var _loop_1 = function () {
+        var tempPoints = points;
+        var tempBoughtOptions = [];
+        var tempBoughtOptionKeys = [];
+        filteredArgs.forEach(function (arg, index) {
+            var theArg = methodArgs[arg];
+            var options = Object.keys(theArg.options);
+            var selectedOptionKey = options[Math.floor(Math.random() * options.length)];
+            // Randomly select an option
+            var selectedOption = theArg.options[selectedOptionKey];
+            //If the cost is bigger than the tempPoints go to next attempt
+            if (selectedOption.cost > tempPoints) {
+                maxCounterForRandom++;
+                return;
+            }
+            //Else remove the cost from the tempPoints and add into the temporary bought options
+            else {
+                tempPoints -= selectedOption.cost;
+                tempBoughtOptions.push(selectedOption);
+                tempBoughtOptionKeys.push(selectedOptionKey);
+                if (index === filteredArgs.length - 1) {
+                    mainSelectedOption = tempBoughtOptions;
+                    remainingPoints = tempPoints;
+                    mainSelectedOptionKeys = tempBoughtOptionKeys;
+                    return;
+                }
+            }
+        });
+    };
+    while (maxCounterForRandom > 0 && mainSelectedOption === null) {
+        _loop_1();
+    }
     if (mainSelectedOption === null) {
         mainSelectedOption = cheapestOptions;
         cheapestOptions.forEach(function (option) {
@@ -73,7 +77,18 @@ function buyOptions(points, methodArgs) {
         });
         mainSelectedOptionKeys = cheapestOptionsKeys;
     }
-    return { selectedOptions: mainSelectedOption, remainingPoints: remainingPoints, selectedOptionKeys: mainSelectedOptionKeys };
+    var theRecord = {};
+    filteredArgs.forEach(function (arg, index) {
+        if (mainSelectedOptionKeys) {
+            theRecord[arg] = mainSelectedOptionKeys[index];
+        }
+    });
+    return {
+        selectedOptions: mainSelectedOption,
+        remainingPoints: remainingPoints,
+        selectedOptionKeys: mainSelectedOptionKeys,
+        selectedOptionsRecord: theRecord
+    };
 }
 // Example usage
 var methodArgs = {
@@ -110,4 +125,3 @@ var methodArgs = {
 };
 var points = 20;
 var result = buyOptions(points, methodArgs);
-console.log(result);
