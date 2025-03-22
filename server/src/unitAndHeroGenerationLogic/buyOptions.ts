@@ -1,7 +1,7 @@
-function buyOptions(points, methodArgs){
-    const boughtOptions = {};
+import { MethodArgsConfig, SelectableArg } from "../../../types/battle/effectUtils";
+
+function buyOptions(points:number, methodArgs:MethodArgsConfig){
     let remainingPoints = points;
-    const possibleCombinations = [];
     //Filter all non additive
     const filteredArgs = Object.keys(methodArgs).filter((arg) => {
         return methodArgs[arg].type !== 'additive'
@@ -10,20 +10,27 @@ function buyOptions(points, methodArgs){
     //Find the cheapest possible option to make sure it is bellow the remaining points
 
     let cheapestCost = 0;
-    const cheapestOptions = []
+    const cheapestOptions:{cost:number}[] = []
+    const cheapestOptionsKeys: string[]= [];
 
     filteredArgs.forEach((arg) =>{
-        const options = Object.keys(methodArgs[arg].options);
+        const theArg = methodArgs[arg] as SelectableArg
+        const options = Object.keys(theArg.options);
         let findCheapestOption = Infinity;
-        let cheapest = null;
+        let cheapest:{cost:number} | null = null;
+        let cheapestKey: string | null = null;
         options.forEach((option) => {
-            if(methodArgs[arg].options[option].cost < findCheapestOption){
-                findCheapestOption = methodArgs[arg].options[option].cost;
-                cheapest = methodArgs[arg].options[option]
+            if(theArg.options[option].cost < findCheapestOption){
+                findCheapestOption = theArg.options[option].cost;
+                cheapest = theArg.options[option]
+                cheapestKey = option;
             }
         })
         cheapestCost+= findCheapestOption
-        cheapestOptions.push(cheapest)
+        if(cheapest !== null && cheapestKey !== null){
+            cheapestOptions.push(cheapest as {cost:number})
+            cheapestOptionsKeys.push(cheapestKey as string);
+        }
     })
 
     if(points<cheapestCost){
@@ -33,16 +40,18 @@ function buyOptions(points, methodArgs){
     //Attempt 10 times to find random set of options that fits the price.
 
     let maxCounterForRandom = 10;
-    let possibleOptionFound = false;
-    let mainSelectedOption = null;
+    let mainSelectedOption: {cost: number}[] | null = null;
+    let mainSelectedOptionKeys: string[] | null = null;
     while(maxCounterForRandom > 0 && mainSelectedOption === null ){
         let tempPoints = points;
-        let tempBoughtOptions = [];
+        let tempBoughtOptions: {cost: number}[] = [];
+        let tempBoughtOptionKeys: string[] = [];
         filteredArgs.forEach((arg, index) => {
-            const options = Object.keys(methodArgs[arg].options);
-
+            const theArg = methodArgs[arg] as SelectableArg
+            const options = Object.keys(theArg.options);
+            const selectedOptionKey = options[Math.floor(Math.random() * options.length)];
             // Randomly select an option
-            const selectedOption =  methodArgs[arg].options[options[Math.floor(Math.random() * options.length)]];
+            const selectedOption: {cost:number} =  theArg.options[selectedOptionKey];
             //If the cost is bigger than the tempPoints go to next attempt
             if(selectedOption.cost > tempPoints){
                 maxCounterForRandom++;
@@ -52,20 +61,24 @@ function buyOptions(points, methodArgs){
             else{
                 tempPoints-=selectedOption.cost;
                 tempBoughtOptions.push(selectedOption);
+                tempBoughtOptionKeys.push(selectedOptionKey);
                 if(index === filteredArgs.length - 1){
                     mainSelectedOption = tempBoughtOptions;
+                    remainingPoints = tempPoints
+                    mainSelectedOptionKeys = tempBoughtOptionKeys;
                     return
                 }
             }
         })
     }
     if(mainSelectedOption === null){
-
         mainSelectedOption = cheapestOptions;
+        cheapestOptions.forEach((option) => {
+            remainingPoints-=option.cost;
+        })
+        mainSelectedOptionKeys = cheapestOptionsKeys;
     }
-
-    return mainSelectedOption;
-
+    return {selectedOptions:mainSelectedOption, remainingPoints:remainingPoints, selectedOptionKeys:mainSelectedOptionKeys};
 }
 
 // Example usage
@@ -102,6 +115,6 @@ const methodArgs = {
     }
 };
 
-const points = 10;
-const result = buyOptions(points, methodArgs);
+const points = 20;
+const result = buyOptions(points, methodArgs as MethodArgsConfig);
 console.log(result);

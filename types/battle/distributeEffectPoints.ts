@@ -43,10 +43,6 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
                 smallestCost = methodArgument.costPerValue;
             }
         }
-        else if(methodArgument.type === 'selectable'){
-            //To be added
-            
-        }
 
     })
     
