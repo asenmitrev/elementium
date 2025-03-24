@@ -1,10 +1,8 @@
 import { UnitType, UnitWeights } from "../../../types";
 import {
-  effectCostsDictionary,
   effectGeneration,
-  getRandomEffectCost,
 } from "../../../types/battle/effects";
-import { EffectMethods } from "../../../types/battle/effectUtils";
+import {UnitRaceData, unitRaces} from '../../../types/unitRaces';
 
 const pointsPerLevel = 5;
 const startingPoints = 15;
@@ -62,17 +60,39 @@ export const unitPointAnnotator = function (
   };
 };
 
-export const nameGeneration = function (): string {
+export const nameGeneration = function (race:UnitRaceData): string {
+  if(race){
+    const name = race.names[Math.floor(Math.random() * race.names.length)];
+    const secondName = race.names[Math.floor(Math.random() * race.names.length)];
+    return name +' ' + secondName;
+  }
   return "random name";
 };
 
-export const createUnitType = function (): UnitType {
+export const getRandomMapElement = function<K, V>(map: Map<K, V>): V | undefined {
+  const values = Array.from(map.values());
+  return values[Math.floor(Math.random() * values.length)];
+};
+
+export const createUnitType = function (race?:UnitRaceData): UnitType {
   const level = 1;
-  let { water, earth, fire, special } = unitPointAnnotator(level, "water");
+  let theWeights:UnitWeights | undefined
+  if(!race){
+    race = getRandomMapElement(unitRaces);
+  }
+  theWeights = (race as UnitRaceData).weights;
+  const theName = nameGeneration(race as UnitRaceData);
+  let image = ''
+  if(race){
+    image = race?.type + '/'+ race?.race + '/' + Math. random() * (race?.maxImages - 1) + 1;
+  }
+  
+  let { water, earth, fire, special } = unitPointAnnotator(level, "water", theWeights);
 
   const { effect, remainder } = effectGeneration(special);
 
   if (remainder > 0) {
+
     const [water2, earth2, fire2] = generalPointAnnotator(remainder, {
       water2: 0.33,
       earth2: 0.33,
@@ -85,10 +105,7 @@ export const createUnitType = function (): UnitType {
     // Use the distributed points here if needed
   }
   /*
-        Weights Generation,
-        Name Generation,
         Image Generation,
-        Effect Generation,
         Evolutions Generation
     */
   // console.log('i tuk?')
@@ -96,12 +113,12 @@ export const createUnitType = function (): UnitType {
     water,
     earth,
     fire,
-    name: nameGeneration(),
+    name: theName,
     howManyPeopleHaveIt: 0,
     level: 0,
     effect: effect,
     specialExplanation: "",
-    image: "",
+    image: image,
     evolutions: [],
   };
   // console.log(" i tuk daje?")
@@ -196,6 +213,8 @@ function spreadWithWeights(
 
   return Object.values(values);
 }
+ 
+
+console.log(createUnitType(), '   tuka? ');
 
 
-console.log(createUnitType(), ' tuka?');
