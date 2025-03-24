@@ -1,4 +1,4 @@
-import { UnitType, UnitWeights } from "../../../types";
+import { HeroType, HeroWeights, UnitType, UnitWeights } from "../../../types";
 import {
   effectGeneration,
 } from "../../../types/battle/effects";
@@ -128,28 +128,32 @@ export const createUnitType = function (race?:UnitRaceData): UnitType {
 
 export const heroPointAnnotator = function (
   level: number,
-  type: "water" | "earth" | "fire" | "leadership" | "speed" | "counterEspionage"
+  type: "water" | "earth" | "fire" | "leadership" | "wind" | "counterEspionage",
+  customWeights?: HeroWeights
 ) {
   //How much points would the card spent
   const points = startingPoints + pointsPerLevel * level;
-  const weightForType = {
+  const weightForType = customWeights || {
     water: 0,
     earth: 0,
     fire: 0,
     leadership: 0,
-    speed: 0,
+    wind: 0,
     counterEspionage:0 
   };
-  Object.keys(weightForType).forEach((innerType) => {
-    if (innerType === type) {
-      weightForType[innerType as keyof typeof weightForType] = 0.25;
-    } else {
-      weightForType[innerType as keyof typeof weightForType] = 0.15;
-    }
-  });
+  if(!customWeights){
+    Object.keys(weightForType).forEach((innerType) => {
+      if (innerType === type) {
+        weightForType[innerType as keyof typeof weightForType] = 0.25;
+      } else {
+        weightForType[innerType as keyof typeof weightForType] = 0.15;
+      }
+    });
+  }
+
 
   //1st Water 2nd Earth 3rd Fire
-  const [water, earth, fire, leadership, speed, counterEspionage] = generalPointAnnotator(
+  const [water, earth, fire, leadership, wind, counterEspionage] = generalPointAnnotator(
     points,
     weightForType
   );
@@ -158,10 +162,33 @@ export const heroPointAnnotator = function (
     earth,
     fire,
     leadership,
-    speed,
+    wind,
     counterEspionage
   };
 };
+
+function createHeroType(race:UnitRaceData){
+  const level = 1;
+  const { water, earth, fire, leadership, wind, counterEspionage } = heroPointAnnotator(level, "water");
+  let image = ''
+  if(race){
+    image = race?.type + '/'+ race?.race + '/' + Math. random() * (race?.maxImages - 1) + 1;
+  }
+  const newHeroType: HeroType = {
+      water,
+      earth,
+      fire,
+      leadership,
+      wind,
+      counterEspionage,
+      name: nameGeneration(race),
+      evolutions: [],
+      howManyPeopleHaveIt:0,
+      image:image,
+      level:0
+  }
+  return newHeroType
+}
 
 function spreadWithWeights(
   total: number,

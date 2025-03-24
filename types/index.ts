@@ -58,12 +58,13 @@ export type HeroType = {
   earth: number;
   fire: number;
   water: number;
-  slots: number;
+  leadership: number;
   image: string;
   evolutions: HeroType[];
+  name: string;
   howManyPeopleHaveIt: number;
   level: number;
-  counterEspionageLevel: number;
+  counterEspionage: number;
 };
 
 export type Hero = {
@@ -93,4 +94,12 @@ export type UnitWeights = {
   special: number;
 };
 
+export type HeroWeights = {
+  wind: number;
+  earth: number;
+  fire: number;
+  water: number;
+  leadership: number;
+  counterEspionage: number;
+}
 export type Land = "water" | "fire" | "earth";

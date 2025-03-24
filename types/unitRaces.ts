@@ -1,4 +1,4 @@
-import { UnitWeights } from ".";
+import { HeroWeights, UnitWeights } from ".";
 
 export type UnitRaceData = {
     weights: UnitWeights;
@@ -6,6 +6,7 @@ export type UnitRaceData = {
     type: string;
     race: string;
     maxImages: number;
+    heroWeights?: HeroWeights;
 }
 
 type UnitRaceKey = 'earth-goat' | 'earth-golem' | 'fire-mage' | 'fire-warrior' | 'water-witch';
@@ -29,6 +30,14 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Ursagaze", "Veylstone", "Windsprint", "Xalvora", "Yewhoof",
             "Zephyrclimb", "Aurorock", "Bouldergaze", "Cloudleap", "Dawnstride"
         ],
+        heroWeights: {
+            water:0,
+            earth:0.4,
+            fire:0,
+            leadership:0.4,
+            wind:0.2,
+            counterEspionage:0,
+        },
         maxImages: 8
     }],
     ['earth-golem', {
@@ -48,6 +57,14 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Umberfist", "Verdigris", "Woldstone", "Xerolith", "Yarrowspire",
             "Zirconclash", "Aridspire", "Basaltgrip", "Clayrend", "Dunewarden"
         ],
+        heroWeights: {
+            water:0.1,
+            earth:0.5,
+            fire:0,
+            leadership:0.1,
+            wind:0.1,
+            counterEspionage:0.2,
+        },
         maxImages: 8
     }],
     //Fire
@@ -68,6 +85,14 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Umbraflame", "Vulcanis", "Wildspark", "Xantheros", "Yflareon",
             "Zephyrember", "Ashthorn", "Blazebinder", "Cindervane", "Duskspark"
         ],
+        heroWeights: {
+            water:0,
+            earth:0,
+            fire:0.6,
+            leadership:0.1,
+            wind:0.2,
+            counterEspionage:0.1,
+        },
         maxImages: 8
     }],
     ['fire-warrior', {
@@ -87,6 +112,14 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Umbraforge", "Vulcanblade", "Wildfire", "Xanthor", "Yflareblade",
             "Zephyrash", "Ashstrike", "Blazeguard", "Cinderaxe", "Duskblaze"
         ],
+        heroWeights: {
+            water:0,
+            earth:0,
+            fire:0.4,
+            leadership:0.4,
+            wind:0.2,
+            counterEspionage:0,
+        },
         maxImages: 8
     }],
     //Water
@@ -98,6 +131,14 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             'water': 0.5,
             'fire': 0.05,
             'special': 0.35
+        },
+        heroWeights: {
+            water:0.5,
+            earth:0.1,
+            fire:0,
+            leadership:0.2,
+            wind:0.2,
+            counterEspionage:0.1,
         },
         names: [
             "Aquarina", "Brineveil", "Coralyn", "Dewshade", "Ebbra",
