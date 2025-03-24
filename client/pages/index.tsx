@@ -1,4 +1,3 @@
-import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
@@ -14,20 +13,14 @@ export default function Home({
   }[];
 }) {
   return (
-    <Layout home>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section className={utilStyles.headingMd}>
-        <p>[Your Self Introduction]</p>
-        <p>
-          <Link href="/castles">Castle View</Link>
-        </p>
-        <p>
-          <Link href="/heroes">Heroes View</Link>
-        </p>
-      </section>
-    </Layout>
+    <section className={utilStyles.headingMd}>
+      <p>
+        <Link href="/castles">Castle View</Link>
+      </p>
+      <p>
+        <Link href="/heroes">Heroes View</Link>
+      </p>
+    </section>
   );
 }
 
