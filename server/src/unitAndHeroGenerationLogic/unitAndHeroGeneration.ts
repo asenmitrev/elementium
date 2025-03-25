@@ -74,8 +74,8 @@ export const getRandomMapElement = function<K, V>(map: Map<K, V>): V | undefined
   return values[Math.floor(Math.random() * values.length)];
 };
 
-export const createUnitType = function (race?:UnitRaceData): UnitType {
-  const level = 1;
+
+export const createUnitType = function (race?:UnitRaceData, level:number = 1): UnitType {
   let theWeights:UnitWeights | undefined
   if(!race){
     race = getRandomMapElement(unitRaces);
@@ -104,11 +104,9 @@ export const createUnitType = function (race?:UnitRaceData): UnitType {
 
     // Use the distributed points here if needed
   }
-  /*
-        Image Generation,
-        Evolutions Generation
-    */
-  // console.log('i tuk?')
+
+
+
   const newUnitType: UnitType = {
     water,
     earth,
@@ -120,11 +118,30 @@ export const createUnitType = function (race?:UnitRaceData): UnitType {
     specialExplanation: "",
     image: image,
     evolutions: [],
+    race:race as UnitRaceData
   };
-  // console.log(" i tuk daje?")
-//  console.log(newUnitType,  water, earth)
+
   return newUnitType;
 };
+
+export const generateEvolutionOptions = function(unit:UnitType):{
+  unitTypeOne:UnitType,
+  unitTypeTwo:UnitType,
+  unitTypeThree:UnitType
+}{
+  const unitTypeOne = createUnitType(unit.race, unit.level+1);
+  unitTypeOne.image = unit.image;
+  const unitTypeTwo = createUnitType(unit.race, unit.level+1);
+  unitTypeTwo.image = unit.image;
+  const unitTypeThree = createUnitType(unit.race, unit.level+1);
+  unitTypeThree.image = unit.image;
+  return {
+    unitTypeOne,
+    unitTypeTwo,
+    unitTypeThree
+  }
+}
+
 
 export const heroPointAnnotator = function (
   level: number,
@@ -185,9 +202,24 @@ function createHeroType(race:UnitRaceData){
       evolutions: [],
       howManyPeopleHaveIt:0,
       image:image,
-      level:0
+      level:0,
+      race:race
   }
   return newHeroType
+}
+
+export const createHeroEvolutions = function(hero:HeroType){
+  const [water, earth, fire, leadership, wind, counterEspionage] = generalPointAnnotator(
+    1,
+    hero.race.heroWeights as HeroWeights
+  );
+  hero.water+=water;
+  hero.earth+=earth;
+  hero.fire+=fire;
+  hero.leadership+=leadership;
+  hero.wind+=wind;
+  hero.counterEspionage+=counterEspionage;
+  return hero;
 }
 
 function spreadWithWeights(
