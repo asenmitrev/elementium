@@ -1,13 +1,13 @@
-import { HeroType, Land, UnitType } from "types";
-import { GeneralArguments } from "types/battle/effects";
+import { HeroType, Land, UnitType } from "../../../types";
+import { GeneralArguments } from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
   EffectMethods,
   EffectNarration,
   KillCardArgs,
   RoundArgs,
-} from "types/battle/effectUtils";
-import { BattleEvaluation, RoundNarration } from "types/battle/main";
+} from "../../../types/battle/effectUtils";
+import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -195,9 +195,7 @@ function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
     enemy = args["attacker"];
   }
   const methodFunk: string | undefined = me.effect?.method;
-  const methodArgs: unknown[] = me.effect?.methodArgs
-    ? me.effect.methodArgs
-    : [];
+
   if (methodFunk) {
     // Import or define effectMethods before using it
     const effectMethods: Record<

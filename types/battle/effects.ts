@@ -41,6 +41,69 @@ export type GeneralArguments = {
   ActiveLand: Land;
 };
 
+export type EffectKeys = "removeEnemyEffectEffect" | "debuffActiveEffect" | "buffActiveEffect" | "buffMe" | "debuffEnemy"
+
+export const effectExplanations = {
+  removeEnemyEffectEffect: function(effectMethods:RemoveEnemyEffectEffectMethod){
+    if (effectMethods.stage === 'pre'){
+      return {
+        text: "Before the battle remove the opponents special effect",
+      }
+    }
+    return {
+      text: "After the battle remove the opponents special effect",
+    }
+  },
+  debuffActiveEffect: function(effectMethods: DebuffEnemyEffectMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` debuff your active effect by ${effectMethods.methodArgs.value}`
+
+    return this.debuffActiveEffect;
+  },
+  buffActiveEffect: function(effectMethods: BuffActiveEffectMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buff your active stat by ${effectMethods.methodArgs.value}`
+
+    return narration;
+  },
+  buffMeEffect: function(effectMethods: BuffMeEffectMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buff your ${effectMethods.methodArgs.land} stat by ${effectMethods.methodArgs.value}`
+
+    return narration;
+  },
+  debuffEnemyEffect: function(effectMethods: DebuffEnemyEffectMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    } 
+    narration+= ` debuff your opponents ${effectMethods.methodArgs.land} stat by ${effectMethods.methodArgs.value}`
+
+    return narration;
+  },
+}
+
 export const effectMethods = {
   removeEnemyEffectEffect: function (
     EMethods: RemoveEnemyEffectEffectMethod,
@@ -114,7 +177,7 @@ export const effectMethods = {
 };
 
 export const effectCostsDictionary = new Map<
-  string,
+  EffectKeys,
   { methodArgs: MethodArgsConfig; stages: { pre: number; after: number } }
 >([
   [
@@ -222,7 +285,7 @@ export const effectGeneration = function (points: number): {
   remainder: number;
 } {
   let chosenEffect = getRandomEffectCost();
-  let possibleStages = [];
+  let possibleStages: Array<'pre' | 'after'> = [];
   if(points >= chosenEffect.stages.pre){
     possibleStages.push('pre');
   }
@@ -234,6 +297,8 @@ export const effectGeneration = function (points: number): {
   const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
   const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'after';
   points -= chosenEffect.stages[chosenStage];
+
+  
 
   let boughtOptions = buyOptions(points, chosenEffect.methodArgs);
 
@@ -265,6 +330,7 @@ const combinedMethodArgs = {
       stage: chosenStage,
       method: chosenEffect.key,
       methodArgs: combinedMethodArgs,
+      explanation: effectExplanations[chosenEffect.key as keyof typeof effectExplanations](combinedMethodArgs as any) as string
     },
   };
 };
@@ -293,7 +359,7 @@ const methodArgs = {
         }
 };
 */
-export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: string, stages: { pre: number; after: number } } {
+export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } } {
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
   const [key, { methodArgs, stages }] = effects[randomIndex];

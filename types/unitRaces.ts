@@ -9,7 +9,7 @@ export type UnitRaceData = {
     heroWeights?: HeroWeights;
 }
 
-type UnitRaceKey = 'earth-goat' | 'earth-golem' | 'fire-mage' | 'fire-warrior' | 'water-witch';
+type UnitRaceKey = 'earth-goat' | 'earth-golem' | 'fire-mage' | 'fire-warrior' | 'water-witch' | 'earth-forestSpirit';
 
 export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
     //Earth
@@ -67,6 +67,39 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         },
         maxImages: 8
     }],
+    
+    ['earth-forestSpirit', {
+        type:"earth",
+        race:"forstSpirit",
+        weights: {
+            'earth': 0.4,
+            'water': 0.2,
+            'fire': 0.2,
+            'special': 0.2
+        },
+        names: [
+            "Barrowwhisper", "Hollowveil", "Mossghast", "Rootwraith", "Thornshade",
+            "Gloamroot", "Witherbough", "Duskmire", "Blightbark", "Shadeweaver",
+            "Funguswight", "Brambleghoul", "Rotlimb", "Vinegloom", "Moldermaw",
+            "Sapscowl", "Gallowsmoss", "Petalash", "Bogshriek", "Murkthorn",
+            "Mournwhisper", "Hushbriar", "Grimsap", "Omenroot", "Dreadwillow",
+            "Sighbark", "Croakmire", "Wailtwig", "Murmurleaf", "Hollowcroon",
+            "Stagskull", "Mothbone", "Crowclaw", "Wormtusk", "Hollowhoof",
+            "Antlerrot", "Frogrim", "Snagglefang", "Webfoot", "Bonewhistle",
+            "Oldenwane", "Eldermurk", "Duskeld", "Withersage", "Grimsylvan",
+            "Mirelore", "Barrowgloom", "Fossilbough", "Sallowroot", "Deadfolk"
+        ],
+        heroWeights: {
+            water:0.1,
+            earth:0.3,
+            fire:0.1,
+            leadership:0.1,
+            wind:0.1,
+            counterEspionage:0.3,
+        },
+        maxImages: 28
+    }],
+
     //Fire
     ['fire-mage', {
         type:"fire",
@@ -151,7 +184,3 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         maxImages: 8
     }]
 ])
-function generateStringWithRandomNumber(baseString: string, maxNumber: number): string {
-    const randomNumber = Math.floor(Math.random() * maxNumber) + 1;
-    return `${baseString}-${randomNumber}`;
-}
