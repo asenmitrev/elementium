@@ -26,6 +26,20 @@ export interface RemoveEnemyEffectEffectMethod extends EffectMethods {
   methodArgs: {};
 }
 
+export interface DefenderAdvantage extends EffectMethods {
+  method: "removeEnemyEffectEffect";
+  methodArgs: {
+    value: number;
+  };
+}
+
+export interface AttackerAdvantage extends EffectMethods {
+  method: "removeEnemyEffectEffect";
+  methodArgs: {
+    value: number;
+  };
+}
+
 export type EffectMethodMap = {
   removeEnemyEffectEffect: RemoveEnemyEffectEffectMethod;
   debuffActiveEffect: DebuffActiveEffectMethod;
@@ -41,7 +55,8 @@ export type GeneralArguments = {
   ActiveLand: Land;
 };
 
-export type EffectKeys = "removeEnemyEffectEffect" | "debuffActiveEffect" | "buffActiveEffect" | "buffMe" | "debuffEnemy"
+export type EffectKeys = "removeEnemyEffectEffect" | "debuffActiveEffect" | "buffActiveEffect" | "buffMe" 
+| "debuffEnemy" | "defenderAdvantage" | "attackerAdvantage";
 
 export const effectExplanations = {
   removeEnemyEffectEffect: function(effectMethods:RemoveEnemyEffectEffectMethod){
@@ -54,6 +69,18 @@ export const effectExplanations = {
       text: "After the battle remove the opponents special effect",
     }
   },
+  attackerAdvantage: function(effectMethods: AttackerAdvantage){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buffs your active effect by ${effectMethods.methodArgs.value} if your are the attacker`
+
+    return narration;
+  },
   debuffActiveEffect: function(effectMethods: DebuffEnemyEffectMethod){
     let narration = ''
     if (effectMethods.stage === 'pre'){
@@ -65,6 +92,18 @@ export const effectExplanations = {
     narration+= ` debuff your active effect by ${effectMethods.methodArgs.value}`
 
     return this.debuffActiveEffect;
+  },
+  defenderAdvantage: function(effectMethods: DefenderAdvantage){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buffs your active effect by ${effectMethods.methodArgs.value} if your are the defender`
+
+    return narration;
   },
   buffActiveEffect: function(effectMethods: BuffActiveEffectMethod){
     let narration = ''
@@ -116,6 +155,48 @@ export const effectMethods = {
       stat: null,
       value: 0,
       effect: "debuff",
+    };
+  },
+  attackerAdvantage: function (
+    EMethods: AttackerAdvantage,
+    generalArguments: GeneralArguments
+  ){
+    const { me, perspective,ActiveLand } = generalArguments;
+    if(perspective === 'attacker'){
+      me[ActiveLand] += EMethods.methodArgs.value;
+      return {
+        text: `${me.name} got it's ${ActiveLand} stat debuffed by ${EMethods.methodArgs.value}.`,
+        value: EMethods.methodArgs.value,
+        stat: ActiveLand,
+        effect: "buff",
+      };
+    }
+    return {
+      text: `${me.name}'s power works only when you are the attacker`,
+      stat: null,
+      value: 0,
+      effect: "buff",
+    };
+  },
+  defenderAdvantage: function (
+    EMethods: DefenderAdvantage,
+    generalArguments: GeneralArguments
+  ): EffectNarration {
+    const { me, perspective,ActiveLand } = generalArguments;
+    if(perspective === 'defender'){
+      me[ActiveLand] += EMethods.methodArgs.value;
+      return {
+        text: `${me.name} got it's ${ActiveLand} stat debuffed by ${EMethods.methodArgs.value}.`,
+        value: EMethods.methodArgs.value,
+        stat: ActiveLand,
+        effect: "buff",
+      };
+    }
+    return {
+      text: `${me.name}'s power works only when you are the defender`,
+      stat: null,
+      value: 0,
+      effect: "buff",
     };
   },
   debuffActiveEffect: function (
@@ -186,6 +267,21 @@ export const effectCostsDictionary = new Map<
       methodArgs: {},
       stages: {
         pre: 4,
+        after: 0,
+      },
+    },
+  ],
+  [
+    "defenderAdvantage",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 1
+        }
+      },
+      stages: {
+        pre: 1,
         after: 0,
       },
     },
@@ -280,12 +376,12 @@ export const effectCostsDictionary = new Map<
   ],
 ]);
 
-export const effectGeneration = function (points: number): {
+export const effectGeneration = function (points: number, effectKeys?:EffectKeys[]): {
   effect: EffectMethods | null;
   remainder: number;
 } {
-  let chosenEffect = getRandomEffectCost();
-  let possibleStages: Array<'pre' | 'after'> = [];
+  const chosenEffect = getRandomEffectCost(effectKeys);
+  const possibleStages: Array<'pre' | 'after'> = [];
   if(points >= chosenEffect.stages.pre){
     possibleStages.push('pre');
   }
@@ -359,11 +455,16 @@ const methodArgs = {
         }
 };
 */
-export function getRandomEffectCost(): { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } } {
+export function getRandomEffectCost(effectKeys?:EffectKeys[]): { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } } {
+  if(effectKeys){
+    const randomEl = effectKeys[ Math.floor(Math.random() * effectKeys.length)];
+    return effectCostsDictionary.get(randomEl) as { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } };
+  }
+
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
   const [key, { methodArgs, stages }] = effects[randomIndex];
   return { key, methodArgs, stages };
 }
 
-effectGeneration(20)
+getRandomEffectCost()

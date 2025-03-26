@@ -89,7 +89,7 @@ export const createUnitType = function (race?:UnitRaceData, level:number = 1): U
   
   let { water, earth, fire, special } = unitPointAnnotator(level, "water", theWeights);
 
-  const { effect, remainder } = effectGeneration(special);
+  const { effect, remainder } = effectGeneration(special, race?.possibleEffects);
 
   if (remainder > 0) {
 

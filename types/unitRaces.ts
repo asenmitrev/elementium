@@ -1,4 +1,5 @@
 import { HeroWeights, UnitWeights } from ".";
+import { EffectKeys } from "./battle/effects";
 
 export type UnitRaceData = {
     weights: UnitWeights;
@@ -7,9 +8,12 @@ export type UnitRaceData = {
     race: string;
     maxImages: number;
     heroWeights?: HeroWeights;
+    possibleEffects?:EffectKeys[];
 }
 
-type UnitRaceKey = 'earth-goat' | 'earth-golem' | 'fire-mage' | 'fire-warrior' | 'water-witch' | 'earth-forestSpirit';
+type UnitRaceKey = 'earth-goat' | 'earth-golem' | 'fire-mage' | 'fire-warrior' | 'water-witch' | 'fire-phoenix'
+| 'earth-forestSpirit' | 'water-octopus' | 'water-turtle' | 'mixed-fireWaterElemental' | 'mixed-forestDragon' | 'mixed-hipo' |
+'mixed-natureElemental';
 
 export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
     //Earth
@@ -38,7 +42,11 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             wind:0.2,
             counterEspionage:0,
         },
-        maxImages: 8
+        maxImages: 24,
+        possibleEffects: [
+           "buffActiveEffect",
+           "buffMe"
+        ]
     }],
     ['earth-golem', {
         type:"earth",
@@ -65,7 +73,12 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             wind:0.1,
             counterEspionage:0.2,
         },
-        maxImages: 8
+        maxImages: 24,
+        possibleEffects: [
+            "buffMe",
+            "debuffActiveEffect",
+            "defenderAdvantage"
+         ]
     }],
     
     ['earth-forestSpirit', {
@@ -97,7 +110,12 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             wind:0.1,
             counterEspionage:0.3,
         },
-        maxImages: 28
+        maxImages: 28,
+        possibleEffects: [
+            "debuffActiveEffect",
+            "debuffEnemy",
+            "removeEnemyEffectEffect"
+         ]
     }],
 
     //Fire
@@ -126,7 +144,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             wind:0.2,
             counterEspionage:0.1,
         },
-        maxImages: 8
+        maxImages: 24
     }],
     ['fire-warrior', {
         type:"fire",
@@ -153,7 +171,12 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             wind:0.2,
             counterEspionage:0,
         },
-        maxImages: 8
+        maxImages: 25,
+        possibleEffects: [
+            "buffMe",
+            "removeEnemyEffectEffect",
+            "attackerAdvantage"
+         ]
     }],
     //Water
     ['water-witch', {
@@ -181,6 +204,301 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Undinara", "Vaporlyn", "Wavecrest", "Xanthea", "Yaralune",
             "Zephyra", "Abyssara", "Brinewhisper", "Coralbreeze", "Dewspell"
         ],
-        maxImages: 8
+        maxImages: 25,
+        possibleEffects: [
+            "removeEnemyEffectEffect", "buffActiveEffect", "buffMe", 
+            "debuffEnemy", "defenderAdvantage", "attackerAdvantage"
+         ]
+    }],
+    ['water-octopus', {
+        type:"water",
+        race:"octopus",
+        weights: {
+            'earth': 0.1,
+            'water': 0.4,
+            'fire': 0.1,
+            'special': 0.4
+        },
+        heroWeights: {
+            water:0.3,
+            earth:0.1,
+            fire:0.1,
+            leadership:0.2,
+            wind:0.2,
+            counterEspionage:0.1,
+        },
+        names:  [
+            "Inky", "Squiggles", "Octavius", "Cthulhu Jr.", "Bubbles", 
+            "Tentacool", "Dr. Eightarms", "Wiggly", "Sushi", "Kraken", 
+            "Poseidon", "Marvin", "Squishy", "Zoidberg", "Octodad", 
+            "Aquarius", "Bentley", "Coraline", "Dexter", "Einstein", 
+            "Floaty", "Gillbert", "Houdini", "Ivy", "Jelly", 
+            "Kelp", "Leggy", "Mochi", "Noodle", "Orville", 
+            "Puddles", "Quilliam", "Ripple", "Scooter", "Twirl", 
+            "Umbra", "Vortex", "Whisper", "Xenon", "Yara", 
+            "Zephyr", "Archie", "Blinky", "Casper", "Doodle", 
+            "Echo", "Fidget", "Gumbo", "Hydra", "Izzy", 
+            "Jetsam", "Kiki", "Loki", "Misty", "Nebula", 
+            "Ollie", "Pip", "Quirk", "Rusty", "Sprocket", 
+            "Tangle", "Ursula", "Vega", "Wobble", "Xena", 
+            "Yogi", "Ziggy", "Astra", "Bubbly", "Clyde"
+          ],
+        maxImages: 24,
+        possibleEffects: [
+            "removeEnemyEffectEffect", "debuffActiveEffect",  "buffMe", 
+            "debuffEnemy", "defenderAdvantage"
+         ]
+    }],
+    ['water-turtle', {
+        type:"water",
+        race:"turtle",
+        weights: {
+            'earth': 0.35,
+            'water': 0.55,
+            'fire': 0,
+            'special': 0.1
+        },
+        heroWeights: {
+            water:0.45,
+            earth:0.35,
+            fire:0,
+            leadership:0.1,
+            wind:0.1,
+            counterEspionage:0,
+        },
+        names: [
+            "Shelly", "Crush", "Squirt", "Turbo", "Marina",  
+            "Bubbles", "Coral", "Paddle", "Finn", "Nemo",  
+            "Tidal", "Lagoon", "Azul", "Surf", "Waverly",  
+            "Kai", "Pearl", "Sandy", "Shelldon", "Marlin",  
+            "Tortuga", "Cove", "Dory", "Pebbles", "Splash",  
+            "Breeze", "Cucumber", "Dune", "Ebb", "Flipper",  
+            "Gill", "Honey", "Indigo", "Jade", "Kelp",  
+            "Lucky", "Misty", "Nova", "Oceanus", "Poseidon",  
+            "Quill", "Ripple", "Sapphire", "Tide", "Umi",  
+            "Vortex", "Winston", "Xena", "Yara", "Zuma",  
+            "Algae", "Barnaby", "Chip", "Dewey", "Echo",  
+            "Fathom", "Glider", "Harbor", "Isla", "Jetty",  
+            "Koa", "Levi", "Mango", "Nixie", "Orca",  
+            "Pip", "Quest", "Reef", "Scooter", "Tango",  
+            "Urchin", "Vega", "Wash", "Yoshi", "Ziggy"  
+          ],
+        maxImages: 25,
+        possibleEffects: [
+            "defenderAdvantage"
+         ]
+    }],
+    ['fire-phoenix', {
+        type:"fire",
+        race:"phoenix",
+        weights: {
+            'earth': 0.1,
+            'water': 0.1,
+            'fire': 0.6,
+            'special': 0.2
+        },
+        heroWeights: {
+            water:0,
+            earth:0,
+            fire:0.5,
+            leadership:0,
+            wind:0.4,
+            counterEspionage:0.1,
+        },
+        names: [
+            "Ember", "Pyre", "Solarius", "Ignis", "Blaze",
+            "Fawkes", "Ashen", "Cinder", "Solaris", "Vulcan",
+            "Inferno", "Scorch", "Helios", "Rekindle", "Phoenixia",
+            "Aurelian", "Flare", "Sear", "Brimstone", "Magmus",
+            "Ragnarok", "Solaire", "Char", "Wildfire", "Zephyros",
+            "Balthazar", "Incendius", "Radiant", "Sunflare", "Volcanis",
+            "Eldrin", "Lumos", "Novaflare", "Onyxia", "Pyrrha",
+            "Quicksilver", "Ravenshade", "Smolder", "Therion", "Uriel",
+            "Vesuvius", "Wildspark", "Xanthe", "Yggdrasil", "Zarathos",
+            "Aetheris", "Briarblaze", "Crimsonwing", "Drakon", "Ebonflame",
+            "Firebrand", "Goldfeather", "Hestia", "Icarion", "Jadeflare",
+            "Kaelthas", "Lavaborn", "Mythrandir", "Nirvana", "Obsidian",
+            "Phaedra", "Quetzal", "Rising Dawn", "Starborn", "Tempest",
+            "Undying Light", "Valkyrie", "Warbringer", "Xerxes", "Yvaine",
+            "Zircon", "Aurora", "Burning Sky", "Celestia", "Dawnfire"
+          ],
+          possibleEffects: [
+            "buffMe",
+            "removeEnemyEffectEffect",
+            "attackerAdvantage"
+         ],
+        maxImages: 24
+    }],
+
+    ['mixed-fireWaterElemental', {
+        type:"mixed",
+        race:"fireWaterElemental",
+        weights: {
+            'earth': 0,
+            'water': 0.4,
+            'fire': 0.4,
+            'special': 0.2
+        },
+        heroWeights: {
+            water:0.3,
+            earth:0,
+            fire:0.3,
+            leadership:0.1,
+            wind:0.2,
+            counterEspionage:0.1,
+        },
+        names: [
+            "Pyroflux Tide", "Scorchwave", "Blazebrine", "Infernosh", "Steamspark",
+            "Magmara", "Flareflow", "Torrentflare", "Hydrolight", "Cinderwash",
+            "Emberglow", "Tiderupt", "Boilburst", "Vaporblaze", "Seasear",
+            "Flamerip", "Sizzlespray", "Burnflow", "Scaldsurge", "Dewflare",
+            "Spoutspark", "Lavalash", "Mistburn", "Geyserflare", "Blazebubble",
+            "Seafire", "Tidekindle", "Floodflame", "Glowdrip", "Splashburn",
+            "Brineblaze", "Frostfire", "Whirlflame", "Sprayflare", "Moltenmist",
+            "Dantide", "Emberwash", "Blazewave", "Searspout", "Flamefroth",
+            "Tideraze", "Vaporscorch", "Fireswell", "Hailfire", "Spoutflare",
+            "Bubblesear", "Pyrospray", "Scaldspark", "Lagoonblaze", "Floodflare",
+            "Sizzleswell", "Blazebrine", "Torchsurf", "Steamsear", "Flameripple",
+            "Tidebrand", "Infernowash", "Glowtide", "Seaspark", "Burnishflow",
+            "Sprayblaze", "Magmadrop", "Flarepool", "Searush", "Pyrotide",
+            "Bubbleburn", "Flamespout", "Scaldsurge", "Vaporflame", "Tideroar",
+            "Blazewash", "Frostflare", "Seaflicker"
+        ],
+          possibleEffects: [
+            "buffMe",
+            "removeEnemyEffectEffect",
+            "attackerAdvantage",
+            "debuffActiveEffect",
+            "debuffEnemy",
+            "buffActiveEffect"
+         ],
+        maxImages: 17
+    }],
+
+    ['mixed-forestDragon', {
+        type:"mixed",
+        race:"forestDragon",
+        weights: {
+            'earth': 0.4,
+            'water': 0,
+            'fire': 0.4,
+            'special': 0.2
+        },
+        heroWeights: {
+            water:0,
+            earth:0.3,
+            fire:0.3,
+            leadership:0,
+            wind:0.3,
+            counterEspionage:0.1,
+        },
+        names: [
+            "Verdanthorn", "Emberbough", "Sylvanclaw", "Mosscrest", "Willowflame",
+            "Thornspark", "Rootfang", "Bramblewing", "Leafdrake", "Groveheart",
+            "Briarback", "Fernscale", "Canopyroar", "Timberflame", "Dewclaw",
+            "Vinewrath", "Oakenshade", "Petalwing", "Twilightbark", "Hollowroot",
+            "Gladegaze", "Bloomfang", "Shadewhisper", "Elderflame", "Barkhide",
+            "Duskthorn", "Gleamleaf", "Frostbough", "Sunroot", "Whisperbranch",
+            "Sproutspire", "Mirethorn", "Hazelstorm", "Silversap", "Duskgrove",
+            "Thicketmaw", "Lichenscale", "Hollowvein", "Briarflame", "Moonbark",
+            "Wildshroud", "Seedspark", "Glimmerroot", "Stormleaf", "Ashenbranch",
+            "Tanglemane", "Frostpetal", "Galebough", "Mistwood", "Shadowfern",
+            "Dewscale", "Bramblemane", "Embervein", "Hollowthorn", "Rustlewing",
+            "Grovefang", "Duskshroud", "Sapflare", "Whisperthorn", "Bloomspark",
+            "Rootshade", "Thornwhisper", "Barkflame", "Silvershroud", "Mossfang",
+            "Gladewing", "Vineflare", "Sunscale", "Shadethorn", "Frostvein",
+            "Timbergaze", "Leafspark", "Briarwhisper", "Willowshade", "Hollowroot"
+        ],
+          possibleEffects: [
+            "buffMe",
+            "removeEnemyEffectEffect",
+            "attackerAdvantage",
+            "defenderAdvantage",
+         ],
+        maxImages: 24
+    }],
+
+    ['mixed-hipo', {
+        type:"mixed",
+        race:"hipo",
+        weights: {
+            'earth': 0.45,
+            'water': 0.45,
+            'fire': 0,
+            'special': 0.1
+        },
+        heroWeights: {
+            water:0.4,
+            earth:0.4,
+            fire:0,
+            leadership:0.15,
+            wind:0.05,
+            counterEspionage:0,
+        },
+        names: [
+            "Gorebelly", "Mawfang", "Bogripper", "Bloodwallow", "Tuskrot",
+            "Dreadmire", "Sludgehowl", "Bonecrush", "Murksnort", "Rippleshroud",
+            "Carrionhoof", "Hollowtusk", "Fleshsink", "Gloomchomp", "Miregore",
+            "Plaguemaw", "Soulquag", "Brackenbane", "Gulchgrin", "Rotbellow",
+            "Darkslurp", "Mudmangle", "Vilewallow", "Gutstomp", "Blightback",
+            "Screamriver", "Haghoof", "Gorewallow", "Terrorbog", "Shriekmire",
+            "Mawshroud", "Bogfiend", "Grislegrind", "Drownfang", "Squelchflesh",
+            "Tumordrool", "Havocbelly", "Scumtide", "Gloomhoof", "Wartcrush",
+            "Charnelgrin", "Murkbloat", "Slaughterbath", "Bonequag", "Pustulemaw",
+            "Fangmarsh", "Dreadslop", "Gutbog", "Vomitback", "Soulsludge",
+            "Coffinwallow", "Gorequiver", "Miregurgle", "Hollowslop", "Blightmaw",
+            "Sewerhoof", "Cursesink", "Festerbelly", "Mudcoffin", "Throatmire",
+            "Rotswamp", "Terrorgulp", "Bogcarrion", "Hagmangle", "Drownmaw",
+            "Shambleslurp", "Grislesink", "Plaguewallow", "Screamgrin", "Havocmire",
+            "Gulchrot", "Fleshquag", "Sludgeshriek", "Brackengore", "Bloodbath"
+        ],
+          possibleEffects: [
+            "attackerAdvantage",
+            "defenderAdvantage",
+         ],
+        maxImages: 25
+    }],
+
+    ['mixed-natureElemental', {
+        type:"mixed",
+        race:"hipo",
+        weights: {
+            'earth': 0.3,
+            'water': 0.3,
+            'fire': 0.3,
+            'special': 0.1
+        },
+        heroWeights: {
+            water:0.2,
+            earth:0.2,
+            fire:0.2,
+            leadership:0.1,
+            wind:0.2,
+            counterEspionage:0.1,
+        },
+        names: [
+            "Gorebelly", "Mawfang", "Bogripper", "Bloodwallow", "Tuskrot",
+            "Dreadmire", "Sludgehowl", "Bonecrush", "Murksnort", "Rippleshroud",
+            "Carrionhoof", "Hollowtusk", "Fleshsink", "Gloomchomp", "Miregore",
+            "Plaguemaw", "Soulquag", "Brackenbane", "Gulchgrin", "Rotbellow",
+            "Darkslurp", "Mudmangle", "Vilewallow", "Gutstomp", "Blightback",
+            "Screamriver", "Haghoof", "Gorewallow", "Terrorbog", "Shriekmire",
+            "Mawshroud", "Bogfiend", "Grislegrind", "Drownfang", "Squelchflesh",
+            "Tumordrool", "Havocbelly", "Scumtide", "Gloomhoof", "Wartcrush",
+            "Charnelgrin", "Murkbloat", "Slaughterbath", "Bonequag", "Pustulemaw",
+            "Fangmarsh", "Dreadslop", "Gutbog", "Vomitback", "Soulsludge",
+            "Coffinwallow", "Gorequiver", "Miregurgle", "Hollowslop", "Blightmaw",
+            "Sewerhoof", "Cursesink", "Festerbelly", "Mudcoffin", "Throatmire",
+            "Rotswamp", "Terrorgulp", "Bogcarrion", "Hagmangle", "Drownmaw",
+            "Shambleslurp", "Grislesink", "Plaguewallow", "Screamgrin", "Havocmire",
+            "Gulchrot", "Fleshquag", "Sludgeshriek", "Brackengore", "Bloodbath"
+        ],
+          possibleEffects: [
+            "attackerAdvantage",
+            "defenderAdvantage",
+            'buffMe'
+         ],
+        maxImages: 25
     }]
+
 ])
