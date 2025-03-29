@@ -21,22 +21,61 @@ export interface DebuffEnemyEffectMethod extends EffectMethods {
   method: "debuffEnemyEffect";
   methodArgs: {land: Land, value: number};
 }
+
+export interface DebuffNextXCardsMethod extends EffectMethods {
+  method: "debuffNextXCards";
+  methodArgs: {
+    value: number;
+    land: Land;
+    howManyCards: number;
+  };
+}
+
+export interface BuffNextXCardsMethod extends EffectMethods {
+  method: "debuffNextXCards";
+  methodArgs: {
+    value: number;
+    land: Land;
+    howManyCards: number;
+  };
+}
 export interface RemoveEnemyEffectEffectMethod extends EffectMethods {
   method: "removeEnemyEffectEffect";
   methodArgs: {};
 }
 
+export interface ReviveEffectMethod extends EffectMethods {
+  method: "revive";
+  methodArgs: {};
+}
+
 export interface DefenderAdvantage extends EffectMethods {
-  method: "removeEnemyEffectEffect";
+  method: "defenderAdvantage";
   methodArgs: {
     value: number;
   };
 }
 
 export interface AttackerAdvantage extends EffectMethods {
-  method: "removeEnemyEffectEffect";
+  method: "attackerAdvantage";
   methodArgs: {
     value: number;
+  };
+}
+
+export interface EpicBattle extends EffectMethods {
+  method: "epicBattle";
+  methodArgs: {
+    value: number;
+    land: Land | "active";
+  };
+}
+
+export interface Domination extends EffectMethods {
+  method: "domination";
+  methodArgs: {
+    value: number;
+    land: Land | "active";
   };
 }
 
@@ -53,12 +92,39 @@ export type GeneralArguments = {
   enemy: UnitType;
   perspective: "attacker" | "defender";
   ActiveLand: Land;
+  myDeck: UnitType[];
+  enemyDeck: UnitType[];
 };
 
 export type EffectKeys = "removeEnemyEffectEffect" | "debuffActiveEffect" | "buffActiveEffect" | "buffMe" 
-| "debuffEnemy" | "defenderAdvantage" | "attackerAdvantage";
+| "debuffEnemy" | "defenderAdvantage" | "attackerAdvantage" | "debuffNextXCards" | "buffNextXCards" | "revive" | "epicBattle" | "domination";
 
 export const effectExplanations = {
+  epicBattle: function(effectMethods: EpicBattle){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buffs your ${effectMethods.methodArgs.land} stat by ${effectMethods.methodArgs.value} if your army is smaller than the enemies`
+
+    return narration; 
+  }
+  ,
+  domination: function(effectMethods: Domination){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buffs your ${effectMethods.methodArgs.land} stat by ${effectMethods.methodArgs.value} if your army is bigger than the enemies`
+
+    return narration; 
+  },
   removeEnemyEffectEffect: function(effectMethods:RemoveEnemyEffectEffectMethod){
     if (effectMethods.stage === 'pre'){
       return {
@@ -141,9 +207,102 @@ export const effectExplanations = {
 
     return narration;
   },
+  debuffNextXCards: function(effectMethods: DebuffNextXCardsMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` debuff the next ${effectMethods.methodArgs.howManyCards} cards of your opponents deck by ${effectMethods.methodArgs.value} on their ${effectMethods.methodArgs.land} stat`
+
+    return narration;
+  },
+  buffNextXCards: function(effectMethods: DebuffNextXCardsMethod){
+    let narration = ''
+    if (effectMethods.stage === 'pre'){
+      narration+= "Before the battle"
+    }
+    else{
+      narration+= "After the battle"
+    }
+    narration+= ` buff the next ${effectMethods.methodArgs.howManyCards} cards of your opponents deck by ${effectMethods.methodArgs.value} on their ${effectMethods.methodArgs.land} stat`
+
+    return narration;
+  },
+  revive: function(effectMethods: ReviveEffectMethod){
+    return "If you have less power than the enemy place your card at the end of your deck instead of the graveyard but lose this effect for the rest of the battle.";
+  },
 }
 
 export const effectMethods = {
+  epicBattle: function (
+    EMethods: EpicBattle,
+    generalArguments: GeneralArguments 
+  ){
+    const { myDeck, enemyDeck, me, ActiveLand } = generalArguments;
+    if(myDeck.length < enemyDeck.length){
+      if(EMethods.methodArgs.land === 'active'){
+        me[ActiveLand] += EMethods.methodArgs.value;
+      }
+      else{
+        me[EMethods.methodArgs.land] += EMethods.methodArgs.value;
+      }
+      return {
+        text: `${me.name} got it's ${EMethods.methodArgs.land} stat buffed by ${EMethods.methodArgs.value}.`,
+        value: EMethods.methodArgs.value,
+        stat: EMethods.methodArgs.land,
+        effect: "buff",
+      };
+    }
+  },
+  domination: function (
+    EMethods: Domination,
+    generalArguments: GeneralArguments  
+  ){
+    const { myDeck, enemyDeck, me, ActiveLand } = generalArguments;
+    if(myDeck.length > enemyDeck.length){
+      if(EMethods.methodArgs.land === 'active'){
+        me[ActiveLand] += EMethods.methodArgs.value;
+      }
+      else{
+        me[EMethods.methodArgs.land] += EMethods.methodArgs.value;
+      }
+      return {
+        text: `${me.name} got it's ${EMethods.methodArgs.land} stat buffed by ${EMethods.methodArgs.value}.`,
+        value: EMethods.methodArgs.value,
+        stat: EMethods.methodArgs.land,
+        effect: "buff",
+      };
+    }
+  },
+  revive: function(
+    EMethods: ReviveEffectMethod,
+    generalArguments: GeneralArguments
+  ): EffectNarration {
+    const { me, myDeck , enemy, ActiveLand} = generalArguments;
+    
+    if(me[ActiveLand] <= enemy[ActiveLand]){
+      me[ActiveLand] = enemy[ActiveLand];
+      const card: UnitType = {...me}
+      card.effect = null;
+      myDeck.push(card);
+      return {
+        text: `${me.name} revived from the battle.`,
+        value: 0,
+        stat: null,
+        effect: "buff",
+      };
+    }
+    return {
+      text: `${me.name}'s effect triggers only if you have less power than your enemy.`,
+      value: 0,
+      stat: null,
+      effect: "buff",
+    };
+
+  },
   removeEnemyEffectEffect: function (
     EMethods: RemoveEnemyEffectEffectMethod,
     generalArguments: GeneralArguments
@@ -156,6 +315,41 @@ export const effectMethods = {
       value: 0,
       effect: "debuff",
     };
+  },
+  debuffNextXCards: function (
+    EMethods: DebuffNextXCardsMethod,
+    generalArguments: GeneralArguments 
+  ):EffectNarration{
+    const { enemyDeck } = generalArguments;
+    enemyDeck.forEach((card, index) => {
+      if(index < EMethods.methodArgs.howManyCards && index > 0){
+        card[EMethods.methodArgs.land] -= EMethods.methodArgs.value;
+      }
+    });
+    return {
+      text: `The next ${EMethods.methodArgs.howManyCards} cards of the enemies deck got their ${EMethods.methodArgs.land} stat debuffed by ${EMethods.methodArgs.value}.`,
+      value: EMethods.methodArgs.value,
+      stat: EMethods.methodArgs.land,
+      effect: "debuff",
+    }
+  },
+  buffNextXCards: function (
+    EMethods: DebuffNextXCardsMethod,
+    generalArguments: GeneralArguments 
+  ){
+    const {  myDeck } = generalArguments;
+    myDeck.forEach((card, index) => {
+      if(index < EMethods.methodArgs.howManyCards && index > 0){
+        card[EMethods.methodArgs.land] += EMethods.methodArgs.value;
+      }
+    })
+    return {
+      text: `The next ${EMethods.methodArgs.howManyCards} cards of your deck got their ${EMethods.methodArgs.land} stat buffed by ${EMethods.methodArgs.value}.`,
+      value: EMethods.methodArgs.value,
+      stat: EMethods.methodArgs.land,
+      effect: "buff",
+    }
+
   },
   attackerAdvantage: function (
     EMethods: AttackerAdvantage,
@@ -262,11 +456,166 @@ export const effectCostsDictionary = new Map<
   { methodArgs: MethodArgsConfig; stages: { pre: number; after: number } }
 >([
   [
+    "epicBattle",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 1
+        },
+        land:{
+          type:"selectable",
+          options:{
+            active:{
+              cost: 2
+            },
+            water:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            }
+          }  
+        }
+      },
+      stages: {
+        pre: 1,
+        after: 0,
+      }
+    }
+  ],
+  [
+    "domination",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 1
+        },
+        land:{
+          type:"selectable",
+          options:{
+            active:{
+              cost: 2
+            },
+            water:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            }
+          }  
+        }
+      },
+      stages: {
+        pre: 1,
+        after: 0,
+      }
+    }
+  ],
+  [
     "removeEnemyEffectEffect",
     {
       methodArgs: {},
       stages: {
-        pre: 4,
+        pre: 5,
+        after: 2,
+      },
+    },
+  ],
+  [
+    "revive",
+    {
+      methodArgs: {},
+      stages: {
+        pre: Infinity,
+        after: 4,
+      },
+    },
+  ],
+  [
+    "debuffNextXCards",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 3
+        }, 
+        numberOfCards:{
+          type: "additive",
+          costPerValue: 2
+        },
+        land:{
+          type:"selectable",
+          options:{
+            water:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            }
+          }
+        }
+      },
+      stages: {
+        pre: 0,
+        after: 0,
+      },
+    }
+  ],
+  [
+    "buffNextXCards",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 3
+        }, 
+        numberOfCards:{
+          type: "additive",
+          costPerValue: 2
+        },
+        land:{
+          type:"selectable",
+          options:{
+            water:{
+              cost: 0
+            },
+            earth:{
+              cost: 0
+            },
+            fire:{
+              cost: 0
+            }
+          }
+        }
+      },
+      stages: {
+        pre: 0,
+        after: 0,
+      },
+    }
+  ],
+  [
+    "attackerAdvantage",
+    {
+      methodArgs: {
+        value:{
+          type: "additive",
+          costPerValue: 2
+        }
+      },
+      stages: {
+        pre: 1,
         after: 0,
       },
     },
@@ -277,7 +626,7 @@ export const effectCostsDictionary = new Map<
       methodArgs: {
         value:{
           type: "additive",
-          costPerValue: 1
+          costPerValue: 2
         }
       },
       stages: {
@@ -307,11 +656,11 @@ export const effectCostsDictionary = new Map<
       methodArgs: {
         value:{
           type: "additive",
-          costPerValue: 3
+          costPerValue: 4
         }
       },
       stages: {
-        pre: 3,
+        pre: 2,
         after: 1,
       },
     },
@@ -322,7 +671,7 @@ export const effectCostsDictionary = new Map<
       methodArgs: {
         value:{
           type: "additive",
-          costPerValue: 2
+          costPerValue: 3
         },
         land:{
           type:"selectable",
@@ -351,7 +700,7 @@ export const effectCostsDictionary = new Map<
       methodArgs: {
         value:{
           type: "additive",
-          costPerValue: 2
+          costPerValue: 3
         },
         land:{
           type:"selectable",

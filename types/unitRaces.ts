@@ -45,7 +45,9 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         maxImages: 24,
         possibleEffects: [
            "buffActiveEffect",
-           "buffMe"
+           "buffMe",
+           "epicBattle",
+           "buffNextXCards"
         ]
     }],
     ['earth-golem', {
@@ -114,7 +116,9 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         possibleEffects: [
             "debuffActiveEffect",
             "debuffEnemy",
-            "removeEnemyEffectEffect"
+            "removeEnemyEffectEffect",
+            "debuffNextXCards",
+            "domination"
          ]
     }],
 
@@ -325,7 +329,8 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
           possibleEffects: [
             "buffMe",
             "removeEnemyEffectEffect",
-            "attackerAdvantage"
+            "attackerAdvantage",
+            "revive"
          ],
         maxImages: 24
     }],
@@ -496,7 +501,8 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
           possibleEffects: [
             "attackerAdvantage",
             "defenderAdvantage",
-            'buffMe'
+            'buffMe',
+            "revive"
          ],
         maxImages: 25
     }]

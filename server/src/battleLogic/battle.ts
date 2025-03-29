@@ -188,10 +188,14 @@ export function battle(args: {
 
 function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
   const me: UnitType = args[perspective];
+  const myDeck: UnitType[] = args[`${perspective}Deck`];
+  let enemyDeck: UnitType[];
   let enemy: UnitType;
   if (perspective === "attacker") {
+    enemyDeck = args["defenderDeck"];
     enemy = args["defender"];
   } else {
+    enemyDeck = args["attackerDeck"];
     enemy = args["attacker"];
   }
   const methodFunk: string | undefined = me.effect?.method;
@@ -210,6 +214,8 @@ function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
       perspective,
       ActiveLand: args.land,
       enemy,
+      myDeck,
+      enemyDeck,
     };
     if (methodFunk in effectMethods && me.effect) {
       return effectMethods[methodFunk](me.effect, generalArguments);
