@@ -97,7 +97,7 @@ export type GeneralArguments = {
 };
 
 export type EffectKeys = "removeEnemyEffectEffect" | "debuffActiveEffect" | "buffActiveEffect" | "buffMe" 
-| "debuffEnemy" | "defenderAdvantage" | "attackerAdvantage" | "debuffNextXCards" | "buffNextXCards" | "revive" | "epicBattle" | "domination";
+| "debuffEnemyEffect" | "defenderAdvantage" | "attackerAdvantage" | "debuffNextXCards" | "buffNextXCards" | "revive" | "epicBattle" | "domination";
 
 export const effectExplanations = {
   epicBattle: function(effectMethods: EpicBattle){
@@ -666,7 +666,7 @@ export const effectCostsDictionary = new Map<
     },
   ],
   [
-    "buffMe",
+    "buffMeEffect",
     {
       methodArgs: {
         value:{
@@ -695,7 +695,7 @@ export const effectCostsDictionary = new Map<
     },
   ],
   [
-    "debuffEnemy",
+    "debuffEnemyEffect",
     {
       methodArgs: {
         value:{
@@ -737,16 +737,13 @@ export const effectGeneration = function (points: number, effectKeys?:EffectKeys
   if(points>= chosenEffect.stages.after){
     possibleStages.push('after');
   }
-
   //Pick stage and pay
   const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
   const chosenStage = possibleStages[randomStageIndex] as 'pre' | 'after';
   points -= chosenEffect.stages[chosenStage];
 
-  
-
   let boughtOptions = buyOptions(points, chosenEffect.methodArgs);
-
+  
   if(boughtOptions === undefined){
     //vurni ot funkciqta shtoto ne stigat parite
     return {
@@ -757,7 +754,6 @@ export const effectGeneration = function (points: number, effectKeys?:EffectKeys
   //Pick options and pay
   const {selectedOptionsRecord, remainingPoints} = buyOptions(points, chosenEffect.methodArgs) as BuyOptionsResult;
 
-
   const {remainderPoints, effectValueDistribution  } = distributePoints(
     remainingPoints,
     chosenEffect.methodArgs
@@ -767,15 +763,15 @@ const combinedMethodArgs = {
   ...selectedOptionsRecord,
   ...effectValueDistribution
 };
+console.log({...chosenEffect, methodArgs:combinedMethodArgs}, effectExplanations[chosenEffect.key]);
 
-  
   return {
     remainder: remainderPoints,
     effect: {
       stage: chosenStage,
       method: chosenEffect.key,
       methodArgs: combinedMethodArgs,
-      explanation: effectExplanations[chosenEffect.key as keyof typeof effectExplanations](combinedMethodArgs as any) as string
+      explanation: effectExplanations[chosenEffect.key as keyof typeof effectExplanations]({...chosenEffect, methodArgs:combinedMethodArgs}) as string
     },
   };
 };
@@ -807,12 +803,19 @@ const methodArgs = {
 export function getRandomEffectCost(effectKeys?:EffectKeys[]): { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } } {
   if(effectKeys){
     const randomEl = effectKeys[ Math.floor(Math.random() * effectKeys.length)];
+    const effectData = effectCostsDictionary.get(randomEl);
+    return {
+      key: randomEl,
+      methodArgs: effectData?.methodArgs,
+      stages: effectData?.stages
+    } as { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } };
     return effectCostsDictionary.get(randomEl) as { methodArgs: MethodArgsConfig; key: EffectKeys, stages: { pre: number; after: number } };
   }
 
   const effects = Array.from(effectCostsDictionary.entries());
   const randomIndex = Math.floor(Math.random() * effects.length);
   const [key, { methodArgs, stages }] = effects[randomIndex];
+
   return { key, methodArgs, stages };
 }
 

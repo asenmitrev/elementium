@@ -7,5 +7,8 @@
   ],
   "scripts": {
     "dev:client": "yarn workspace client run dev"
+  },
+  "dependencies": {
+    "jest": "^29.7.0"
   }
 }

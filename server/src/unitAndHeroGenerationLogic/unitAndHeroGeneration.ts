@@ -76,17 +76,19 @@ export const getRandomMapElement = function<K, V>(map: Map<K, V>): V | undefined
 
 
 export const createUnitType = function (race?:UnitRaceData, level:number = 1): UnitType {
+
   let theWeights:UnitWeights | undefined
   if(!race){
     race = getRandomMapElement(unitRaces);
   }
+
   theWeights = (race as UnitRaceData).weights;
   const theName = nameGeneration(race as UnitRaceData);
   let image = ''
   if(race){
     image = race?.type + '/'+ race?.race + '/' + Math. random() * (race?.maxImages - 1) + 1;
   }
-  
+
   let { water, earth, fire, special } = unitPointAnnotator(level, "water", theWeights);
 
   const { effect, remainder } = effectGeneration(special, race?.possibleEffects);
@@ -273,6 +275,7 @@ function spreadWithWeights(
   return Object.values(values);
 }
  
+console.log('dolu')
 
 console.log(createUnitType(), '   tuka? ');
 

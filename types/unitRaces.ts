@@ -45,7 +45,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         maxImages: 24,
         possibleEffects: [
            "buffActiveEffect",
-           "buffMe",
+           "buffMeEffect",
            "epicBattle",
            "buffNextXCards"
         ]
@@ -77,7 +77,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         },
         maxImages: 24,
         possibleEffects: [
-            "buffMe",
+            "buffMeEffect",
             "debuffActiveEffect",
             "defenderAdvantage"
          ]
@@ -115,7 +115,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         maxImages: 28,
         possibleEffects: [
             "debuffActiveEffect",
-            "debuffEnemy",
+            "debuffEnemyEffect",
             "removeEnemyEffectEffect",
             "debuffNextXCards",
             "domination"
@@ -177,7 +177,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         },
         maxImages: 25,
         possibleEffects: [
-            "buffMe",
+            "buffMeEffect",
             "removeEnemyEffectEffect",
             "attackerAdvantage"
          ]
@@ -210,8 +210,8 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         ],
         maxImages: 25,
         possibleEffects: [
-            "removeEnemyEffectEffect", "buffActiveEffect", "buffMe", 
-            "debuffEnemy", "defenderAdvantage", "attackerAdvantage"
+            "removeEnemyEffectEffect", "buffActiveEffect", "buffMeEffect", 
+            "debuffEnemyEffect", "defenderAdvantage", "attackerAdvantage"
          ]
     }],
     ['water-octopus', {
@@ -249,8 +249,8 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
           ],
         maxImages: 24,
         possibleEffects: [
-            "removeEnemyEffectEffect", "debuffActiveEffect",  "buffMe", 
-            "debuffEnemy", "defenderAdvantage"
+            "removeEnemyEffectEffect", "debuffActiveEffect",  "buffMeEffect", 
+            "debuffEnemyEffect", "defenderAdvantage"
          ]
     }],
     ['water-turtle', {
@@ -327,7 +327,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Zircon", "Aurora", "Burning Sky", "Celestia", "Dawnfire"
           ],
           possibleEffects: [
-            "buffMe",
+            "buffMeEffect",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "revive"
@@ -370,11 +370,11 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Blazewash", "Frostflare", "Seaflicker"
         ],
           possibleEffects: [
-            "buffMe",
+            "buffMeEffect",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "debuffActiveEffect",
-            "debuffEnemy",
+            "debuffEnemyEffect",
             "buffActiveEffect"
          ],
         maxImages: 17
@@ -415,7 +415,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Timbergaze", "Leafspark", "Briarwhisper", "Willowshade", "Hollowroot"
         ],
           possibleEffects: [
-            "buffMe",
+            "buffMeEffect",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "defenderAdvantage",
