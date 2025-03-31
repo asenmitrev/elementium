@@ -763,7 +763,6 @@ const combinedMethodArgs = {
   ...selectedOptionsRecord,
   ...effectValueDistribution
 };
-console.log({...chosenEffect, methodArgs:combinedMethodArgs}, effectExplanations[chosenEffect.key]);
 
   return {
     remainder: remainderPoints,

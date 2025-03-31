@@ -1,3 +1,4 @@
+import { UnitRaceData, unitRaces } from "types/unitRaces";
 import { HeroType, Land, UnitType } from "../../../types";
 import { GeneralArguments } from "../../../types/battle/effects";
 import {
@@ -8,6 +9,7 @@ import {
   RoundArgs,
 } from "../../../types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
+import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -271,3 +273,23 @@ function killCard(killCardArgs: KillCardArgs) {
     graveyard.push(removedUnitTypeUserFacing);
   }
 }
+
+ 
+let theBattle = battle(
+  {
+    attackerDeck: [
+      createUnitType()
+    ],
+    defenderDeck: [
+      createUnitType()
+    ],
+    attackerGraveyard: [],
+    defenderGraveyard: [],
+    attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
+    defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
+    defenderCastle: undefined,
+    land: "fire",
+  }
+)
+
+console.log(theBattle)

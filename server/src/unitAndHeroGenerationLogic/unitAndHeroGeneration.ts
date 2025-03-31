@@ -86,7 +86,7 @@ export const createUnitType = function (race?:UnitRaceData, level:number = 1): U
   const theName = nameGeneration(race as UnitRaceData);
   let image = ''
   if(race){
-    image = race?.type + '/'+ race?.race + '/' + Math. random() * (race?.maxImages - 1) + 1;
+    image = race?.type + '/'+ race?.race + '/' + Math.floor(Math.random() * (race?.maxImages - 1) + 1) + '.jpeg';
   }
 
   let { water, earth, fire, special } = unitPointAnnotator(level, "water", theWeights);
@@ -186,7 +186,7 @@ export const heroPointAnnotator = function (
   };
 };
 
-function createHeroType(race:UnitRaceData){
+export function createHeroType(race:UnitRaceData){
   const level = 1;
   const { water, earth, fire, leadership, wind, counterEspionage } = heroPointAnnotator(level, "water");
   let image = ''
@@ -275,7 +275,6 @@ function spreadWithWeights(
   return Object.values(values);
 }
  
-console.log('dolu')
 
 console.log(createUnitType(), '   tuka? ');
 
