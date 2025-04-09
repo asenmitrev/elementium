@@ -77,6 +77,9 @@ export const authOptions: AuthOptions = {
               "Content-Type": "application/json",
             },
           });
+          console.log(res);
+          console.log(await res.json());
+          console.log(`${API_URL}/auth/login`);
           if (!res.ok) throw await res.json();
           const tokens: {
             onboardingStep: number;
