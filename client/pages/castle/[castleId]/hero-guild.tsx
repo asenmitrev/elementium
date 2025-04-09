@@ -1,10 +1,7 @@
-import { mockHeroes } from "@/mocks/heroes";
-import HeroList from "@/components/hero-list";
 import CastleLayout from "./layout";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BuildingHeader from "@/components/building-header";
-import { mockCastles } from "@/mocks/castles";
 import { useRouter } from "next/router";
 import { getBuildingImage } from "@/components/building";
 import useCastle from "@/hooks/useCastle";
@@ -37,7 +34,7 @@ export default function HeroGuild() {
             </Card>
           </div>
         </div>
-        <HeroList heroes={mockHeroes.filter((hero) => hero.alive)} />
+        {/* <HeroList heroes={mockHeroes.filter((hero) => hero.alive)} /> */}
       </div>
     </CastleLayout>
   );

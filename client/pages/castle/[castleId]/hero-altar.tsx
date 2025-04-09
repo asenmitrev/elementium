@@ -1,5 +1,3 @@
-import { mockHeroes } from "@/mocks/heroes";
-import HeroList from "@/components/hero-list";
 import CastleLayout from "./layout";
 
 import { Progress } from "@/components/ui/progress";
@@ -44,7 +42,7 @@ export default function HeroGuild() {
           These heroes have died, you can revive them
         </h2>
 
-        <HeroList heroes={mockHeroes.filter((hero) => !hero.alive)} />
+        {/* <HeroList heroes={mockHeroes.filter((hero) => !hero.alive)} /> */}
       </div>
     </CastleLayout>
   );

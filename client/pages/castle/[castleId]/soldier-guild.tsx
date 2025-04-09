@@ -1,5 +1,3 @@
-import { mockSoldiers } from "@/mocks/soldiers";
-import SoldierList from "@/components/soldier-list";
 import CastleLayout from "./layout";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,8 +38,6 @@ export default function HeroGuild() {
             </div>
           </div>
         </div>
-
-        <SoldierList soldiers={mockSoldiers} />
       </div>
     </CastleLayout>
   );

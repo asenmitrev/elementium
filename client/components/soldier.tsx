@@ -23,6 +23,9 @@ export default function SoldierCard({ unit }: { unit: UnitType }) {
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 p-4 space-y-4">
+              <div className="text-sm text-white text-shadow-lg">
+                {unit.effect?.explanation}
+              </div>
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-white">
                   <Mountain className="w-4 h-4 text-green-300" />

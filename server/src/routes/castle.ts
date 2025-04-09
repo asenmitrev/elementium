@@ -1,6 +1,8 @@
 import express, { Request, Response, Router } from "express";
 import { Castle } from "../models/castle.model";
+import { Hero } from "../models/hero.model";
 import { authenticateToken } from "../middleware/auth";
+import { ObjectId } from "mongodb";
 
 const router: Router = express.Router();
 
@@ -35,6 +37,48 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error fetching castle" });
   }
 });
+
+// Get all heroes in a castle
+router.get(
+  "/:id/heroes",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const castle = await Castle.findOne({
+        _id: new ObjectId(req.params.id),
+        owner: new ObjectId(req.user!.userId),
+      });
+
+      if (!castle) {
+        res.status(404).json({ error: "Castle not found" });
+        return;
+      }
+
+      const heroes = await Hero.aggregate([
+        {
+          $match: {
+            player: new ObjectId(req.user!.userId),
+            x: castle.x,
+            y: castle.y,
+          },
+        },
+        {
+          $lookup: {
+            from: "units",
+            localField: "_id",
+            foreignField: "holder",
+            as: "units",
+          },
+        },
+      ]).exec();
+
+      res.json(heroes);
+    } catch (error) {
+      console.error("Error fetching castle heroes:", error);
+      res.status(500).json({ error: "Error fetching castle heroes" });
+    }
+  }
+);
 
 function generateValidCoordinates(
   existingCastles: any[]

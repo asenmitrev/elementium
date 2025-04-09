@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Castle } from "types";
+import { Castle, Hero, Unit } from "types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005";
 
@@ -50,5 +50,19 @@ export class CastleService {
       }
     );
     return response.data;
+  }
+
+  static async getCastleHeroes(
+    castleId: string,
+    cookie?: string
+  ): Promise<(Hero & { units: Unit[] })[]> {
+    const response = await fetch(`${API_URL}/castles/${castleId}/heroes`, {
+      headers: {
+        ...(cookie ? { Cookie: cookie } : {}),
+      },
+      credentials: "include",
+    });
+    console.log(response);
+    return response.json();
   }
 }

@@ -76,5 +76,5 @@ const HeroSchema = new Schema(
 // Create indexes for faster queries
 HeroSchema.index({ player: 1 });
 HeroSchema.index({ x: 1, y: 1 });
-
+HeroSchema.index({ player: 1, x: 1, y: 1 });
 export const Hero = mongoose.model<IHero & Document>("Hero", HeroSchema);
