@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import { TokenService } from "../auth/token.service";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "../models/user.model";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth";
