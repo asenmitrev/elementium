@@ -77,6 +77,7 @@ export const authOptions: AuthOptions = {
               "Content-Type": "application/json",
             },
           });
+          if (!res.ok) throw await res.json();
           const tokens: {
             onboardingStep: number;
             accessToken: {
@@ -88,7 +89,6 @@ export const authOptions: AuthOptions = {
               expiresIn: number;
             };
           } = await res.json();
-          if (!res.ok) throw tokens;
 
           // Extract the user from the access token
           const user: UserObject = {
