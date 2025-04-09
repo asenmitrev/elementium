@@ -9,7 +9,6 @@ const UnitTypeSchema = new Schema({
   name: String,
   specialExplanation: String,
   evolutions: [Schema.Types.Mixed],
-  howManyPeopleHaveIt: Number,
   level: Number,
   image: String,
 });

@@ -59,7 +59,7 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
         // console.log(remainingPoints, smallestCost)
         args = args.filter((arg) => {
             if(methodArgs[arg].type === 'additive'){
-                return methodArgs[arg].costPerValue <= remainingPoints;
+                return (methodArgs[arg] as AdditiveArg).costPerValue <= remainingPoints;
             }
         })
         for (const arg of args) {

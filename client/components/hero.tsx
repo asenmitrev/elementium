@@ -19,10 +19,11 @@ export default function HeroCard({
         {/* Image container with all content */}
         <Link href={link ?? `/hero/${hero._id}`}>
           <div className="relative aspect-[4/3]">
-            <img
-              src={hero.type.image}
+            <Image
+              src={`/images/units/${hero.type.image}`}
               alt="Hero"
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+              fill
             />
 
             {/* Dark gradient overlay that's always visible at the top and bottom */}
@@ -103,7 +104,12 @@ function SoldierItem({
   return (
     <button className="group relative flex flex-col items-center">
       <div className="relative w-full aspect-square">
-        <Image src={unit.image} alt={unit.name} fill className="object-cover" />
+        <Image
+          src={`/images/units/${unit.image}`}
+          alt={unit.name}
+          fill
+          className="object-cover"
+        />
         {moreUnitsCount > 0 && (
           <div className="absolute top-0 right-0 left-0 bottom-0 bg-black/50 text-gray-50 text-sm flex items-center justify-center">
             +{moreUnitsCount}

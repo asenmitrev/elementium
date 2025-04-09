@@ -44,7 +44,6 @@ export type UnitType = {
   name: string;
   specialExplanation: string;
   evolutions: UnitType[];
-  howManyPeopleHaveIt: number;
   level: number;
   image: string;
   race: UnitRaceData;
@@ -105,5 +104,5 @@ export type HeroWeights = {
   water: number;
   leadership: number;
   counterEspionage: number;
-}
+};
 export type Land = "water" | "fire" | "earth";

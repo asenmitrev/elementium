@@ -6,6 +6,8 @@
     "client"
   ],
   "scripts": {
+    "start:client": "yarn workspace client run dev",
+    "start:server": "yarn workspace server run start",
     "dev:client": "yarn workspace client run dev"
   },
   "dependencies": {

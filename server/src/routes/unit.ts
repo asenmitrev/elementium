@@ -24,7 +24,7 @@ router.get(
 // Get specific unit
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const unit = await Unit.findById(req.params.id).populate("holder");
+    const unit = await Unit.findById(req.params.userId).populate("holder");
 
     if (!unit) {
       res.status(404).json({ error: "Unit not found" });
@@ -34,8 +34,9 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
     // Verify ownership through holder
     const holder = unit.holder;
     if (
-      (holder instanceof Hero && holder.player.toString() !== req.user!.id) ||
-      (holder instanceof Castle && holder.owner.toString() !== req.user!.id)
+      (holder instanceof Hero &&
+        holder.player.toString() !== req.user!.userId) ||
+      (holder instanceof Castle && holder.owner.toString() !== req.user!.userId)
     ) {
       res.status(403).json({ error: "Not authorized" });
       return;
