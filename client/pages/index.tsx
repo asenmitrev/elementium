@@ -1,7 +1,5 @@
-import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
-import { GetStaticProps } from "next";
 
 export default function Home({
   allPostsData,
@@ -23,7 +21,3 @@ export default function Home({
     </section>
   );
 }
-
-export const getStaticProps: GetStaticProps = async () => {
-  return { redirect: { destination: "/castles", permanent: false } };
-};
