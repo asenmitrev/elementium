@@ -1,7 +1,8 @@
 import express, { Request, Response, Router } from "express";
 import { Hero } from "../models/hero.model";
 import { authenticateToken } from "../middleware/auth";
-
+import { Hero as IHero, UnitType } from "types";
+import { heroes } from "../predefined/heroes";
 const router: Router = express.Router();
 
 // Get all heroes for a user
@@ -14,6 +15,44 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
     res.status(500).json({ error: "Error fetching heroes" });
   }
 });
+
+router.get(
+  "/predefined-units",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      res.json(heroes);
+    } catch (error) {
+      console.error("Error fetching units:", error);
+      res.status(500).json({ error: "Error fetching units" });
+    }
+  }
+);
+
+router.post(
+  "/predefined-units",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { heroId } = req.body;
+      const hero = heroes.find((hero) => hero._id === heroId);
+      if (!hero) {
+        res.status(404).json({ error: "Hero not found" });
+        return;
+      }
+      const { _id, units, ...newHeroFromTemplate } = {
+        ...hero,
+        player: req.user!.userId,
+      };
+      const newHero = new Hero(newHeroFromTemplate);
+      await newHero.save();
+      res.status(201).json(newHero);
+    } catch (error) {
+      console.error("Error creating hero:", error);
+      res.status(500).json({ error: "Error creating hero" });
+    }
+  }
+);
 
 // Get specific hero
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {

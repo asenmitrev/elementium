@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { User } from "../models/user.model";
 import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth";
+import { Hero } from "../models/hero.model";
+import { Castle } from "../models/castle.model";
 
 dotenv.config();
 
@@ -144,9 +146,37 @@ router.post("/logout", (req: Request, res: Response): void => {
   res.json({ message: "Logged out successfully" });
 });
 
-router.get("/me", authenticateToken, (req: Request, res: Response): void => {
-  // If we get here, the user is authenticated (middleware validated the token)
-  res.json({ isAuthenticated: true });
-});
+router.get(
+  "/me",
+  authenticateToken,
+  async (req: Request, res: Response): Promise<void> => {
+    // If we get here, the user is authenticated (middleware validated the token)
+    try {
+      const castleCount = await Castle.countDocuments({
+        owner: req.user!.userId,
+      });
+      const heroCount = await Hero.countDocuments({
+        player: req.user!.userId,
+        alive: true,
+      });
+
+      let onboardingStep: number = -1;
+
+      if (castleCount === 0) {
+        onboardingStep = 0;
+      } else if (heroCount === 0) {
+        onboardingStep = 1;
+      }
+      res.json({
+        isAuthenticated: true,
+        onboardingStep,
+      });
+      return;
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+    }
+    res.json({ isAuthenticated: true });
+  }
+);
 
 export default router;

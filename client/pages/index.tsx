@@ -25,7 +25,5 @@ export default function Home({
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  return {
-    props: {},
-  };
+  return { redirect: { destination: "/castles", permanent: false } };
 };

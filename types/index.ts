@@ -43,7 +43,6 @@ export type UnitType = {
   name: string;
   specialExplanation: string;
   evolutions: UnitType[];
-  howManyPeopleHaveIt: number;
   level: number;
   image: string;
 };
@@ -61,7 +60,6 @@ export type HeroType = {
   slots: number;
   image: string;
   evolutions: HeroType[];
-  howManyPeopleHaveIt: number;
   level: number;
   counterEspionageLevel: number;
 };

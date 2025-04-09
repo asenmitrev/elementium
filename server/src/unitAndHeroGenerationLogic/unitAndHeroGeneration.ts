@@ -97,7 +97,6 @@ export const createUnitType = function (): UnitType {
     earth,
     fire,
     name: nameGeneration(),
-    howManyPeopleHaveIt: 0,
     level: 0,
     effect: effect,
     specialExplanation: "",
@@ -105,7 +104,7 @@ export const createUnitType = function (): UnitType {
     evolutions: [],
   };
   // console.log(" i tuk daje?")
-//  console.log(newUnitType,  water, earth)
+  //  console.log(newUnitType,  water, earth)
   return newUnitType;
 };
 
@@ -121,7 +120,7 @@ export const heroPointAnnotator = function (
     fire: 0,
     leadership: 0,
     speed: 0,
-    counterEspionage:0 
+    counterEspionage: 0,
   };
   Object.keys(weightForType).forEach((innerType) => {
     if (innerType === type) {
@@ -132,17 +131,15 @@ export const heroPointAnnotator = function (
   });
 
   //1st Water 2nd Earth 3rd Fire
-  const [water, earth, fire, leadership, speed, counterEspionage] = generalPointAnnotator(
-    points,
-    weightForType
-  );
+  const [water, earth, fire, leadership, speed, counterEspionage] =
+    generalPointAnnotator(points, weightForType);
   return {
     water,
     earth,
     fire,
     leadership,
     speed,
-    counterEspionage
+    counterEspionage,
   };
 };
 
@@ -197,5 +194,4 @@ function spreadWithWeights(
   return Object.values(values);
 }
 
-
-console.log(createUnitType(), ' tuka?');
+console.log(createUnitType(), " tuka?");

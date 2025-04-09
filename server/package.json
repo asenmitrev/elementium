@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "seed:herotypes": "ts-node src/scripts/seedHeroTypes.ts",
     "start": "tsx watch src/index.ts"
   },
   "dependencies": {
