@@ -12,12 +12,12 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Droplets, Wind, Flame, Mountain, Sparkles, Badge } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Hero } from "types";
+import { HeroType, UnitType } from "types";
 import { HeroService } from "@/services/hero.service";
 import HeroCard from "@/components/hero";
 
 interface ChooseHeroProps {
-  initialHeroes: Hero[];
+  initialHeroes: (HeroType & { units: UnitType[] })[];
 }
 
 export const getServerSideProps: GetServerSideProps<ChooseHeroProps> = async (
@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<ChooseHeroProps> = async (
 };
 
 export default function ChooseHero({ initialHeroes }: ChooseHeroProps) {
-  const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
+  const [selectedHero, setSelectedHero] = useState<HeroType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -64,7 +64,7 @@ export default function ChooseHero({ initialHeroes }: ChooseHeroProps) {
 
     setIsSubmitting(true);
     try {
-      await HeroService.createPredefinedHero(selectedHero._id);
+      await HeroService.createPredefinedHero(selectedHero.name);
       toast.success("Your hero has been chosen!");
       router.push("/heroes");
     } catch (error) {
@@ -101,12 +101,16 @@ export default function ChooseHero({ initialHeroes }: ChooseHeroProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
           {initialHeroes.map((hero) => (
             <motion.div
-              key={hero._id}
+              key={hero.name}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setSelectedHero(hero)}
             >
-              <HeroCard hero={hero} link={`?heroId=${hero._id}`} />
+              <HeroCard
+                hero={hero}
+                units={hero.units}
+                link={`?heroId=${hero.name}`}
+              />
             </motion.div>
           ))}
         </div>

@@ -595,7 +595,7 @@ const waterWitchUnits: UnitType[] = [
     },
   },
 ];
-const heroes: (HeroType & { units: UnitType[] })[] = [
+export const predefinedHeroTypes: (HeroType & { units: UnitType[] })[] = [
   {
     water: 5,
     earth: 3,
@@ -606,7 +606,7 @@ const heroes: (HeroType & { units: UnitType[] })[] = [
     name: "Radiantash Therion",
     evolutions: [],
     howManyPeopleHaveIt: 0,
-    image: "fire/mage/17.613705278449241",
+    image: "fire/mage/17.jpeg",
     units: fireMageUnits,
     level: 0,
     race: {
@@ -665,9 +665,9 @@ const heroes: (HeroType & { units: UnitType[] })[] = [
     counterEspionage: 4,
     name: "Bouldergrim Nethrock",
     evolutions: [],
-    units: [],
+    units: earthGolemUnits,
     howManyPeopleHaveIt: 0,
-    image: "earth/golem/19.6545262056063731",
+    image: "earth/golem/19.jpeg",
     level: 0,
     race: {
       type: "earth",
@@ -728,7 +728,7 @@ const heroes: (HeroType & { units: UnitType[] })[] = [
     evolutions: [],
     units: waterWitchUnits,
     howManyPeopleHaveIt: 0,
-    image: "water/witch/19.270993443246841",
+    image: "water/witch/19.jpeg",
     level: 0,
     race: {
       type: "water",

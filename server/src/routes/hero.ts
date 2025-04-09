@@ -1,8 +1,9 @@
 import express, { Request, Response, Router } from "express";
 import { Hero } from "../models/hero.model";
 import { authenticateToken } from "../middleware/auth";
-import { Hero as IHero, UnitType } from "types";
-import { heroes } from "../predefined/heroes";
+import { predefinedHeroTypes } from "../predefined/heroes";
+import { Castle } from "../models/castle.model";
+
 const router: Router = express.Router();
 
 // Get all heroes for a user
@@ -21,7 +22,7 @@ router.get(
   authenticateToken,
   async (req: Request, res: Response) => {
     try {
-      res.json(heroes);
+      res.json(predefinedHeroTypes);
     } catch (error) {
       console.error("Error fetching units:", error);
       res.status(500).json({ error: "Error fetching units" });
@@ -34,17 +35,41 @@ router.post(
   authenticateToken,
   async (req: Request, res: Response) => {
     try {
-      const { heroId } = req.body;
-      const hero = heroes.find((hero) => hero._id === heroId);
-      if (!hero) {
-        res.status(404).json({ error: "Hero not found" });
+      const userHeroCount = await Hero.countDocuments({
+        player: req.user!.id,
+      });
+      if (userHeroCount > 0) {
+        res.status(400).json({
+          error:
+            "You already have a hero, please skip the tutorial or contact an admin.",
+        });
         return;
       }
-      const { _id, units, ...newHeroFromTemplate } = {
-        ...hero,
-        player: req.user!.userId,
-      };
-      const newHero = new Hero(newHeroFromTemplate);
+      const castle = await Castle.findOne({ player: req.user!.id });
+      if (!castle) {
+        res.status(404).json({ error: "Castle not found" });
+        return;
+      }
+      const { heroName } = req.body;
+      const heroType = predefinedHeroTypes.find(
+        (hero) => hero.name === heroName
+      );
+
+      if (!heroType) {
+        res.status(404).json({ error: "Hero Type not found" });
+        return;
+      }
+      const newHero = new Hero({
+        type: heroType,
+        player: req.user!.id,
+        name: heroName,
+        x: castle.x,
+        y: castle.y,
+        level: 0,
+        experienceTillLevelUp: 0,
+        mission: null,
+        alive: true,
+      });
       await newHero.save();
       res.status(201).json(newHero);
     } catch (error) {
@@ -71,27 +96,6 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching hero:", error);
     res.status(500).json({ error: "Error fetching hero" });
-  }
-});
-
-// Create new hero
-router.post("/", authenticateToken, async (req: Request, res: Response) => {
-  try {
-    const { type, x, y, units } = req.body;
-
-    const hero = new Hero({
-      type,
-      x,
-      y,
-      units,
-      player: req.user!.id,
-    });
-
-    await hero.save();
-    res.status(201).json(hero);
-  } catch (error) {
-    console.error("Error creating hero:", error);
-    res.status(500).json({ error: "Error creating hero" });
   }
 });
 

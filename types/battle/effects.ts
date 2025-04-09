@@ -11,7 +11,7 @@ import {
 } from "../../server/src/unitAndHeroGenerationLogic/buyOptions";
 export interface BuffMeEffectMethod extends EffectMethods {
   method: "buffMe";
-  methodArgs: {land: Land, value: number};
+  methodArgs: { land: Land; value: number };
 }
 
 export interface BuffActiveEffectMethod extends EffectMethods {
@@ -196,13 +196,12 @@ export const effectExplanations = {
 
     return narration;
   },
-  buffMe: function(effectMethods: BuffMeEffectMethod){
-    let narration = ''
-    if (effectMethods.stage === 'pre'){
-      narration+= "Before the battle"
-    }
-    else{
-      narration = "After the battle"
+  buffMe: function (effectMethods: BuffMeEffectMethod) {
+    let narration = "";
+    if (effectMethods.stage === "pre") {
+      narration += "Before the battle";
+    } else {
+      narration = "After the battle";
     }
     narration += ` buff your ${effectMethods.methodArgs.land} stat by ${effectMethods.methodArgs.value}`;
 

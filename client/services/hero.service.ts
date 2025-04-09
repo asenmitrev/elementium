@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Hero } from "types";
+import { Hero, HeroType, UnitType } from "types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005";
 
@@ -36,7 +36,9 @@ export class HeroService {
     return response.data;
   }
 
-  static async getPredefinedHeroes(cookie?: string): Promise<Hero[]> {
+  static async getPredefinedHeroes(
+    cookie?: string
+  ): Promise<(HeroType & { units: UnitType[] })[]> {
     const response = await axios.get(
       `${API_URL}/heroes/predefined-units`,
       cookie

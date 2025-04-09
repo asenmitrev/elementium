@@ -1,15 +1,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Wind, Droplets, Mountain, Flame } from "lucide-react";
-import { Hero, UnitType } from "types";
+import { Hero, HeroType, UnitType } from "types";
 import Image from "next/image";
 import Link from "next/link";
 export default function HeroCard({
   hero,
+  units,
   link,
   showArmy = true,
 }: {
-  hero: Hero;
+  hero: HeroType;
+  units: UnitType[];
   link?: string;
   showArmy?: boolean;
 }) {
@@ -17,10 +19,10 @@ export default function HeroCard({
     <Card className="w-full max-w-md overflow-hidden flex flex-col">
       <div className="relative group">
         {/* Image container with all content */}
-        <Link href={link ?? `/hero/${hero._id}`}>
+        <Link href={link ?? `/hero/${hero.name}`}>
           <div className="relative aspect-[4/3]">
             <Image
-              src={`/images/units/${hero.type.image}`}
+              src={`/images/units/${hero.image}`}
               alt="Hero"
               className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
               fill
@@ -33,13 +35,9 @@ export default function HeroCard({
                 <h2 className="text-2xl font-bold text-white flex items-center justify-between">
                   {hero.name}
                   <Badge
-                    className={`${
-                      hero.alive
-                        ? "bg-green-500/20 text-green-300 hover:bg-green-500/30"
-                        : "bg-red-500/20 text-red-300 hover:bg-red-500/30"
-                    }`}
+                    className={`${"bg-red-500/20 text-red-300 hover:bg-red-500/30"}`}
                   >
-                    {hero.alive ? "Active" : "Dead"}
+                    Active
                   </Badge>
                 </h2>
                 {/* Level and status */}
@@ -53,19 +51,19 @@ export default function HeroCard({
                 <div className="grid grid-cols-4 gap-4 text-sm">
                   <div className="flex items-center gap-2 text-white">
                     <Wind className="w-4 h-4 text-gray-300" />
-                    <span className="font-medium ">{hero.type.wind}</span>
+                    <span className="font-medium ">{hero.wind}</span>
                   </div>
                   <div className="flex items-center gap-2 text-white">
                     <Droplets className="w-4 h-4 text-blue-300" />
-                    <span className="font-medium">{hero.type.water}</span>
+                    <span className="font-medium">{hero.water}</span>
                   </div>
                   <div className="flex items-center gap-2 text-white">
                     <Mountain className="w-4 h-4 text-green-300" />
-                    <span className="font-medium">{hero.type.earth}</span>
+                    <span className="font-medium">{hero.earth}</span>
                   </div>
                   <div className="flex items-center gap-2 text-white">
                     <Flame className="w-4 h-4 text-orange-300" />
-                    <span className="font-medium">{hero.type.fire}</span>
+                    <span className="font-medium">{hero.fire}</span>
                   </div>
                 </div>
               </div>
@@ -75,13 +73,13 @@ export default function HeroCard({
       </div>
 
       {/* Soldiers List */}
-      {!showArmy ? null : hero.units.length > 0 ? (
+      {!showArmy ? null : units.length > 0 ? (
         <div className="grid grid-cols-3 gap-0">
-          {hero.units.slice(0, 3).map((unit, index) => (
+          {units.slice(0, 3).map((unit, index) => (
             <SoldierItem
               key={index}
               unit={unit}
-              moreUnitsCount={index === 2 ? hero.units.length - 3 : 0}
+              moreUnitsCount={index === 2 ? units.length - 3 : 0}
             />
           ))}
         </div>
