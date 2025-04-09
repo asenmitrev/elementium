@@ -45,7 +45,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         maxImages: 24,
         possibleEffects: [
            "buffActiveEffect",
-           "buffMeEffect",
+           "buffMe",
            "epicBattle",
            "buffNextXCards"
         ]
@@ -77,7 +77,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         },
         maxImages: 24,
         possibleEffects: [
-            "buffMeEffect",
+            "buffMe",
             "debuffActiveEffect",
             "defenderAdvantage"
          ]
@@ -177,7 +177,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         },
         maxImages: 25,
         possibleEffects: [
-            "buffMeEffect",
+            "buffMe",
             "removeEnemyEffectEffect",
             "attackerAdvantage"
          ]
@@ -210,7 +210,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
         ],
         maxImages: 25,
         possibleEffects: [
-            "removeEnemyEffectEffect", "buffActiveEffect", "buffMeEffect", 
+            "removeEnemyEffectEffect", "buffActiveEffect", "buffMe", 
             "debuffEnemyEffect", "defenderAdvantage", "attackerAdvantage"
          ]
     }],
@@ -249,7 +249,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
           ],
         maxImages: 24,
         possibleEffects: [
-            "removeEnemyEffectEffect", "debuffActiveEffect",  "buffMeEffect", 
+            "removeEnemyEffectEffect", "debuffActiveEffect",  "buffMe", 
             "debuffEnemyEffect", "defenderAdvantage"
          ]
     }],
@@ -327,7 +327,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Zircon", "Aurora", "Burning Sky", "Celestia", "Dawnfire"
           ],
           possibleEffects: [
-            "buffMeEffect",
+            "buffMe",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "revive"
@@ -370,7 +370,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Blazewash", "Frostflare", "Seaflicker"
         ],
           possibleEffects: [
-            "buffMeEffect",
+            "buffMe",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "debuffActiveEffect",
@@ -415,7 +415,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
             "Timbergaze", "Leafspark", "Briarwhisper", "Willowshade", "Hollowroot"
         ],
           possibleEffects: [
-            "buffMeEffect",
+            "buffMe",
             "removeEnemyEffectEffect",
             "attackerAdvantage",
             "defenderAdvantage",

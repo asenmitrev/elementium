@@ -3,7 +3,7 @@ import { EffectMethods, EffectNarration, MethodArgsConfig } from "./effectUtils"
 import { distributePoints } from "./distributeEffectPoints";
 import { buyOptions, BuyOptionsResult } from "../../server/src/unitAndHeroGenerationLogic/buyOptions";
 export interface BuffMeEffectMethod extends EffectMethods {
-  method: "buffMeEffect";
+  method: "buffMe";
   methodArgs: {land: Land, value: number};
 }
 
@@ -83,7 +83,7 @@ export type EffectMethodMap = {
   removeEnemyEffectEffect: RemoveEnemyEffectEffectMethod;
   debuffActiveEffect: DebuffActiveEffectMethod;
   buffActiveEffect: BuffActiveEffectMethod;
-  buffMeEffect: BuffMeEffectMethod;
+  buffMe: BuffMeEffectMethod;
   debuffEnemyEffect: DebuffEnemyEffectMethod;
 };
 
@@ -183,7 +183,7 @@ export const effectExplanations = {
 
     return narration;
   },
-  buffMeEffect: function(effectMethods: BuffMeEffectMethod){
+  buffMe: function(effectMethods: BuffMeEffectMethod){
     let narration = ''
     if (effectMethods.stage === 'pre'){
       narration+= "Before the battle"
@@ -421,7 +421,7 @@ export const effectMethods = {
       effect: "buff",
     };
   },
-  buffMeEffect: function (
+  buffMe: function (
     EMethods: BuffMeEffectMethod,
     generalArguments: GeneralArguments
   ): EffectNarration {
@@ -666,7 +666,7 @@ export const effectCostsDictionary = new Map<
     },
   ],
   [
-    "buffMeEffect",
+    "buffMe",
     {
       methodArgs: {
         value:{
