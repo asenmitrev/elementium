@@ -7,6 +7,10 @@
   ],
   "scripts": {
     "start:client": "yarn workspace client run dev",
-    "start:server": "yarn workspace server run start"
+    "start:server": "yarn workspace server run start",
+    "dev:client": "yarn workspace client run dev"
+  },
+  "dependencies": {
+    "jest": "^29.7.0"
   }
 }

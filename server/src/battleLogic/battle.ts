@@ -1,13 +1,15 @@
-import { HeroType, Land, UnitType } from "types";
-import { GeneralArguments } from "types/battle/effects";
+import { UnitRaceData, unitRaces } from "types/unitRaces";
+import { HeroType, Land, UnitType } from "../../../types";
+import { GeneralArguments } from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
   EffectMethods,
   EffectNarration,
   KillCardArgs,
   RoundArgs,
-} from "types/battle/effectUtils";
-import { BattleEvaluation, RoundNarration } from "types/battle/main";
+} from "../../../types/battle/effectUtils";
+import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
+import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -188,16 +190,18 @@ export function battle(args: {
 
 function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
   const me: UnitType = args[perspective];
+  const myDeck: UnitType[] = args[`${perspective}Deck`];
+  let enemyDeck: UnitType[];
   let enemy: UnitType;
   if (perspective === "attacker") {
+    enemyDeck = args["defenderDeck"];
     enemy = args["defender"];
   } else {
+    enemyDeck = args["attackerDeck"];
     enemy = args["attacker"];
   }
   const methodFunk: string | undefined = me.effect?.method;
-  const methodArgs: unknown[] = me.effect?.methodArgs
-    ? me.effect.methodArgs
-    : [];
+
   if (methodFunk) {
     // Import or define effectMethods before using it
     const effectMethods: Record<
@@ -212,6 +216,8 @@ function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
       perspective,
       ActiveLand: args.land,
       enemy,
+      myDeck,
+      enemyDeck,
     };
     if (methodFunk in effectMethods && me.effect) {
       return effectMethods[methodFunk](me.effect, generalArguments);
@@ -267,3 +273,23 @@ function killCard(killCardArgs: KillCardArgs) {
     graveyard.push(removedUnitTypeUserFacing);
   }
 }
+
+ 
+let theBattle = battle(
+  {
+    attackerDeck: [
+      createUnitType()
+    ],
+    defenderDeck: [
+      createUnitType()
+    ],
+    attackerGraveyard: [],
+    defenderGraveyard: [],
+    attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
+    defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
+    defenderCastle: undefined,
+    land: "fire",
+  }
+)
+
+console.log(theBattle)

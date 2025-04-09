@@ -28,6 +28,7 @@ export type EffectMethods = {
   stage: "pre" | "after";
   methodArgs: Record<string, number | string> | undefined;
   method: string;
+  explanation: string;
 };
 
 export type BattleEvaluationArgs = {

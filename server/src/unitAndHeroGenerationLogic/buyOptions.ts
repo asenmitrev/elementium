@@ -14,7 +14,6 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
     })
 
     //Find the cheapest possible option to make sure it is bellow the remaining points
-
     let cheapestCost = 0;
     const cheapestOptions:{cost:number}[] = []
     const cheapestOptionsKeys: string[]= [];
@@ -38,7 +37,6 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
             cheapestOptionsKeys.push(cheapestKey as string);
         }
     })
-
     if(points<cheapestCost){
         console.log("You can't afford any full set of args");
         return undefined;
@@ -48,7 +46,7 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
     let maxCounterForRandom = 10;
     let mainSelectedOption: {cost: number}[] | null = null;
     let mainSelectedOptionKeys: string[] | null = null;
-    while(maxCounterForRandom > 0 && mainSelectedOption === null ){
+    while(maxCounterForRandom > 0 && mainSelectedOption === null && filteredArgs.length ){
         let tempPoints = points;
         let tempBoughtOptions: {cost: number}[] = [];
         let tempBoughtOptionKeys: string[] = [];
@@ -60,7 +58,7 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
             const selectedOption: {cost:number} =  theArg.options[selectedOptionKey];
             //If the cost is bigger than the tempPoints go to next attempt
             if(selectedOption.cost > tempPoints){
-                maxCounterForRandom++;
+                maxCounterForRandom--;
                 return;
             }
             //Else remove the cost from the tempPoints and add into the temporary bought options
@@ -76,6 +74,7 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
                 }
             }
         })
+        
     }
     if(mainSelectedOption === null){
         mainSelectedOption = cheapestOptions;

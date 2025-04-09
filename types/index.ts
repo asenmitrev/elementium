@@ -1,4 +1,5 @@
 import { EffectMethods } from "./battle/effectUtils";
+import { UnitRaceData } from "./unitRaces";
 
 export type Castle = {
   _id: string;
@@ -45,6 +46,7 @@ export type UnitType = {
   evolutions: UnitType[];
   level: number;
   image: string;
+  race: UnitRaceData;
 };
 
 export type Unit = {
@@ -52,16 +54,20 @@ export type Unit = {
   holder: Castle | Hero;
   experienceTillLevelUp: number;
 };
+
 export type HeroType = {
   wind: number;
   earth: number;
   fire: number;
   water: number;
-  slots: number;
+  leadership: number;
   image: string;
   evolutions: HeroType[];
+  name: string;
+  howManyPeopleHaveIt: number;
   level: number;
-  counterEspionageLevel: number;
+  counterEspionage: number;
+  race: UnitRaceData;
 };
 
 export type Hero = {
@@ -91,4 +97,12 @@ export type UnitWeights = {
   special: number;
 };
 
+export type HeroWeights = {
+  wind: number;
+  earth: number;
+  fire: number;
+  water: number;
+  leadership: number;
+  counterEspionage: number;
+};
 export type Land = "water" | "fire" | "earth";

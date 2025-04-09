@@ -1,10 +1,6 @@
-import { UnitType, UnitWeights } from "../../../types";
-import {
-  effectCostsDictionary,
-  effectGeneration,
-  getRandomEffectCost,
-} from "../../../types/battle/effects";
-import { EffectMethods } from "../../../types/battle/effectUtils";
+import { HeroType, HeroWeights, UnitType, UnitWeights } from "../../../types";
+import { effectGeneration } from "../../../types/battle/effects";
+import { UnitRaceData, unitRaces } from "../../../types/unitRaces";
 
 const pointsPerLevel = 5;
 const startingPoints = 15;
@@ -62,15 +58,55 @@ export const unitPointAnnotator = function (
   };
 };
 
-export const nameGeneration = function (): string {
+export const nameGeneration = function (race: UnitRaceData): string {
+  if (race) {
+    const name = race.names[Math.floor(Math.random() * race.names.length)];
+    const secondName =
+      race.names[Math.floor(Math.random() * race.names.length)];
+    return name + " " + secondName;
+  }
   return "random name";
 };
 
-export const createUnitType = function (): UnitType {
-  const level = 1;
-  let { water, earth, fire, special } = unitPointAnnotator(level, "water");
+export const getRandomMapElement = function <K, V>(
+  map: Map<K, V>
+): V | undefined {
+  const values = Array.from(map.values());
+  return values[Math.floor(Math.random() * values.length)];
+};
 
-  const { effect, remainder } = effectGeneration(special);
+export const createUnitType = function (
+  race?: UnitRaceData,
+  level: number = 1
+): UnitType {
+  let theWeights: UnitWeights | undefined;
+  if (!race) {
+    race = getRandomMapElement(unitRaces);
+  }
+
+  theWeights = (race as UnitRaceData).weights;
+  const theName = nameGeneration(race as UnitRaceData);
+  let image = "";
+  if (race) {
+    image =
+      race?.type +
+      "/" +
+      race?.race +
+      "/" +
+      Math.floor(Math.random() * (race?.maxImages - 1) + 1) +
+      ".jpeg";
+  }
+
+  let { water, earth, fire, special } = unitPointAnnotator(
+    level,
+    "water",
+    theWeights
+  );
+
+  const { effect, remainder } = effectGeneration(
+    special,
+    race?.possibleEffects
+  );
 
   if (remainder > 0) {
     const [water2, earth2, fire2] = generalPointAnnotator(remainder, {
@@ -84,63 +120,119 @@ export const createUnitType = function (): UnitType {
 
     // Use the distributed points here if needed
   }
-  /*
-        Weights Generation,
-        Name Generation,
-        Image Generation,
-        Effect Generation,
-        Evolutions Generation
-    */
-  // console.log('i tuk?')
+
   const newUnitType: UnitType = {
     water,
     earth,
     fire,
-    name: nameGeneration(),
+    name: theName,
     level: 0,
     effect: effect,
     specialExplanation: "",
-    image: "",
+    image: image,
     evolutions: [],
+    race: race as UnitRaceData,
   };
-  // console.log(" i tuk daje?")
-  //  console.log(newUnitType,  water, earth)
   return newUnitType;
+};
+
+export const generateEvolutionOptions = function (unit: UnitType): {
+  unitTypeOne: UnitType;
+  unitTypeTwo: UnitType;
+  unitTypeThree: UnitType;
+} {
+  const unitTypeOne = createUnitType(unit.race, unit.level + 1);
+  unitTypeOne.image = unit.image;
+  const unitTypeTwo = createUnitType(unit.race, unit.level + 1);
+  unitTypeTwo.image = unit.image;
+  const unitTypeThree = createUnitType(unit.race, unit.level + 1);
+  unitTypeThree.image = unit.image;
+  return {
+    unitTypeOne,
+    unitTypeTwo,
+    unitTypeThree,
+  };
 };
 
 export const heroPointAnnotator = function (
   level: number,
-  type: "water" | "earth" | "fire" | "leadership" | "speed" | "counterEspionage"
+  type: "water" | "earth" | "fire" | "leadership" | "wind" | "counterEspionage",
+  customWeights?: HeroWeights
 ) {
   //How much points would the card spent
   const points = startingPoints + pointsPerLevel * level;
-  const weightForType = {
+  const weightForType = customWeights || {
     water: 0,
     earth: 0,
     fire: 0,
     leadership: 0,
-    speed: 0,
+    wind: 0,
     counterEspionage: 0,
   };
-  Object.keys(weightForType).forEach((innerType) => {
-    if (innerType === type) {
-      weightForType[innerType as keyof typeof weightForType] = 0.25;
-    } else {
-      weightForType[innerType as keyof typeof weightForType] = 0.15;
-    }
-  });
+  if (!customWeights) {
+    Object.keys(weightForType).forEach((innerType) => {
+      if (innerType === type) {
+        weightForType[innerType as keyof typeof weightForType] = 0.25;
+      } else {
+        weightForType[innerType as keyof typeof weightForType] = 0.15;
+      }
+    });
+  }
 
   //1st Water 2nd Earth 3rd Fire
-  const [water, earth, fire, leadership, speed, counterEspionage] =
+  const [water, earth, fire, leadership, wind, counterEspionage] =
     generalPointAnnotator(points, weightForType);
   return {
     water,
     earth,
     fire,
     leadership,
-    speed,
+    wind,
     counterEspionage,
   };
+};
+
+export function createHeroType(race: UnitRaceData) {
+  const level = 1;
+  const { water, earth, fire, leadership, wind, counterEspionage } =
+    heroPointAnnotator(level, "water");
+  let image = "";
+  if (race) {
+    image =
+      race?.type +
+      "/" +
+      race?.race +
+      "/" +
+      Math.random() * (race?.maxImages - 1) +
+      1;
+  }
+  const newHeroType: HeroType = {
+    water,
+    earth,
+    fire,
+    leadership,
+    wind,
+    counterEspionage,
+    name: nameGeneration(race),
+    evolutions: [],
+    howManyPeopleHaveIt: 0,
+    image: image,
+    level: 0,
+    race: race,
+  };
+  return newHeroType;
+}
+
+export const createHeroEvolutions = function (hero: HeroType) {
+  const [water, earth, fire, leadership, wind, counterEspionage] =
+    generalPointAnnotator(1, hero.race.heroWeights as HeroWeights);
+  hero.water += water;
+  hero.earth += earth;
+  hero.fire += fire;
+  hero.leadership += leadership;
+  hero.wind += wind;
+  hero.counterEspionage += counterEspionage;
+  return hero;
 };
 
 function spreadWithWeights(
@@ -194,4 +286,10 @@ function spreadWithWeights(
   return Object.values(values);
 }
 
-console.log(createUnitType(), " tuka?");
+console.log(
+  JSON.stringify(
+    Array.from({ length: 3 }).map((_) =>
+      createUnitType(unitRaces.get("earth-golem") as UnitRaceData)
+    )
+  )
+);
