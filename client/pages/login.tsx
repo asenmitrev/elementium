@@ -8,13 +8,22 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { toast } from "sonner";
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, GetServerSidePropsResult } from "next";
 import { signIn } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 type SignInFormValues = {
   username: string;
   password: string;
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (session) {
+    return { redirect: { destination: "/castles", permanent: false } };
+  }
+  return { props: {} } as GetServerSidePropsResult<{}>;
+};
 export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -90,7 +99,3 @@ export default function SignInForm() {
     </FormProvider>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return { props: {} };
-};

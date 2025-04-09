@@ -9,8 +9,6 @@ import { useRouter } from "next/router";
 import { AuthService, AuthError } from "@/services/auth.service";
 import Link from "next/link";
 import { toast } from "sonner";
-import axios from "axios";
-import { CastleService } from "@/services/castle.service";
 import { signIn } from "next-auth/react";
 
 type FormData = {
