@@ -10,7 +10,7 @@ export class CastleService {
       cookie
         ? {
             headers: {
-              Cookie: cookie || "",
+              Authorization: `Bearer ${cookie}`,
             },
           }
         : {
@@ -26,7 +26,7 @@ export class CastleService {
       cookie
         ? {
             headers: {
-              Cookie: cookie || "",
+              Authorization: `Bearer ${cookie}`,
             },
           }
         : {
@@ -37,7 +37,8 @@ export class CastleService {
   }
 
   static async createCapitalCastle(
-    type: "fire" | "water" | "earth"
+    type: "fire" | "water" | "earth",
+    cookie: string
   ): Promise<Castle> {
     const response = await axios.post(
       `${API_URL}/castles`,
@@ -46,7 +47,9 @@ export class CastleService {
         isCapital: true,
       },
       {
-        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+        },
       }
     );
     return response.data;
@@ -54,15 +57,13 @@ export class CastleService {
 
   static async getCastleHeroes(
     castleId: string,
-    cookie?: string
+    cookie: string
   ): Promise<(Hero & { units: Unit[] })[]> {
     const response = await fetch(`${API_URL}/castles/${castleId}/heroes`, {
       headers: {
-        ...(cookie ? { Cookie: cookie } : {}),
+        Authorization: `Bearer ${cookie}`,
       },
-      credentials: "include",
     });
-    console.log(response);
     return response.json();
   }
 }

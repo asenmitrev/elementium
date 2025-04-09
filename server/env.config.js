@@ -9,6 +9,9 @@ module.exports = {
       watch: false,
       treekill: false,
       ignore_watch: ["node_modules", "data"],
+      env: {
+        NODE_ENV: "production",
+      },
     },
   ],
 };

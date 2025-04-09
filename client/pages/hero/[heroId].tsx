@@ -3,8 +3,9 @@ import { Hero as IHero, Unit } from "../../../types";
 import SoldierList from "@/components/soldier-list";
 import Hero from "@/components/hero";
 import ProtectedRoute from "@/components/protected-route";
-import { requireAuth } from "@/utils/auth.server";
 import { HeroService } from "@/services/hero.service";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 interface HeroPageProps {
   hero: IHero & { units: Unit[] };
@@ -13,16 +14,14 @@ interface HeroPageProps {
 export const getServerSideProps: GetServerSideProps<HeroPageProps> = async (
   context
 ) => {
-  // First run the auth check
-  const authResult = await requireAuth(context);
-  if ("redirect" in authResult) {
-    return authResult;
-  }
-
+  const session = await getServerSession(context.req, context.res, authOptions);
   const heroId = context.params?.heroId as string;
 
   try {
-    const hero = await HeroService.getHero(heroId, context.req?.headers.cookie);
+    const hero = await HeroService.getHero(
+      heroId,
+      session?.user.accessToken || ""
+    );
 
     return {
       props: {

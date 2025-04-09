@@ -3,7 +3,6 @@ import Link from "next/link";
 import ProtectedRoute from "@/components/protected-route";
 import useCastles from "@/hooks/useCastles";
 import { GetServerSideProps } from "next";
-import { requireAuth } from "@/utils/auth.server";
 import { CastleService } from "@/services/castle.service";
 import type { Castle as ICastle } from "types";
 import Image from "next/image";
@@ -11,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { requireAuth } from "@/utils/check-onboarding";
 
 interface CastlesProps {
   initialCastles: ICastle[];
@@ -44,15 +46,15 @@ const elementColors = {
 export const getServerSideProps: GetServerSideProps<CastlesProps> = async (
   context
 ) => {
-  // First run the auth check
-  const authResult = await requireAuth(context);
-  if ("redirect" in authResult) {
-    return authResult;
-  }
+  const session = await getServerSession(context.req, context.res, authOptions);
 
+  const auth = await requireAuth(context);
+  if ("redirect" in auth) {
+    return auth;
+  }
   try {
     // Fetch castles on the server - cookies will be automatically included
-    const castles = await CastleService.getCastles(context.req?.headers.cookie);
+    const castles = await CastleService.getCastles(session?.user.accessToken);
 
     if (!castles || castles.length === 0) {
       return {

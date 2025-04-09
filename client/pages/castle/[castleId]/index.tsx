@@ -10,8 +10,9 @@ import { useRouter } from "next/router";
 import ProtectedRoute from "@/components/protected-route";
 import useCastle from "@/hooks/useCastle";
 import { GetServerSidePropsContext } from "next";
-import { requireAuth } from "@/utils/auth.server";
 import { CastleService } from "@/services/castle.service";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 interface Resources {
   elementium: number;
@@ -22,18 +23,13 @@ interface CastleProps {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // First run the auth check
-  const authResult = await requireAuth(context);
-  if ("redirect" in authResult) {
-    return authResult;
-  }
-
+  const session = await getServerSession(context.req, context.res, authOptions);
   try {
     const castleId = context.params?.castleId as string;
     // Fetch castle on the server - cookies will be automatically included
     const castle = await CastleService.getCastle(
       castleId,
-      context.req?.headers.cookie
+      session?.user.accessToken
     );
 
     if (!castle) {

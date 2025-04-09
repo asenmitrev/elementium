@@ -1,14 +1,20 @@
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import type { GetServerSidePropsContext } from "next";
-import type { NextPageContext } from "next";
-const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
-type ServerContext = GetServerSidePropsContext | NextPageContext;
+import { getServerSession } from "next-auth";
 
-export async function checkAuthServer(context: ServerContext) {
+const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+
+export async function checkAuthServer(context: GetServerSidePropsContext) {
   try {
+    const session = await getServerSession(
+      context.req as any,
+      context.res as any,
+      authOptions
+    );
     const response = await fetch(`${API_URL}/auth/me`, {
       credentials: "include",
       headers: {
-        Cookie: context.req?.headers.cookie || "",
+        Authorization: `Bearer ${session?.user.accessToken}`,
       },
     });
 

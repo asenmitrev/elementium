@@ -71,9 +71,13 @@ export class AuthService {
     await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
   }
 
-  static async checkAuth(): Promise<boolean> {
+  static async checkAuth(cookie: string): Promise<boolean> {
     try {
-      await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
+      await axios.get(`${API_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+        },
+      });
       return true;
     } catch (error) {
       return false;

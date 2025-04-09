@@ -1,20 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { requireAuth } from "@/utils/auth.server";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { CastleService } from "@/services/castle.service";
 import axios from "axios";
 import type { GetServerSideProps } from "next";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { Droplets, Wind, Flame, Mountain, Sparkles, Badge } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { HeroType, UnitType } from "types";
 import { HeroService } from "@/services/hero.service";
 import HeroCard from "@/components/hero";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 
 interface ChooseHeroProps {
   initialHeroes: (HeroType & { units: UnitType[] })[];
@@ -23,16 +21,12 @@ interface ChooseHeroProps {
 export const getServerSideProps: GetServerSideProps<ChooseHeroProps> = async (
   context
 ) => {
-  // First run the auth check
-  const authResult = await requireAuth(context);
-  if ("redirect" in authResult) {
-    return authResult;
-  }
+  const session = await getServerSession(context.req, context.res, authOptions);
 
   try {
     // Fetch predefined heroes on the server
     const heroes = await HeroService.getPredefinedHeroes(
-      context.req?.headers.cookie
+      session?.user.accessToken || ""
     );
 
     return {
@@ -55,7 +49,7 @@ export default function ChooseHero({ initialHeroes }: ChooseHeroProps) {
   const [selectedHero, setSelectedHero] = useState<HeroType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
+  const { data: session } = useSession();
   const handleHeroChoice = async () => {
     if (!selectedHero) {
       toast.error("Please select a hero");
@@ -64,7 +58,10 @@ export default function ChooseHero({ initialHeroes }: ChooseHeroProps) {
 
     setIsSubmitting(true);
     try {
-      await HeroService.createPredefinedHero(selectedHero.name);
+      await HeroService.createPredefinedHero(
+        selectedHero.name,
+        session?.user.accessToken || ""
+      );
       toast.success("Your hero has been chosen!");
       router.push("/heroes");
     } catch (error) {

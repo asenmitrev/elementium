@@ -1,18 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { requireAuth } from "@/utils/auth.server";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CastleService } from "@/services/castle.service";
 import axios from "axios";
-import type { GetServerSideProps } from "next";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
-
+import { useSession } from "next-auth/react";
 const elements = [
   {
     id: "fire" as const,
@@ -46,15 +44,13 @@ const elements = [
   },
 ];
 
-export const getServerSideProps: GetServerSideProps = requireAuth;
-
 export default function ChooseElement() {
   const [selectedElement, setSelectedElement] = useState<
     "fire" | "water" | "earth" | null
   >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
+  const { data: session } = useSession();
   const handleElementChoice = async () => {
     if (!selectedElement) {
       toast.error("Please select an element");
@@ -63,7 +59,10 @@ export default function ChooseElement() {
 
     setIsSubmitting(true);
     try {
-      await CastleService.createCapitalCastle(selectedElement);
+      await CastleService.createCapitalCastle(
+        selectedElement,
+        session?.user.accessToken || ""
+      );
       toast.success("Your capital castle has been created!");
       router.push("/castles");
     } catch (error) {

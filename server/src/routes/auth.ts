@@ -41,21 +41,16 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     });
 
     // Set cookies
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    res.status(201).json({
+      accessToken: {
+        token: accessToken,
+        expiresIn: 15 * 60 * 1000,
+      },
+      refreshToken: {
+        token: refreshToken,
+        expiresIn: 30 * 24 * 60 * 60 * 1000,
+      },
     });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
-
-    res.json({ message: "Login successful" });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "An error occurred during login" });
@@ -103,22 +98,16 @@ router.post("/register", async (req: Request, res: Response): Promise<void> => {
       email: user.email,
     });
 
-    // Set cookies
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    res.status(201).json({
+      accessToken: {
+        token: accessToken,
+        expiresIn: 15 * 60 * 1000,
+      },
+      refreshToken: {
+        token: refreshToken,
+        expiresIn: 30 * 24 * 60 * 60 * 1000,
+      },
     });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
-
-    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).json({
@@ -168,7 +157,6 @@ router.get(
         onboardingStep = 1;
       }
       res.json({
-        isAuthenticated: true,
         onboardingStep,
       });
       return;

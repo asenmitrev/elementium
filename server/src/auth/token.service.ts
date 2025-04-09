@@ -7,7 +7,7 @@ dotenv.config();
 export class TokenService {
   private readonly secretKey: string;
   private readonly accessTokenExpiry: string = "15m";
-  private readonly refreshTokenExpiry: string = "7d";
+  private readonly refreshTokenExpiry: string = "30d";
 
   constructor() {
     if (!process.env.JWT_SECRET) {

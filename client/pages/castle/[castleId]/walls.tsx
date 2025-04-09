@@ -6,10 +6,11 @@ import { useRouter } from "next/router";
 import { getBuildingImage } from "@/components/building";
 import useCastle from "@/hooks/useCastle";
 import { GetServerSideProps } from "next";
-import { requireAuth } from "@/utils/auth.server";
 import { CastleService } from "@/services/castle.service";
 import { Hero as IHero, Castle, Unit } from "types";
 import Hero from "@/components/hero";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 interface WallsProps {
   initialCastle: Castle;
@@ -19,18 +20,13 @@ interface WallsProps {
 export const getServerSideProps: GetServerSideProps<WallsProps> = async (
   context
 ) => {
-  // First run the auth check
-  const authResult = await requireAuth(context);
-  if ("redirect" in authResult) {
-    return authResult;
-  }
-
+  const session = await getServerSession(context.req, context.res, authOptions);
   const castleId = context.params?.castleId as string;
 
   try {
     const [castle, heroes] = await Promise.all([
-      CastleService.getCastle(castleId, context.req?.headers.cookie),
-      CastleService.getCastleHeroes(castleId, context.req?.headers.cookie),
+      CastleService.getCastle(castleId, session?.user.accessToken || ""),
+      CastleService.getCastleHeroes(castleId, session?.user.accessToken || ""),
     ]);
 
     if (!castle) {
@@ -49,7 +45,7 @@ export const getServerSideProps: GetServerSideProps<WallsProps> = async (
       },
     };
   } catch (error) {
-    console.error("Error fetching castle data:", error);
+    // console.error("Error fetching castle data:", error);
     return {
       redirect: {
         destination: "/error",
@@ -63,7 +59,7 @@ export default function Walls({ initialCastle, heroes }: WallsProps) {
   const router = useRouter();
   const castleId = router.query.castleId as string;
   const { castle } = useCastle(castleId, initialCastle);
-
+  console.log(heroes);
   if (!castle) return <div>Castle not found</div>;
 
   return (

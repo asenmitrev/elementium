@@ -7,11 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { checkAuthServer } from "@/utils/auth.server";
 import type { GetServerSideProps } from "next";
-
+import { signIn } from "next-auth/react";
 type SignInFormValues = {
   username: string;
   password: string;
@@ -26,12 +24,15 @@ export default function SignInForm() {
       password: "",
     },
   });
-  const { login } = useAuth();
 
   const onSubmit = async (data: SignInFormValues) => {
     setIsSubmitting(true);
     try {
-      await login(data.username, data.password);
+      await signIn("credentials", {
+        username: data.username,
+        password: data.password,
+        redirect: false,
+      });
       toast.success("Successfully signed in!");
       router.push("/castles");
     } catch (error) {
@@ -91,16 +92,5 @@ export default function SignInForm() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const authCheck = await checkAuthServer(context);
-
-  if (authCheck.props.isAuthenticated) {
-    return {
-      redirect: {
-        destination: "/castles",
-        permanent: false,
-      },
-    };
-  }
-
   return { props: {} };
 };

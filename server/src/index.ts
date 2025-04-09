@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 
 // ... other imports ...
 
-// import cors from "cors";
+import cors from "cors";
 import authRoutes from "./routes/auth";
 import dotenv from "dotenv";
 import castleRoutes from "./routes/castle";
@@ -36,12 +36,15 @@ const connectDB = async () => {
 connectDB();
 
 // Middleware
-// app.use(
-//   cors({
-//     origin: process.env.CLIENT_URL || "http://localhost:3000",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://elementium-theta.vercel.app"
+        : "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 

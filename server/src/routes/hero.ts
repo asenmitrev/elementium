@@ -51,7 +51,7 @@ router.post(
   async (req: Request, res: Response) => {
     try {
       const userHeroCount = await Hero.countDocuments({
-        player: req.user!.id,
+        player: new ObjectId(req.user!.userId),
       });
       if (userHeroCount > 0) {
         res.status(400).json({
@@ -60,7 +60,9 @@ router.post(
         });
         return;
       }
-      const castle = await Castle.findOne({ player: req.user!.id });
+      const castle = await Castle.findOne({
+        owner: new ObjectId(req.user!.userId),
+      });
       if (!castle) {
         res.status(404).json({ error: "Castle not found" });
         return;

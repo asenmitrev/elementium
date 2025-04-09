@@ -15,12 +15,11 @@ import {
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-
+import { useSession, signOut } from "next-auth/react";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const session = useSession();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const menuItems = isAuthenticated
+  const menuItems = session.data?.user
     ? [
         { name: "Map", icon: MapPin, href: "/map" },
         { name: "Castles", icon: Castle, href: "/castles" },
@@ -37,7 +36,7 @@ const Header = () => {
         {
           name: "Sign out",
           icon: LogOut,
-          onClick: () => logout(),
+          onClick: () => signOut(),
           href: "#",
         },
       ]
