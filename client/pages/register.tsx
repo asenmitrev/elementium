@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,8 @@ export default function SignUpForm() {
   const formMethods = useForm<FormData>();
   const router = useRouter();
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const handleSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
@@ -32,9 +34,7 @@ export default function SignUpForm() {
         password: data.password,
         redirect: false,
       });
-
-      // Check if user has any castles
-      router.push("/");
+      setIsAuthenticated(true);
     } catch (error) {
       const authError = error as AuthError;
       toast.error(authError.message || "An error occurred during registration");
@@ -42,6 +42,12 @@ export default function SignUpForm() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <form
