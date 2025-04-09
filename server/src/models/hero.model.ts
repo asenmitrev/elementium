@@ -1,14 +1,22 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { Hero as IHero } from "types";
+import { HeroType, Hero as IHero } from "types";
 
-const HeroTypeSchema = new Schema({
+// Create schema for the embedded HeroType
+const HeroTypeSchema = new Schema<HeroType>({
   name: String,
   image: String,
   wind: Number,
   earth: Number,
   fire: Number,
   water: Number,
-  slots: Number,
+  leadership: Number,
+  counterEspionage: Number,
+  level: Number,
+  howManyPeopleHaveIt: Number,
+  race: {
+    type: Schema.Types.Mixed,
+    required: true,
+  },
   evolutions: [Schema.Types.Mixed],
 });
 
@@ -21,8 +29,7 @@ const MissionSchema = new Schema({
 const HeroSchema = new Schema(
   {
     type: {
-      type: Schema.Types.ObjectId,
-      ref: "HeroType",
+      type: HeroTypeSchema,
       required: true,
     },
     x: {

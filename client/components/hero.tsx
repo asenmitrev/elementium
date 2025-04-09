@@ -9,8 +9,10 @@ export default function HeroCard({
   units,
   link,
   showArmy = true,
+  heroId,
 }: {
   hero: HeroType;
+  heroId?: string;
   units: UnitType[];
   link?: string;
   showArmy?: boolean;
@@ -19,7 +21,7 @@ export default function HeroCard({
     <Card className="w-full max-w-md overflow-hidden flex flex-col">
       <div className="relative group">
         {/* Image container with all content */}
-        <Link href={link ?? `/hero/${hero.name}`}>
+        <Link href={link ?? (heroId ? `/hero/${heroId}` : `/heroes`)}>
           <div className="relative aspect-[4/3]">
             <Image
               src={`/images/units/${hero.image}`}

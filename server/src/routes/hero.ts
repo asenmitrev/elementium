@@ -3,13 +3,28 @@ import { Hero } from "../models/hero.model";
 import { authenticateToken } from "../middleware/auth";
 import { predefinedHeroTypes } from "../predefined/heroes";
 import { Castle } from "../models/castle.model";
+import { ObjectId } from "mongodb";
+import { Unit } from "../models/unit.model";
+import { Unit as IUnit } from "types";
 
 const router: Router = express.Router();
 
 // Get all heroes for a user
 router.get("/", authenticateToken, async (req: Request, res: Response) => {
   try {
-    const heroes = await Hero.find({ player: req.user!.id });
+    const heroes = await Hero.aggregate([
+      {
+        $match: { player: new ObjectId(req.user!.userId) },
+      },
+      {
+        $lookup: {
+          from: "units",
+          localField: "_id",
+          foreignField: "holder",
+          as: "units",
+        },
+      },
+    ]).exec();
     res.json(heroes);
   } catch (error) {
     console.error("Error fetching heroes:", error);
@@ -61,16 +76,25 @@ router.post(
       }
       const newHero = new Hero({
         type: heroType,
-        player: req.user!.id,
+        player: req.user!.userId,
         name: heroName,
         x: castle.x,
         y: castle.y,
         level: 0,
-        experienceTillLevelUp: 0,
+        experienceTillLevelUp: 100,
         mission: null,
         alive: true,
       });
       await newHero.save();
+
+      const units: IUnit[] = heroType.units.map((unit) => ({
+        holder: newHero._id,
+        holderModel: "Hero",
+        experienceTillLevelUp: 100,
+        player: req.user!.userId,
+        type: unit,
+      }));
+      await Unit.insertMany(units);
       res.status(201).json(newHero);
     } catch (error) {
       console.error("Error creating hero:", error);
@@ -84,14 +108,15 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
     const hero = await Hero.findOne({
       _id: req.params.id,
-      player: req.user!.id,
+      player: req.user!.userId,
     });
-
     if (!hero) {
       res.status(404).json({ error: "Hero not found" });
       return;
     }
 
+    const units = await Unit.find({ holder: hero!._id });
+    hero.units = units;
     res.json(hero);
   } catch (error) {
     console.error("Error fetching hero:", error);

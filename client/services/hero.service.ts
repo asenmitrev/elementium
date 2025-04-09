@@ -1,10 +1,13 @@
 import axios from "axios";
-import { Hero, HeroType, UnitType } from "types";
+import { Hero, HeroType, Unit, UnitType } from "types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005";
 
 export class HeroService {
-  static async getHero(heroId: string, cookie?: string): Promise<Hero> {
+  static async getHero(
+    heroId: string,
+    cookie?: string
+  ): Promise<Hero & { units: Unit[] }> {
     const response = await axios.get(
       `${API_URL}/heroes/${heroId}`,
       cookie
@@ -20,8 +23,10 @@ export class HeroService {
     return response.data;
   }
 
-  static async getHeroes(cookie?: string): Promise<Hero[]> {
-    const response = await axios.get(
+  static async getHeroes(
+    cookie?: string
+  ): Promise<(Hero & { units: Unit[] })[]> {
+    const response = await axios.get<(Hero & { units: Unit[] })[]>(
       `${API_URL}/heroes`,
       cookie
         ? {
@@ -61,11 +66,11 @@ export class HeroService {
     return response.data;
   }
 
-  static async createPredefinedHero(heroId: string): Promise<Hero> {
+  static async createPredefinedHero(heroName: string): Promise<Hero> {
     const response = await axios.post(
       `${API_URL}/heroes/predefined-units`,
       {
-        heroId,
+        heroName,
       },
       {
         withCredentials: true,
