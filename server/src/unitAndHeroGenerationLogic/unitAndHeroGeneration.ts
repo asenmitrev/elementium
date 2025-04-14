@@ -286,10 +286,10 @@ function spreadWithWeights(
   return Object.values(values);
 }
 
-console.log(
-  JSON.stringify(
-    Array.from({ length: 3 }).map((_) =>
-      createUnitType(unitRaces.get("earth-golem") as UnitRaceData)
-    )
-  )
-);
+// console.log(
+//   JSON.stringify(
+//     Array.from({ length: 3 }).map((_) =>
+//       createUnitType(unitRaces.get("earth-golem") as UnitRaceData)
+//     )
+//   )
+// );

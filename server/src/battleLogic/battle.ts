@@ -1,5 +1,5 @@
 import { UnitRaceData, unitRaces } from "types/unitRaces";
-import { HeroType, Land, UnitType } from "../../../types";
+import { HeroType, Land, UnitType, UnitTypeSimple } from "../../../types";
 import { GeneralArguments } from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
@@ -90,8 +90,8 @@ export function battle(args: {
   land: Land;
 }): {
   winner: "attacker" | "defender" | "draw";
-  remainingAttackerDeck: UnitType[];
-  remainingDefenderDeck: UnitType[];
+  remainingAttackerDeck: UnitTypeSimple[];
+  remainingDefenderDeck: UnitTypeSimple[];
   HeroTypeUserFacingCastleNarrations: string[];
   rounds: RoundNarration[];
 } {
@@ -142,6 +142,8 @@ export function battle(args: {
             +${defenderCastle.earth} for earth`);
   }
 
+
+
   while (attackerDeck.length > 0 && defenderDeck.length > 0) {
     const attacker = attackerDeck[0];
     const defender = defenderDeck[0];
@@ -161,33 +163,113 @@ export function battle(args: {
       break;
     }
   }
-  if (attackerDeck.length === 0 && defenderDeck.length === 0) {
+  const attackerDeckSimple = simplifyDecks(attackerDeck)
+  const defenderDeckSimple = simplifyDecks(defenderDeck)
+
+  const simpleRounds:RoundNarration[] = rounds.map((round) => {
+    let winner:any = round.battle?.winner;
+    if(winner === undefined){
+      winner = null;
+    }    else{
+      winner = {
+        ...winner,
+        race:undefined,
+        evolutions:undefined
+      }
+    }
+    let loser:any = round.battle?.loser;
+    if(loser === undefined){
+      loser = null;
+    }
+    else{
+      loser = {
+       ...loser,
+        race:undefined,
+        evolutions:undefined
+      }
+    }
+    let attacker:any = round.battle?.attacker;
+    if(attacker === undefined){
+      attacker = null;
+    }
+    else{
+      attacker = {
+       ...attacker,
+        race:undefined,
+        evolutions:undefined
+      }
+    }
+    let defender:any = round.battle?.defender;
+    if(defender === undefined){
+      defender = null;
+    }
+    else{
+      defender = {
+       ...defender,
+        race:undefined,
+        evolutions:undefined
+      }
+    }
+
+    let battleText = round.battle?.text;
+    if(battleText === undefined){
+      battleText = "";
+    }
+    return {
+      ...round,
+      battle:{
+        ...round.battle,
+        winner:winner,
+        loser:loser,
+        attacker:attacker,
+        defender:defender,
+        text:battleText
+      }
+    }
+  })
+  if (attackerDeckSimple.length === 0 && defenderDeck.length === 0) {
     return {
       winner: "draw",
-      remainingAttackerDeck: attackerDeck,
-      remainingDefenderDeck: defenderDeck,
-      rounds: rounds,
+      remainingAttackerDeck: attackerDeckSimple,
+      remainingDefenderDeck: defenderDeckSimple,
+      rounds: simpleRounds,
       HeroTypeUserFacingCastleNarrations: HeroTypeUserFacingCastleNarrations,
     };
-  } else if (attackerDeck.length === 0) {
+  } else if (attackerDeckSimple.length === 0) {
     return {
       winner: "defender",
-      remainingAttackerDeck: attackerDeck,
-      remainingDefenderDeck: defenderDeck,
-      rounds: rounds,
+      remainingAttackerDeck: attackerDeckSimple,
+      remainingDefenderDeck: defenderDeckSimple,
+      rounds: simpleRounds,
       HeroTypeUserFacingCastleNarrations: HeroTypeUserFacingCastleNarrations,
     };
   } else {
     return {
       winner: "attacker",
-      remainingAttackerDeck: attackerDeck,
-      remainingDefenderDeck: defenderDeck,
-      rounds: rounds,
+      remainingAttackerDeck: attackerDeckSimple,
+      remainingDefenderDeck: defenderDeckSimple,
+      rounds: simpleRounds,
       HeroTypeUserFacingCastleNarrations: HeroTypeUserFacingCastleNarrations,
     };
   }
 }
 
+function simplifyDecks(
+  deck: UnitType[], 
+): UnitTypeSimple[] {
+  return deck.map((UnitTypeUserFacing: UnitType) => {
+    return {
+      name: UnitTypeUserFacing.name,
+      image: UnitTypeUserFacing.image,
+      level: UnitTypeUserFacing.level, 
+      water: UnitTypeUserFacing.water,
+      earth: UnitTypeUserFacing.earth,
+      fire: UnitTypeUserFacing.fire,
+      specialExplanation: UnitTypeUserFacing.specialExplanation,
+      effect: UnitTypeUserFacing.effect
+    } 
+  }) 
+}
 function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
   const me: UnitType = args[perspective];
   const myDeck: UnitType[] = args[`${perspective}Deck`];
@@ -235,16 +317,25 @@ export function battleEvaluation(
     return {
       text: `${attacker.name} defeated ${defender.name}`,
       winner: attacker,
+      loser: defender,
+      attacker: attacker,
+      defender: defender
     };
   } else if (defender[land] > attacker[land]) {
     return {
       text: `${defender.name} defeated ${attacker.name}`,
       winner: defender,
+      loser: attacker,
+      attacker: attacker,
+      defender: defender
     };
   } else {
     return {
       winner: null,
       text: `Both ${attacker.name} and ${defender.name} died in battle`,
+      loser: null,
+      attacker: attacker,
+      defender: defender
     };
   }
 }
@@ -278,10 +369,10 @@ function killCard(killCardArgs: KillCardArgs) {
 let theBattle = battle(
   {
     attackerDeck: [
-      createUnitType()
+      createUnitType(),createUnitType(),createUnitType()
     ],
     defenderDeck: [
-      createUnitType()
+      createUnitType(),createUnitType(),createUnitType()
     ],
     attackerGraveyard: [],
     defenderGraveyard: [],
@@ -292,4 +383,4 @@ let theBattle = battle(
   }
 )
 
-console.log(theBattle)
+console.log(JSON.stringify(theBattle))
