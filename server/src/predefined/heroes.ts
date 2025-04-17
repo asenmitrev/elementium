@@ -265,7 +265,7 @@ const earthGolemUnits: UnitType[] = [
       method: "defenderAdvantage",
       methodArgs: {},
       explanation:
-        "After the battle buffs your active effect by undefined if your are the defender",
+        "After the battle buffs your active stat by undefined if your are the defender",
     },
     specialExplanation: "",
     image: "earth/golem/12.jpeg",

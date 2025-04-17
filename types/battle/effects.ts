@@ -159,7 +159,7 @@ export const effectExplanations = {
     } else {
       narration += "After the battle";
     }
-    narration += ` buffs your active effect by ${effectMethods.methodArgs.value} if your are the attacker`;
+    narration += ` buffs your active stat by ${effectMethods.methodArgs.value} if your are the attacker`;
 
     return narration;
   },
@@ -170,9 +170,9 @@ export const effectExplanations = {
     } else {
       narration += "After the battle";
     }
-    narration += ` debuff your active effect by ${effectMethods.methodArgs.value}`;
+    narration += ` debuff your active stat by ${effectMethods.methodArgs.value}`;
 
-    return this.debuffActiveEffect;
+    return narration;
   },
   defenderAdvantage: function (effectMethods: DefenderAdvantage) {
     let narration = "";
@@ -181,7 +181,7 @@ export const effectExplanations = {
     } else {
       narration += "After the battle";
     }
-    narration += ` buffs your active effect by ${effectMethods.methodArgs.value} if your are the defender`;
+    narration += ` buffs your active stat by ${effectMethods.methodArgs.value} if your are the defender`;
 
     return narration;
   },
@@ -769,6 +769,8 @@ export const effectGeneration = function (
     remainingPoints,
     chosenEffect.methodArgs
   );
+
+  
 
   const combinedMethodArgs = {
     ...selectedOptionsRecord,
