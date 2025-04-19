@@ -144,13 +144,9 @@ export const effectExplanations = {
     effectMethods: RemoveEnemyEffectEffectMethod
   ) {
     if (effectMethods.stage === "pre") {
-      return {
-        text: "Before the battle remove the opponents special effect",
-      };
+      return  "Before the battle remove the opponents special effect";
     }
-    return {
-      text: "After the battle remove the opponents special effect",
-    };
+    return "After the battle remove the opponents special effect";
   },
   attackerAdvantage: function (effectMethods: AttackerAdvantage) {
     let narration = "";
@@ -552,7 +548,7 @@ export const effectCostsDictionary = new Map<
           type: "additive",
           costPerValue: 3,
         },
-        numberOfCards: {
+        howManyCards: {
           type: "additive",
           costPerValue: 2,
         },
@@ -585,7 +581,7 @@ export const effectCostsDictionary = new Map<
           type: "additive",
           costPerValue: 3,
         },
-        numberOfCards: {
+        howManyCards: {
           type: "additive",
           costPerValue: 2,
         },

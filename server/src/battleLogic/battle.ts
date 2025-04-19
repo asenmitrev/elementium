@@ -366,21 +366,21 @@ function killCard(killCardArgs: KillCardArgs) {
 }
 
  
-let theBattle = battle(
-  {
-    attackerDeck: [
-      createUnitType(),createUnitType(),createUnitType()
-    ],
-    defenderDeck: [
-      createUnitType(),createUnitType(),createUnitType()
-    ],
-    attackerGraveyard: [],
-    defenderGraveyard: [],
-    attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
-    defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
-    defenderCastle: undefined,
-    land: "fire",
-  }
-)
+// let theBattle = battle(
+//   {
+//     attackerDeck: [
+//       createUnitType(),createUnitType(),createUnitType()
+//     ],
+//     defenderDeck: [
+//       createUnitType(),createUnitType(),createUnitType()
+//     ],
+//     attackerGraveyard: [],
+//     defenderGraveyard: [],
+//     attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
+//     defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
+//     defenderCastle: undefined,
+//     land: "fire",
+//   }
+// )
 
-console.log(JSON.stringify(theBattle))
+console.log(createUnitType().effect?.explanation,createUnitType().effect?.explanation,createUnitType().effect?.explanation, createUnitType().effect?.explanation)
