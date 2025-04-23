@@ -167,4 +167,61 @@ router.get(
   }
 );
 
+router.post("/refresh", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      res.status(401).json({ error: "Refresh token is required" });
+      return;
+    }
+
+    // Verify the refresh token
+    try {
+      const payload = tokenService.verifyToken(refreshToken);
+
+      // Check if token is a refresh token
+      if (payload.type !== "refresh") {
+        res.status(401).json({ error: "Invalid token type" });
+        return;
+      }
+
+      // Find the user
+      const user = await User.findById(payload.userId);
+      if (!user) {
+        res.status(401).json({ error: "User not found" });
+        return;
+      }
+
+      // Generate new tokens
+      const newAccessToken = tokenService.generateAccessToken({
+        id: user._id,
+        email: user.email,
+      });
+
+      const newRefreshToken = tokenService.generateRefreshToken({
+        id: user._id,
+        email: user.email,
+      });
+
+      // Return new tokens
+      res.status(200).json({
+        accessToken: {
+          token: newAccessToken,
+          expiresIn: 15 * 60 * 1000,
+        },
+        refreshToken: {
+          token: newRefreshToken,
+          expiresIn: 30 * 24 * 60 * 60 * 1000,
+        },
+      });
+    } catch (error) {
+      res.status(401).json({ error: "Invalid refresh token" });
+    }
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    res.status(500).json({ error: "An error occurred during token refresh" });
+  }
+});
+
 export default router;

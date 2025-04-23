@@ -18,6 +18,9 @@ async function refreshAccessToken(nextAuthJWTCookie: JWT): Promise<JWT> {
       body: JSON.stringify({
         refreshToken: nextAuthJWTCookie.data.tokens.refresh,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const accessToken: {
       accessToken: {
@@ -142,13 +145,13 @@ export const authOptions: AuthOptions = {
       }
 
       // The current access token is still valid
-      if (Date.now() < token.data.validity.valid_until * 1000) {
+      if (Date.now() < token.data.validity.valid_until) {
         console.debug("Access token is still valid");
         return token;
       }
 
       // The refresh token is still valid
-      if (Date.now() < token.data.validity.refresh_until * 1000) {
+      if (Date.now() < token.data.validity.refresh_until) {
         console.debug("Access token is being refreshed");
         return await refreshAccessToken(token);
       }

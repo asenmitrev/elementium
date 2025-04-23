@@ -1,15 +1,14 @@
-import { UnitRaceData, unitRaces } from "types/unitRaces";
 import { HeroType, Land, UnitType, UnitTypeSimple } from "../../../types";
 import { GeneralArguments } from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
+  BattleResult,
   EffectMethods,
   EffectNarration,
   KillCardArgs,
   RoundArgs,
 } from "../../../types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
-import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -88,13 +87,7 @@ export function battle(args: {
   defenderHeroTypeUserFacing: HeroType | undefined;
   defenderCastle: HeroType | undefined;
   land: Land;
-}): {
-  winner: "attacker" | "defender" | "draw";
-  remainingAttackerDeck: UnitTypeSimple[];
-  remainingDefenderDeck: UnitTypeSimple[];
-  HeroTypeUserFacingCastleNarrations: string[];
-  rounds: RoundNarration[];
-} {
+}): BattleResult {
   const {
     attackerDeck,
     defenderDeck,
@@ -142,8 +135,6 @@ export function battle(args: {
             +${defenderCastle.earth} for earth`);
   }
 
-
-
   while (attackerDeck.length > 0 && defenderDeck.length > 0) {
     const attacker = attackerDeck[0];
     const defender = defenderDeck[0];
@@ -163,70 +154,67 @@ export function battle(args: {
       break;
     }
   }
-  const attackerDeckSimple = simplifyDecks(attackerDeck)
-  const defenderDeckSimple = simplifyDecks(defenderDeck)
+  const attackerDeckSimple = simplifyDecks(attackerDeck);
+  const defenderDeckSimple = simplifyDecks(defenderDeck);
 
-  const simpleRounds:RoundNarration[] = rounds.map((round) => {
-    let winner:any = round.battle?.winner;
-    if(winner === undefined){
+  const simpleRounds: RoundNarration[] = rounds.map((round) => {
+    let winner: any = round.battle?.winner;
+    if (winner === undefined) {
       winner = null;
-    }    else{
+    } else {
       winner = {
         ...winner,
-        race:undefined,
-        evolutions:undefined
-      }
+        race: undefined,
+        evolutions: undefined,
+      };
     }
-    let loser:any = round.battle?.loser;
-    if(loser === undefined){
+    let loser: any = round.battle?.loser;
+    if (loser === undefined) {
       loser = null;
-    }
-    else{
+    } else {
       loser = {
-       ...loser,
-        race:undefined,
-        evolutions:undefined
-      }
+        ...loser,
+        race: undefined,
+        evolutions: undefined,
+      };
     }
-    let attacker:any = round.battle?.attacker;
-    if(attacker === undefined){
+    let attacker: any = round.battle?.attacker;
+    if (attacker === undefined) {
       attacker = null;
-    }
-    else{
+    } else {
       attacker = {
-       ...attacker,
-        race:undefined,
-        evolutions:undefined
-      }
+        ...attacker,
+        race: undefined,
+        evolutions: undefined,
+      };
     }
-    let defender:any = round.battle?.defender;
-    if(defender === undefined){
+    let defender: any = round.battle?.defender;
+    if (defender === undefined) {
       defender = null;
-    }
-    else{
+    } else {
       defender = {
-       ...defender,
-        race:undefined,
-        evolutions:undefined
-      }
+        ...defender,
+        race: undefined,
+        evolutions: undefined,
+      };
     }
 
     let battleText = round.battle?.text;
-    if(battleText === undefined){
+    if (battleText === undefined) {
       battleText = "";
     }
     return {
       ...round,
-      battle:{
+      battle: {
         ...round.battle,
-        winner:winner,
-        loser:loser,
-        attacker:attacker,
-        defender:defender,
-        text:battleText
-      }
-    }
-  })
+        winner: winner,
+        loser: loser,
+        attacker: attacker,
+        defender: defender,
+        text: battleText,
+      },
+    };
+  });
   if (attackerDeckSimple.length === 0 && defenderDeck.length === 0) {
     return {
       winner: "draw",
@@ -254,21 +242,19 @@ export function battle(args: {
   }
 }
 
-function simplifyDecks(
-  deck: UnitType[], 
-): UnitTypeSimple[] {
+function simplifyDecks(deck: UnitType[]): UnitTypeSimple[] {
   return deck.map((UnitTypeUserFacing: UnitType) => {
     return {
       name: UnitTypeUserFacing.name,
       image: UnitTypeUserFacing.image,
-      level: UnitTypeUserFacing.level, 
+      level: UnitTypeUserFacing.level,
       water: UnitTypeUserFacing.water,
       earth: UnitTypeUserFacing.earth,
       fire: UnitTypeUserFacing.fire,
       specialExplanation: UnitTypeUserFacing.specialExplanation,
-      effect: UnitTypeUserFacing.effect
-    } 
-  }) 
+      effect: UnitTypeUserFacing.effect,
+    };
+  });
 }
 function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
   const me: UnitType = args[perspective];
@@ -319,7 +305,7 @@ export function battleEvaluation(
       winner: attacker,
       loser: defender,
       attacker: attacker,
-      defender: defender
+      defender: defender,
     };
   } else if (defender[land] > attacker[land]) {
     return {
@@ -327,7 +313,7 @@ export function battleEvaluation(
       winner: defender,
       loser: attacker,
       attacker: attacker,
-      defender: defender
+      defender: defender,
     };
   } else {
     return {
@@ -335,7 +321,7 @@ export function battleEvaluation(
       text: `Both ${attacker.name} and ${defender.name} died in battle`,
       loser: null,
       attacker: attacker,
-      defender: defender
+      defender: defender,
     };
   }
 }
@@ -365,7 +351,6 @@ function killCard(killCardArgs: KillCardArgs) {
   }
 }
 
- 
 // let theBattle = battle(
 //   {
 //     attackerDeck: [
@@ -382,5 +367,3 @@ function killCard(killCardArgs: KillCardArgs) {
 //     land: "fire",
 //   }
 // )
-
-console.log(createUnitType().effect?.explanation,createUnitType().effect?.explanation,createUnitType().effect?.explanation, createUnitType().effect?.explanation)

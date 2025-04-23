@@ -6,6 +6,7 @@ import { Castle } from "../models/castle.model";
 import { ObjectId } from "mongodb";
 import { Unit } from "../models/unit.model";
 import { Unit as IUnit } from "types";
+import { predefinedNeutrals } from "../predefined/neutrals";
 
 const router: Router = express.Router();
 
@@ -105,6 +106,19 @@ router.post(
   }
 );
 
+router.get(
+  "/onboarding-neutrals",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const neutrals = predefinedNeutrals;
+      res.json(neutrals);
+    } catch (error) {
+      console.error("Error fetching neutrals:", error);
+      res.status(500).json({ error: "Error fetching neutrals" });
+    }
+  }
+);
 // Get specific hero
 router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
   try {

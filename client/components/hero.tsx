@@ -10,18 +10,21 @@ export default function HeroCard({
   link,
   showArmy = true,
   heroId,
+  noLink = false,
 }: {
   hero: HeroType;
   heroId?: string;
   units: UnitType[];
   link?: string;
+  noLink?: boolean;
   showArmy?: boolean;
 }) {
+  const LinkComponent = noLink ? "div" : Link;
   return (
     <Card className="w-full max-w-md overflow-hidden flex flex-col">
       <div className="relative group">
         {/* Image container with all content */}
-        <Link href={link ?? (heroId ? `/hero/${heroId}` : `/heroes`)}>
+        <LinkComponent href={link ?? (heroId ? `/hero/${heroId}` : `/heroes`)}>
           <div className="relative aspect-[4/3]">
             <Image
               src={`/images/units/${hero.image}`}
@@ -71,7 +74,7 @@ export default function HeroCard({
               </div>
             </div>
           </div>
-        </Link>
+        </LinkComponent>
       </div>
 
       {/* Soldiers List */}
@@ -115,8 +118,27 @@ function SoldierItem({
             +{moreUnitsCount}
           </div>
         )}
-        <div className="flex absolute bottom-1 left-1 items-center gap-1 text-xs text-white/60 group-hover:text-white/90 transition-colors">
-          <span>{unit.name}</span>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/60">
+          <div className="flex absolute top-1 left-1 items-center gap-1 text-xs text-white group-hover:text-white/90 transition-colors">
+            <span>{unit.name}</span>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-1 space-y-4">
+            {/* Stats grid */}
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center gap-2 text-white">
+                <Droplets className="w-4 h-4 text-blue-300" />
+                <span className="font-medium">{unit.water}</span>
+              </div>
+              <div className="flex items-center gap-2 text-white">
+                <Mountain className="w-4 h-4 text-green-300" />
+                <span className="font-medium">{unit.earth}</span>
+              </div>
+              <div className="flex items-center gap-2 text-white">
+                <Flame className="w-4 h-4 text-orange-300" />
+                <span className="font-medium">{unit.fire}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </button>
