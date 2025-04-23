@@ -45,7 +45,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
     res.status(201).json({
       accessToken: {
         token: accessToken,
-        expiresIn: 15 * 60 * 1000,
+        expiresIn: 14 * 60 * 1000,
       },
       refreshToken: {
         token: refreshToken,
@@ -217,7 +217,7 @@ router.post("/refresh", async (req: Request, res: Response): Promise<void> => {
       res.status(200).json({
         accessToken: {
           token: newAccessToken,
-          expiresIn: 15 * 60 * 1000,
+          expiresIn: 14 * 60 * 1000,
         },
         refreshToken: {
           token: newRefreshToken,
