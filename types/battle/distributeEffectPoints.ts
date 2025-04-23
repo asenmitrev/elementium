@@ -54,7 +54,7 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
 
     
     
-    while(remainingPoints >= smallestCost && remainingPoints !== 0 && args.length >0){
+    //while(remainingPoints >= smallestCost && remainingPoints !== 0 && args.length >0){
         // Iterate over the shuffled methodArgs
         // console.log(remainingPoints, smallestCost)
         args = args.filter((arg) => {
@@ -81,9 +81,13 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
             // Update the remaining points
             remainingPoints -= chosenValues * (methodArgs[arg] as AdditiveArg).costPerValue;
         }
-    }
+    //}
 
-
+    Object.keys(methodArgs).forEach((arg) => {
+        if(!effectValueDistribution[arg] && methodArgs[arg].type === 'additive'){
+            effectValueDistribution[arg] = 0;
+        } 
+    })
 
     // Return the effectValueDistribution object and the remaining points
     return {

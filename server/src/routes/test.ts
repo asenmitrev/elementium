@@ -10,7 +10,6 @@ router.get(
     "/test",
     authenticateToken,
     async (req: Request, res: Response) => {
-      console.log('test')
       res.status(200).json({message: 'test'})
     }
   );

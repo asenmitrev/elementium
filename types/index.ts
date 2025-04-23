@@ -49,6 +49,17 @@ export type UnitType = {
   race: UnitRaceData;
 };
 
+export type UnitTypeSimple = {
+  effect: EffectMethods | null;
+  earth: number;
+  fire: number;
+  water: number;
+  name: string;
+  specialExplanation: string;
+  level: number;
+  image: string;
+};
+
 export type Unit = {
   type: UnitType;
   holder: Castle | Hero;
