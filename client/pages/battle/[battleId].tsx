@@ -23,6 +23,14 @@ export const getServerSideProps: GetServerSideProps<BattlePageProps> = async (
       session?.user.accessToken || ""
     );
 
+    if (!battle) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
     return {
       props: {
         battle,
@@ -73,6 +81,10 @@ export default function BattlePage({ battle }: BattlePageProps) {
       </div>
     );
   };
+
+  if (!battle) {
+    return <div>Battle not found</div>;
+  }
 
   return (
     <ProtectedRoute>
@@ -129,7 +141,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
             </div>
           </div>
 
-          {battle.rounds.length > 0 && (
+          {battle?.rounds.length > 0 && (
             <div className="bg-white shadow rounded-lg p-6">
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
@@ -140,18 +152,18 @@ export default function BattlePage({ battle }: BattlePageProps) {
                     <div className="mt-3 text-sm border-l-4 pl-2 border-blue-400">
                       <div>
                         Pre-battle:{" "}
-                        {battle.rounds[currentRound].preAttacker.text}
+                        {battle?.rounds[currentRound]?.preAttacker?.text}
                       </div>
                       <div
                         className={`${
-                          battle.rounds[currentRound].preAttacker.effect ===
+                          battle.rounds[currentRound]?.preAttacker?.effect ===
                           "buff"
                             ? "text-green-600"
                             : "text-red-600"
                         }`}
                       >
-                        {battle.rounds[currentRound].preAttacker.stat &&
-                          `${battle.rounds[currentRound].preAttacker.stat}: ${battle.rounds[currentRound].preAttacker.value}`}
+                        {battle.rounds[currentRound]?.preAttacker?.stat &&
+                          `${battle.rounds[currentRound]?.preAttacker?.stat}: ${battle.rounds[currentRound]?.preAttacker?.value}`}
                       </div>
                     </div>
                   )}
@@ -160,18 +172,18 @@ export default function BattlePage({ battle }: BattlePageProps) {
                     <div className="mt-3 text-sm border-l-4 pl-2 border-purple-400">
                       <div>
                         Post-battle:{" "}
-                        {battle.rounds[currentRound].postAttacker.text}
+                        {battle.rounds[currentRound]?.postAttacker?.text}
                       </div>
                       <div
                         className={`${
-                          battle.rounds[currentRound].postAttacker.effect ===
+                          battle.rounds[currentRound]?.postAttacker?.effect ===
                           "buff"
                             ? "text-green-600"
                             : "text-red-600"
                         }`}
                       >
-                        {battle.rounds[currentRound].postAttacker.stat &&
-                          `${battle.rounds[currentRound].postAttacker.stat}: ${battle.rounds[currentRound].postAttacker.value}`}
+                        {battle.rounds[currentRound]?.postAttacker?.stat &&
+                          `${battle.rounds[currentRound]?.postAttacker?.stat}: ${battle.rounds[currentRound]?.postAttacker?.value}`}
                       </div>
                     </div>
                   )}
@@ -179,58 +191,59 @@ export default function BattlePage({ battle }: BattlePageProps) {
 
                 <div>
                   <h3 className="font-medium mb-3">Defender</h3>
-                  {renderUnit(battle.rounds[currentRound].battle?.defender)}
+                  {renderUnit(battle.rounds[currentRound]?.battle?.defender)}
 
-                  {battle.rounds[currentRound].preDefender && (
+                  {battle.rounds[currentRound]?.preDefender && (
                     <div className="mt-3 text-sm border-l-4 pl-2 border-blue-400">
                       <div>
                         Pre-battle:{" "}
-                        {battle.rounds[currentRound].preDefender.text}
+                        {battle?.rounds[currentRound]?.preDefender?.text}
                       </div>
                       <div
                         className={`${
-                          battle.rounds[currentRound].preDefender.effect ===
+                          battle.rounds[currentRound]?.preDefender?.effect ===
                           "buff"
                             ? "text-green-600"
                             : "text-red-600"
                         }`}
                       >
-                        {battle.rounds[currentRound].preDefender.stat &&
-                          `${battle.rounds[currentRound].preDefender.stat}: ${battle.rounds[currentRound].preDefender.value}`}
+                        {battle.rounds[currentRound]?.preDefender?.stat &&
+                          `${battle.rounds[currentRound]?.preDefender?.stat}: ${battle.rounds[currentRound]?.preDefender?.value}`}
                       </div>
                     </div>
                   )}
 
-                  {battle.rounds[currentRound].postDefender && (
+                  {battle.rounds[currentRound]?.postDefender && (
                     <div className="mt-3 text-sm border-l-4 pl-2 border-purple-400">
                       <div>
                         Post-battle:{" "}
-                        {battle.rounds[currentRound].postDefender.text}
+                        {battle.rounds[currentRound]?.postDefender?.text}
                       </div>
                       <div
                         className={`${
-                          battle.rounds[currentRound].postDefender.effect ===
+                          battle.rounds[currentRound]?.postDefender?.effect ===
                           "buff"
                             ? "text-green-600"
                             : "text-red-600"
                         }`}
                       >
-                        {battle.rounds[currentRound].postDefender.stat &&
-                          `${battle.rounds[currentRound].postDefender.stat}: ${battle.rounds[currentRound].postDefender.value}`}
+                        {battle.rounds[currentRound]?.postDefender?.stat &&
+                          `${battle.rounds[currentRound]?.postDefender?.stat}: ${battle.rounds[currentRound]?.postDefender?.value}`}
                       </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {battle.rounds[currentRound].battle && (
+              {battle.rounds[currentRound]?.battle && (
                 <div className="mt-4 p-3 bg-gray-100 rounded text-center">
                   <p className="font-medium">
-                    {battle.rounds[currentRound].battle.text}
+                    {battle?.rounds[currentRound]?.battle?.text}
                   </p>
-                  {battle.rounds[currentRound].battle.winner && (
+                  {battle?.rounds[currentRound]?.battle?.winner && (
                     <p className="mt-2 text-green-600">
-                      Winner: {battle.rounds[currentRound].battle.winner.name}
+                      Winner:{" "}
+                      {battle?.rounds[currentRound]?.battle?.winner?.name}
                     </p>
                   )}
                 </div>

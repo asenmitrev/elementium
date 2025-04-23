@@ -39,6 +39,9 @@ async function refreshAccessToken(nextAuthJWTCookie: JWT): Promise<JWT> {
     nextAuthJWTCookie.data.validity.valid_until =
       new Date().getTime() + accessToken.accessToken.expiresIn;
     nextAuthJWTCookie.data.tokens.access = accessToken.accessToken.token;
+    nextAuthJWTCookie.data.tokens.refresh = accessToken.refreshToken.token;
+    nextAuthJWTCookie.data.validity.refresh_until =
+      new Date().getTime() + accessToken.refreshToken.expiresIn;
 
     // Clone the object to ensure it has a new ref id
     return { ...nextAuthJWTCookie };
