@@ -53,7 +53,10 @@ router.get(
   async (req: Request, res: Response) => {
     const battle = await BattleResult.findOne({
       _id: req.params.battleId,
-      player: req.user!.userId,
+      $or: [
+        { playerAttacker: req.user!.userId },
+        { playerDefender: req.user!.userId },
+      ],
     });
     if (!battle) {
       res.status(404).json({ error: "Battle not found" });

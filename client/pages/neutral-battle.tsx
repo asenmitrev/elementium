@@ -60,7 +60,7 @@ export default function BattleNeutral({ initialNeutrals }: BattleNeutralProps) {
       );
       toast.success("Your battle has started!");
       console.log(battle);
-      // router.push("/battle");
+      router.push(`/battle/${battle._id}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(

@@ -68,6 +68,17 @@ export async function requireAuth(context: GetServerSidePropsContext) {
         permanent: false,
       },
     };
+  } else if (
+    authCheck.props.isAuthenticated &&
+    authCheck.props.onboardingStep === 2 &&
+    !context.resolvedUrl.includes("/neutral-battle")
+  ) {
+    return {
+      redirect: {
+        destination: "/neutral-battle",
+        permanent: false,
+      },
+    };
   }
 
   return authCheck;

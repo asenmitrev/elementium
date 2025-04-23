@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { authenticateToken } from "../middleware/auth";
 import { Hero } from "../models/hero.model";
 import { Castle } from "../models/castle.model";
+import { BattleResult } from "../models/battleResult.model";
 
 dotenv.config();
 
@@ -148,6 +149,12 @@ router.get(
         player: req.user!.userId,
         alive: true,
       });
+      const battleCount = await BattleResult.countDocuments({
+        $or: [
+          { playerAttacker: req.user!.userId },
+          { playerDefender: req.user!.userId },
+        ],
+      });
 
       let onboardingStep: number = -1;
 
@@ -155,6 +162,8 @@ router.get(
         onboardingStep = 0;
       } else if (heroCount === 0) {
         onboardingStep = 1;
+      } else if (battleCount === 0) {
+        onboardingStep = 2;
       }
       res.json({
         onboardingStep,
