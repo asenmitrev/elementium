@@ -8,7 +8,14 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { UnitTypeSimple } from "types";
 import SoldierCard from "@/components/soldier";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Flame,
+  Droplets,
+  Mountain,
+} from "lucide-react";
 
 interface BattlePageProps {
   battle: BattleResult;
@@ -64,8 +71,6 @@ export default function BattlePage({ battle }: BattlePageProps) {
     if (phase === "starting") {
       setPhase("pre");
     } else if (phase === "pre") {
-      setPhase("battle");
-    } else if (phase === "battle") {
       setPhase("post");
     } else if (phase === "post") {
       setPhase("complete");
@@ -159,12 +164,68 @@ export default function BattlePage({ battle }: BattlePageProps) {
     }
   };
 
+  // Get the current phase data for decks and graveyards
+  const getCurrentPhaseDecks = () => {
+    const round = battle.rounds[currentRound];
+    if (!round)
+      return {
+        attackerDeck: [],
+        defenderDeck: [],
+        attackerGraveyard: [],
+        defenderGraveyard: [],
+        land: null,
+      };
+
+    switch (phase) {
+      case "starting":
+        return {
+          attackerDeck: round.startingRound?.attackerDeck || [],
+          defenderDeck: round.startingRound?.defenderDeck || [],
+          attackerGraveyard: round.startingRound?.attackerGraveyard || [],
+          defenderGraveyard: round.startingRound?.defenderGraveyard || [],
+          land: round.startingRound?.land,
+        };
+      case "pre":
+        return {
+          attackerDeck: round.preRound?.attackerDeck || [],
+          defenderDeck: round.preRound?.defenderDeck || [],
+          attackerGraveyard: round.preRound?.attackerGraveyard || [],
+          defenderGraveyard: round.preRound?.defenderGraveyard || [],
+          land: round.preRound?.land,
+        };
+      case "post":
+      case "complete":
+        return {
+          attackerDeck: round.postRound?.attackerDeck || [],
+          defenderDeck: round.postRound?.defenderDeck || [],
+          attackerGraveyard: round.postRound?.attackerGraveyard || [],
+          defenderGraveyard: round.postRound?.defenderGraveyard || [],
+          land: round.postRound?.land,
+        };
+      default:
+        return {
+          attackerDeck: [],
+          defenderDeck: [],
+          attackerGraveyard: [],
+          defenderGraveyard: [],
+          land: null,
+        };
+    }
+  };
+
   if (!battle) {
     return <div>Battle not found</div>;
   }
 
   const { attacker, defender, prevAttacker, prevDefender } =
     getCurrentPhaseUnits();
+  const {
+    attackerDeck,
+    defenderDeck,
+    attackerGraveyard,
+    defenderGraveyard,
+    land,
+  } = getCurrentPhaseDecks();
   const currentRoundData = battle.rounds[currentRound];
 
   const isAttackerWinner = battle.winner === "attacker";
@@ -206,6 +267,27 @@ export default function BattlePage({ battle }: BattlePageProps) {
         >
           <h2 className="text-2xl font-bold mb-4">Battle Summary</h2>
 
+          {/* Terrain / Land */}
+          {land && (
+            <div className="mt-6 mb-4 bg-black/20 rounded-lg p-3">
+              <h3 className="text-lg font-semibold mb-2">Battlefield</h3>
+              <div className="flex items-center gap-2">
+                {land.toLowerCase().includes("fire") && (
+                  <Flame className="w-5 h-5 text-orange-400" />
+                )}
+                {land.toLowerCase().includes("water") && (
+                  <Droplets className="w-5 h-5 text-blue-400" />
+                )}
+                {land.toLowerCase().includes("earth") && (
+                  <Mountain className="w-5 h-5 text-green-400" />
+                )}
+                <div className="text-gray-200">{land}</div>
+                <div className="ml-auto text-xs text-gray-400 italic">
+                  Units with matching element receive a battlefield advantage
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex justify-between">
             <div className={isDefenderWinner ? "opacity-50" : ""}>
               <h3
@@ -342,6 +424,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
                         unit={attacker}
                         previousUnit={prevAttacker}
                         showChanges={phase !== "starting"}
+                        battlefieldElement={land}
                       />
                       {attacker.specialExplanation && (
                         <div className="mt-2 text-sm italic text-gray-300">
@@ -426,6 +509,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
                         unit={defender}
                         previousUnit={prevDefender}
                         showChanges={phase !== "starting"}
+                        battlefieldElement={land}
                       />
                       {defender.specialExplanation && (
                         <div className="mt-2 text-sm italic text-gray-300">
@@ -486,6 +570,133 @@ export default function BattlePage({ battle }: BattlePageProps) {
                   )}
               </div>
             </div>
+
+            {/* Decks and Graveyards */}
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Attacker Deck and Graveyard */}
+              <div>
+                <div className="mb-4">
+                  <h3
+                    className={`text-lg font-semibold mb-2 border-b border-gray-700 pb-1 ${
+                      isAttackerWinner ? "text-red-400" : ""
+                    }`}
+                  >
+                    Attacker's Deck ({attackerDeck.length})
+                  </h3>
+                  {attackerDeck.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {attackerDeck.map((unit, index) => (
+                        <div key={index} className="bg-black/20 p-2 rounded">
+                          <SoldierCard unit={unit} battlefieldElement={land} />
+                        </div>
+                      ))}
+                      {attackerDeck.length > 4 && (
+                        <div className="col-span-2 text-center text-sm text-gray-400">
+                          + {attackerDeck.length - 4} more units
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 italic">
+                      No units in deck
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h3
+                    className={`text-lg font-semibold mb-2 border-b border-gray-700 pb-1 ${
+                      isAttackerWinner ? "text-red-400" : ""
+                    }`}
+                  >
+                    Attacker's Graveyard ({attackerGraveyard.length})
+                  </h3>
+                  {attackerGraveyard.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {attackerGraveyard.map((unit, index) => (
+                        <div
+                          key={index}
+                          className="bg-black/20 p-2 rounded opacity-70"
+                        >
+                          <SoldierCard unit={unit} battlefieldElement={land} />
+                        </div>
+                      ))}
+                      {attackerGraveyard.length > 4 && (
+                        <div className="col-span-2 text-center text-sm text-gray-400">
+                          + {attackerGraveyard.length - 4} more fallen units
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 italic">
+                      No units in graveyard
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Defender Deck and Graveyard */}
+              <div>
+                <div className="mb-4">
+                  <h3
+                    className={`text-lg font-semibold mb-2 border-b border-gray-700 pb-1 ${
+                      isDefenderWinner ? "text-emerald-400" : ""
+                    }`}
+                  >
+                    Defender's Deck ({defenderDeck.length})
+                  </h3>
+                  {defenderDeck.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {defenderDeck.slice(0, 4).map((unit, index) => (
+                        <div key={index} className="bg-black/20 p-2 rounded">
+                          <SoldierCard unit={unit} battlefieldElement={land} />
+                        </div>
+                      ))}
+                      {defenderDeck.length > 4 && (
+                        <div className="col-span-2 text-center text-sm text-gray-400">
+                          + {defenderDeck.length - 4} more units
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 italic">
+                      No units in deck
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h3
+                    className={`text-lg font-semibold mb-2 border-b border-gray-700 pb-1 ${
+                      isDefenderWinner ? "text-emerald-400" : ""
+                    }`}
+                  >
+                    Defender's Graveyard ({defenderGraveyard.length})
+                  </h3>
+                  {defenderGraveyard.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {defenderGraveyard.slice(0, 4).map((unit, index) => (
+                        <div
+                          key={index}
+                          className="bg-black/20 p-2 rounded opacity-70"
+                        >
+                          <SoldierCard unit={unit} battlefieldElement={land} />
+                        </div>
+                      ))}
+                      {defenderGraveyard.length > 4 && (
+                        <div className="col-span-2 text-center text-sm text-gray-400">
+                          + {defenderGraveyard.length - 4} more fallen units
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-500 italic">
+                      No units in graveyard
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -493,17 +704,24 @@ export default function BattlePage({ battle }: BattlePageProps) {
         {(phase === "battle" || phase === "post" || phase === "complete") &&
           currentRoundData?.battle && (
             <div className="text-center mb-8">
-              <p className="text-xl mb-2">{currentRoundData.battle.text}</p>
               {currentRoundData.battle.winner && (
-                <p
-                  className={`text-2xl font-bold ${
-                    currentRoundData.battle.winner.name === attacker?.name
-                      ? "text-red-400"
-                      : "text-emerald-400"
-                  }`}
-                >
-                  Winner: {currentRoundData.battle.winner.name}
-                </p>
+                <>
+                  <p className="text-xl mb-2">
+                    {currentRoundData.battle.winner.name} defeated{" "}
+                    {currentRoundData.battle.winner.name === attacker?.name
+                      ? defender?.name
+                      : attacker?.name}
+                  </p>
+                  <p
+                    className={`text-2xl font-bold ${
+                      currentRoundData.battle.winner.name === attacker?.name
+                        ? "text-red-400"
+                        : "text-emerald-400"
+                    }`}
+                  >
+                    Winner: {currentRoundData.battle.winner.name}
+                  </p>
+                </>
               )}
             </div>
           )}
@@ -535,7 +753,11 @@ export default function BattlePage({ battle }: BattlePageProps) {
             {battle.remainingAttackerDeck.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {battle.remainingAttackerDeck.map((unit, index) => (
-                  <SoldierCard key={index} unit={unit} />
+                  <SoldierCard
+                    key={index}
+                    unit={unit}
+                    battlefieldElement={land}
+                  />
                 ))}
               </div>
             ) : (
@@ -554,7 +776,11 @@ export default function BattlePage({ battle }: BattlePageProps) {
             {battle.remainingDefenderDeck.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {battle.remainingDefenderDeck.map((unit, index) => (
-                  <SoldierCard key={index} unit={unit} />
+                  <SoldierCard
+                    key={index}
+                    unit={unit}
+                    battlefieldElement={land}
+                  />
                 ))}
               </div>
             ) : (

@@ -8,10 +8,12 @@ export default function SoldierCard({
   unit,
   previousUnit,
   showChanges = false,
+  battlefieldElement = null,
 }: {
   unit: UnitType | UnitTypeSimple;
   previousUnit?: UnitType | UnitTypeSimple | null;
   showChanges?: boolean;
+  battlefieldElement?: string | null;
 }) {
   // Helper function to determine stat change styling and animation
   const getStatDisplay = (
@@ -87,11 +89,22 @@ export default function SoldierCard({
                     unit.earth !== previousUnit.earth
                       ? "animate-pulse"
                       : ""
+                  } ${
+                    battlefieldElement?.toLowerCase().includes("earth")
+                      ? "bg-green-900/50 p-1 rounded animate-pulse"
+                      : ""
                   }`}
                 >
-                  <Mountain className="w-4 h-4 text-green-300" />
+                  <Mountain
+                    className={`w-4 h-4 ${
+                      battlefieldElement?.toLowerCase().includes("earth")
+                        ? "text-green-300 animate-pulse"
+                        : "text-green-300"
+                    }`}
+                  />
                   {getStatDisplay("earth", unit.earth, previousUnit?.earth)}
                 </div>
+
                 <div
                   className={`flex items-center gap-2 text-white ${
                     showChanges &&
@@ -99,11 +112,22 @@ export default function SoldierCard({
                     unit.fire !== previousUnit.fire
                       ? "animate-pulse"
                       : ""
+                  } ${
+                    battlefieldElement?.toLowerCase().includes("fire")
+                      ? "bg-orange-900/50 p-1 rounded animate-pulse"
+                      : ""
                   }`}
                 >
-                  <Flame className="w-4 h-4 text-orange-300" />
+                  <Flame
+                    className={`w-4 h-4 ${
+                      battlefieldElement?.toLowerCase().includes("fire")
+                        ? "text-orange-300 animate-pulse"
+                        : "text-orange-300"
+                    }`}
+                  />
                   {getStatDisplay("fire", unit.fire, previousUnit?.fire)}
                 </div>
+
                 <div
                   className={`flex items-center gap-2 text-white ${
                     showChanges &&
@@ -111,9 +135,23 @@ export default function SoldierCard({
                     unit.water !== previousUnit.water
                       ? "animate-pulse"
                       : ""
+                  } ${
+                    battlefieldElement?.toLowerCase().includes("water") &&
+                    unit.water > unit.earth &&
+                    unit.water > unit.fire
+                      ? "bg-blue-900/50 p-1 rounded animate-pulse"
+                      : ""
                   }`}
                 >
-                  <Droplets className="w-4 h-4 text-blue-300" />
+                  <Droplets
+                    className={`w-4 h-4 ${
+                      battlefieldElement?.toLowerCase().includes("water") &&
+                      unit.water > unit.earth &&
+                      unit.water > unit.fire
+                        ? "text-blue-300 animate-pulse"
+                        : "text-blue-300"
+                    }`}
+                  />
                   {getStatDisplay("water", unit.water, previousUnit?.water)}
                 </div>
               </div>
