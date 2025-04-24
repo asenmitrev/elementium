@@ -25,11 +25,23 @@ function Round(args: RoundArgs): RoundNarration {
     land,
   } = args;
   const roundNarration: RoundNarration = {
+    startingRound: {
+      attacker: JSON.parse(JSON.stringify(attacker)),
+      defender: JSON.parse(JSON.stringify(defender)), 
+    },
+    preRound: {
+      attacker: JSON.parse(JSON.stringify(attacker)),
+      defender: JSON.parse(JSON.stringify(defender)),
+    },
     preAttacker: undefined,
     preDefender: undefined,
     battle: undefined,
     postAttacker: undefined,
     postDefender: undefined,
+    postRound: {
+      attacker: JSON.parse(JSON.stringify(attacker)),
+      defender: JSON.parse(JSON.stringify(defender)), 
+    }
   };
   if (attacker.effect && attacker.effect.stage === "pre") {
     roundNarration.preAttacker = effectExecutor(args, "attacker");
@@ -37,6 +49,10 @@ function Round(args: RoundArgs): RoundNarration {
   if (defender.effect && defender.effect.stage === "pre") {
     roundNarration.preDefender = effectExecutor(args, "defender");
   }
+
+  roundNarration.preRound.attacker = JSON.parse(JSON.stringify(attacker));
+  roundNarration.preRound.defender = JSON.parse(JSON.stringify(defender));
+
   const result = battleEvaluation({
     attacker,
     defender,
@@ -77,6 +93,8 @@ function Round(args: RoundArgs): RoundNarration {
   if (defender.effect && defender.effect.stage === "after") {
     roundNarration.postDefender = effectExecutor(args, "defender");
   }
+  roundNarration.postRound.attacker = JSON.parse(JSON.stringify(attacker));
+  roundNarration.postRound.defender = JSON.parse(JSON.stringify(defender));
 
   return roundNarration;
 }
@@ -372,4 +390,4 @@ let theBattle = battle(
   }
 )
 
-console.log(theBattle)
+console.log(theBattle.rounds)
