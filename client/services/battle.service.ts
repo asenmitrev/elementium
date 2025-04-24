@@ -21,4 +21,22 @@ export class BattleService {
     });
     return response.data;
   }
+
+  static async startBattle(
+    attackerHeroId: string,
+    defenderHeroId: string,
+    cookie: string
+  ): Promise<any> {
+    const response = await axios.post(
+      `${API_URL}/battle`,
+      {
+        attackerHeroId,
+        defenderHeroId,
+      },
+      {
+        headers: { Authorization: `Bearer ${cookie}` },
+      }
+    );
+    return response.data;
+  }
 }

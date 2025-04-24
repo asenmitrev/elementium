@@ -32,7 +32,6 @@ function Round(args: RoundArgs): RoundNarration {
     postDefender: undefined,
   };
   if (attacker.effect && attacker.effect.stage === "pre") {
-   
     roundNarration.preAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "pre") {
@@ -76,7 +75,7 @@ function Round(args: RoundArgs): RoundNarration {
     roundNarration.postAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "after") {
-    roundNarration.postDefender = effectExecutor(args, "defender",);
+    roundNarration.postDefender = effectExecutor(args, "defender");
   }
 
   return roundNarration;

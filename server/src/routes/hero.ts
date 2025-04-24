@@ -33,6 +33,29 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
   }
 });
 
+// Get all heroes for a user
+router.get("/map", authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const heroes = await Hero.aggregate([
+      {
+        $match: { player: { $ne: new ObjectId(req.user!.userId) } },
+      },
+      {
+        $lookup: {
+          from: "units",
+          localField: "_id",
+          foreignField: "holder",
+          as: "units",
+        },
+      },
+    ]).exec();
+    res.json(heroes);
+  } catch (error) {
+    console.error("Error fetching heroes:", error);
+    res.status(500).json({ error: "Error fetching heroes" });
+  }
+});
+
 router.get(
   "/predefined-units",
   authenticateToken,

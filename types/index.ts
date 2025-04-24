@@ -64,7 +64,7 @@ export type Unit = {
   type: UnitType;
   holder: Castle | Hero;
   experienceTillLevelUp: number;
-  player: string;
+  player?: string;
 };
 
 export type HeroType = {
