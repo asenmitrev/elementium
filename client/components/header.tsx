@@ -31,7 +31,7 @@ const Header = () => {
   const menuItems = session.data?.user
     ? [
         { name: "Map", icon: MapPin, href: "/map" },
-        { name: "Castles", icon: Castle, href: "/castles" },
+        // { name: "Castles", icon: Castle, href: "/castles" },
         { name: "Heroes", icon: Users, href: "/heroes" },
         {
           name: "Sign out",
