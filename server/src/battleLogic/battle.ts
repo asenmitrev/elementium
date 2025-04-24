@@ -1,6 +1,6 @@
 import { UnitRaceData, unitRaces } from "types/unitRaces";
 import { HeroType, Land, UnitType, UnitTypeSimple } from "../../../types";
-import { GeneralArguments } from "../../../types/battle/effects";
+import { effectExplanations, GeneralArguments } from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
   EffectMethods,
@@ -10,6 +10,7 @@ import {
 } from "../../../types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
 import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
+import { effectMethods } from "../../../types/battle/effects";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -28,8 +29,8 @@ function Round(args: RoundArgs): RoundNarration {
     postAttacker: undefined,
     postDefender: undefined,
   };
-
   if (attacker.effect && attacker.effect.stage === "pre") {
+   
     roundNarration.preAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "pre") {
@@ -73,7 +74,7 @@ function Round(args: RoundArgs): RoundNarration {
     roundNarration.postAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "after") {
-    roundNarration.postDefender = effectExecutor(args, "defender");
+    roundNarration.postDefender = effectExecutor(args, "defender",);
   }
 
   return roundNarration;
@@ -286,13 +287,13 @@ function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
 
   if (methodFunk) {
     // Import or define effectMethods before using it
-    const effectMethods: Record<
-      string,
-      (
-        methods: EffectMethods,
-        generalArguments: GeneralArguments
-      ) => EffectNarration
-    > = {}; // Define your effect methods here
+    // const effectMethods: Record<
+    //   string,
+    //   (
+    //     methods: EffectMethods,
+    //     generalArguments: GeneralArguments
+    //   ) => EffectNarration
+    // > = {}
     const generalArguments: GeneralArguments = {
       me,
       perspective,
@@ -302,6 +303,7 @@ function effectExecutor(args: RoundArgs, perspective: "attacker" | "defender") {
       enemyDeck,
     };
     if (methodFunk in effectMethods && me.effect) {
+      // @ts-ignore
       return effectMethods[methodFunk](me.effect, generalArguments);
     }
     return undefined;
@@ -366,21 +368,30 @@ function killCard(killCardArgs: KillCardArgs) {
 }
 
  
-// let theBattle = battle(
-//   {
-//     attackerDeck: [
-//       createUnitType(),createUnitType(),createUnitType()
-//     ],
-//     defenderDeck: [
-//       createUnitType(),createUnitType(),createUnitType()
-//     ],
-//     attackerGraveyard: [],
-//     defenderGraveyard: [],
-//     attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
-//     defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
-//     defenderCastle: undefined,
-//     land: "fire",
-//   }
-// )
+let theBattle = battle(
+  {
+    attackerDeck: [
+      createUnitType(),createUnitType(),createUnitType()
+    ],
+    defenderDeck: [
+      createUnitType(),createUnitType(),createUnitType()
+    ],
+    attackerGraveyard: [],
+    defenderGraveyard: [],
+    attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
+    defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
+    defenderCastle: undefined,
+    land: "fire",
+  }
+)
 
-console.log(createUnitType().effect?.explanation,createUnitType().effect?.explanation,createUnitType().effect?.explanation, createUnitType().effect?.explanation)
+theBattle.rounds.forEach((round) => {
+  console.log(round.preAttacker?.text)
+  console.log(round.preDefender?.text)
+  console.log(round.battle?.text)
+  console.log(round.postAttacker?.text)
+  console.log(round.postDefender?.text)
+})
+
+
+// console.log(createUnitType().effect?.explanation,createUnitType().effect?.explanation,createUnitType().effect?.explanation, createUnitType().effect?.explanation)
