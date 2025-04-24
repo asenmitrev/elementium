@@ -4,6 +4,7 @@ import { Hero } from "../models/hero.model";
 import { predefinedNeutrals } from "../predefined/neutrals";
 import { authenticateToken } from "../middleware/auth";
 import { BattleResult } from "../models/battleResult.model";
+import { Unit } from "../models/unit.model";
 const router: Router = express.Router();
 
 router.post(
@@ -15,6 +16,8 @@ router.post(
       res.status(404).json({ error: "Hero not found" });
       return;
     }
+    const units = await Unit.find({ holder: hero!._id });
+    hero.units = units;
     const existingBattles = await BattleResult.find({
       $or: [
         { playerAttacker: req.user!.userId },

@@ -6,6 +6,7 @@ import { BattleService } from "@/services/battle.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { UnitTypeSimple } from "types";
+import SoldierCard from "@/components/soldier";
 
 interface BattlePageProps {
   battle: BattleResult;
@@ -68,16 +69,13 @@ export default function BattlePage({ battle }: BattlePageProps) {
       return <div className="bg-gray-200 rounded p-4 text-center">No unit</div>;
 
     return (
-      <div className="border rounded-lg p-4 bg-white shadow">
-        <div className="font-bold text-lg">{unit.name}</div>
+      <div className="border rounded-lg p-4 shadow">
+        <SoldierCard unit={unit} />
         <div className="flex justify-between mt-2">
-          <span className="text-red-500">Fire: {unit.fire}</span>
-          <span className="text-blue-500">Water: {unit.water}</span>
-          <span className="text-green-500">Earth: {unit.earth}</span>
+          {unit.specialExplanation && (
+            <div className="mt-2 text-sm italic">{unit.specialExplanation}</div>
+          )}
         </div>
-        {unit.specialExplanation && (
-          <div className="mt-2 text-sm italic">{unit.specialExplanation}</div>
-        )}
       </div>
     );
   };
@@ -99,7 +97,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
         </h1>
 
         {/* Battle Summary */}
-        <div className="mb-8 bg-gray-100 p-4 rounded-lg">
+        <div className="mb-8 border border-white/80 p-4 rounded-lg">
           <h2 className="text-xl font-semibold mb-4">Battle Summary</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -127,14 +125,14 @@ export default function BattlePage({ battle }: BattlePageProps) {
               <button
                 onClick={handlePrevRound}
                 disabled={currentRound === 0}
-                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                className="px-3 py-1 border border-white/80 rounded disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 onClick={handleNextRound}
                 disabled={currentRound === battle.rounds.length - 1}
-                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                className="px-3 py-1 border border-white/80 rounded disabled:opacity-50"
               >
                 Next
               </button>
@@ -142,7 +140,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
           </div>
 
           {battle?.rounds.length > 0 && (
-            <div className="bg-white shadow rounded-lg p-6">
+            <div className="border border-white/80  shadow rounded-lg p-6">
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
                   <h3 className="font-medium mb-3">Attacker</h3>
@@ -236,7 +234,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
               </div>
 
               {battle.rounds[currentRound]?.battle && (
-                <div className="mt-4 p-3 bg-gray-100 rounded text-center">
+                <div className="mt-4 p-3 rounded text-center">
                   <p className="font-medium">
                     {battle?.rounds[currentRound]?.battle?.text}
                   </p>
