@@ -28,6 +28,7 @@ router.post(
       res.status(400).json({ error: "You already have a battle" });
       return;
     }
+
     const battleResult = await battle({
       defenderDeck: hero.units?.map((unit) => unit.type) ?? [],
       attackerDeck: predefinedNeutrals.units.map((unit) => unit),

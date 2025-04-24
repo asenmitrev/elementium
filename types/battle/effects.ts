@@ -144,7 +144,7 @@ export const effectExplanations = {
     effectMethods: RemoveEnemyEffectEffectMethod
   ) {
     if (effectMethods.stage === "pre") {
-      return  "Before the battle remove the opponents special effect";
+      return "Before the battle remove the opponents special effect";
     }
     return "After the battle remove the opponents special effect";
   },
@@ -765,8 +765,6 @@ export const effectGeneration = function (
     remainingPoints,
     chosenEffect.methodArgs
   );
-
-  
 
   const combinedMethodArgs = {
     ...selectedOptionsRecord,

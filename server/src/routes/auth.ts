@@ -7,7 +7,7 @@ import { authenticateToken } from "../middleware/auth";
 import { Hero } from "../models/hero.model";
 import { Castle } from "../models/castle.model";
 import { BattleResult } from "../models/battleResult.model";
-
+import { ObjectId } from "mongodb";
 dotenv.config();
 
 const router: Router = express.Router();
@@ -146,8 +146,7 @@ router.get(
         owner: req.user!.userId,
       });
       const heroCount = await Hero.countDocuments({
-        player: req.user!.userId,
-        alive: true,
+        player: new ObjectId(req.user!.userId),
       });
       const battleCount = await BattleResult.countDocuments({
         $or: [
