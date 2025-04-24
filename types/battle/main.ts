@@ -1,4 +1,4 @@
-import {UnitTypeSimple } from "..";
+import {Land, UnitTypeSimple } from "..";
 import { EffectNarration } from "./effectUtils";
 
 export type BattleEvaluation = {
@@ -12,12 +12,22 @@ export type RoundNarration = {
   startingRound:{
     attacker: UnitTypeSimple;
     defender: UnitTypeSimple;
+    attackerDeck: UnitTypeSimple[];
+    defenderDeck: UnitTypeSimple[];
+    attackerGraveyard: UnitTypeSimple[];
+    defenderGraveyard: UnitTypeSimple[];
+    land: Land;
   },
   preAttacker: EffectNarration | undefined;
   preDefender: EffectNarration | undefined;
   preRound: {
     attacker: UnitTypeSimple;
     defender: UnitTypeSimple;
+    attackerDeck: UnitTypeSimple[];
+    defenderDeck: UnitTypeSimple[];
+    attackerGraveyard: UnitTypeSimple[];
+    defenderGraveyard: UnitTypeSimple[];
+    land: Land;
   }
   battle: BattleEvaluation | undefined;
   postAttacker: EffectNarration | undefined;
@@ -25,5 +35,10 @@ export type RoundNarration = {
   postRound: {
     attacker: UnitTypeSimple;
     defender: UnitTypeSimple;
+    attackerDeck: UnitTypeSimple[];
+    defenderDeck: UnitTypeSimple[];
+    attackerGraveyard: UnitTypeSimple[];
+    defenderGraveyard: UnitTypeSimple[];
+    land: Land;
   }
 };

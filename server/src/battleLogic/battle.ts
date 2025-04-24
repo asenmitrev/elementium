@@ -28,11 +28,21 @@ function Round(args: RoundArgs): RoundNarration {
     startingRound: {
       attacker: JSON.parse(JSON.stringify(attacker)),
       defender: JSON.parse(JSON.stringify(defender)), 
+      attackerDeck: JSON.parse(JSON.stringify(attackerDeck)),
+      defenderDeck: JSON.parse(JSON.stringify(defenderDeck)),
+      attackerGraveyard: JSON.parse(JSON.stringify(attackerGraveyard)),
+      defenderGraveyard: JSON.parse(JSON.stringify(defenderGraveyard)),
+      land: JSON.parse(JSON.stringify(land)),
     },
-    preRound: {
-      attacker: JSON.parse(JSON.stringify(attacker)),
-      defender: JSON.parse(JSON.stringify(defender)),
-    },
+      preRound: {
+        attacker: JSON.parse(JSON.stringify(attacker)),
+        defender: JSON.parse(JSON.stringify(defender)), 
+        attackerDeck: JSON.parse(JSON.stringify(attackerDeck)),
+        defenderDeck: JSON.parse(JSON.stringify(defenderDeck)),
+        attackerGraveyard: JSON.parse(JSON.stringify(attackerGraveyard)),
+        defenderGraveyard: JSON.parse(JSON.stringify(defenderGraveyard)),
+        land: JSON.parse(JSON.stringify(land)),
+      },
     preAttacker: undefined,
     preDefender: undefined,
     battle: undefined,
@@ -41,6 +51,11 @@ function Round(args: RoundArgs): RoundNarration {
     postRound: {
       attacker: JSON.parse(JSON.stringify(attacker)),
       defender: JSON.parse(JSON.stringify(defender)), 
+      attackerDeck: JSON.parse(JSON.stringify(attackerDeck)),
+      defenderDeck: JSON.parse(JSON.stringify(defenderDeck)),
+      attackerGraveyard: JSON.parse(JSON.stringify(attackerGraveyard)),
+      defenderGraveyard: JSON.parse(JSON.stringify(defenderGraveyard)),
+      land: JSON.parse(JSON.stringify(land)),
     }
   };
   if (attacker.effect && attacker.effect.stage === "pre") {
@@ -52,6 +67,13 @@ function Round(args: RoundArgs): RoundNarration {
 
   roundNarration.preRound.attacker = JSON.parse(JSON.stringify(attacker));
   roundNarration.preRound.defender = JSON.parse(JSON.stringify(defender));
+  roundNarration.preRound.attacker = JSON.parse(JSON.stringify(attacker));
+  roundNarration.preRound.defender = JSON.parse(JSON.stringify(defender));
+  roundNarration.preRound.attackerDeck = JSON.parse(JSON.stringify(attackerDeck));
+  roundNarration.preRound.defenderDeck = JSON.parse(JSON.stringify(defenderDeck));
+  roundNarration.preRound.attackerGraveyard = JSON.parse(JSON.stringify(attackerGraveyard));
+  roundNarration.preRound.defenderGraveyard = JSON.parse(JSON.stringify(defenderGraveyard));
+  roundNarration.preRound.land = JSON.parse(JSON.stringify(land));
 
   const result = battleEvaluation({
     attacker,
@@ -95,6 +117,11 @@ function Round(args: RoundArgs): RoundNarration {
   }
   roundNarration.postRound.attacker = JSON.parse(JSON.stringify(attacker));
   roundNarration.postRound.defender = JSON.parse(JSON.stringify(defender));
+  roundNarration.postRound.attackerDeck = JSON.parse(JSON.stringify(attackerDeck));
+  roundNarration.postRound.defenderDeck = JSON.parse(JSON.stringify(defenderDeck));
+  roundNarration.postRound.attackerGraveyard = JSON.parse(JSON.stringify(attackerGraveyard));
+  roundNarration.postRound.defenderGraveyard = JSON.parse(JSON.stringify(defenderGraveyard));
+  roundNarration.postRound.land = JSON.parse(JSON.stringify(land));
 
   return roundNarration;
 }
