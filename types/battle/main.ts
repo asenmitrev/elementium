@@ -9,9 +9,21 @@ export type BattleEvaluation = {
   text: string;
 };
 export type RoundNarration = {
+  startingRound:{
+    attacker: UnitTypeSimple;
+    defender: UnitTypeSimple;
+  },
   preAttacker: EffectNarration | undefined;
   preDefender: EffectNarration | undefined;
+  preRound: {
+    attacker: UnitTypeSimple;
+    defender: UnitTypeSimple;
+  }
   battle: BattleEvaluation | undefined;
   postAttacker: EffectNarration | undefined;
   postDefender: EffectNarration | undefined;
+  postRound: {
+    attacker: UnitTypeSimple;
+    defender: UnitTypeSimple;
+  }
 };

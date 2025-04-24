@@ -71,7 +71,16 @@ describe('Create Unit Type tests', () => {
             const unit = createUnitType();
             if (unit.effect?.explanation) {
                 assert(!unit.effect?.explanation.includes('undefined'), 
-                    `Effect explanation contains 'undefined': ${unit.effect.explanation}`);
+                    `Effect explanation contains 'undefined': ${unit.effect.explanation} ${i}`);
+            }
+        }
+    });
+    it('Check if unit effect has stage property', () => {
+        for (let i = 0; i < 500; i++) {
+            const unit = createUnitType();
+            if (unit.effect) {
+                assert(unit.effect.stage !== undefined, 
+                    `Unit effect should have a stage property: ${JSON.stringify(unit.effect)} ${i}`);
             }
         }
     });
