@@ -1,5 +1,8 @@
 import { HeroType, Land, UnitType, UnitTypeSimple } from "../../../types";
-import { effectExplanations, GeneralArguments } from "../../../types/battle/effects";
+import {
+  effectExplanations,
+  GeneralArguments,
+} from "../../../types/battle/effects";
 import {
   BattleEvaluationArgs,
   BattleResult,
@@ -9,11 +12,11 @@ import {
   RoundArgs,
 } from "../../../types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
-<<<<<<< HEAD
-import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
+import {
+  createHeroType,
+  createUnitType,
+} from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 import { effectMethods } from "../../../types/battle/effects";
-=======
->>>>>>> 2fb37e65e12c5c96f8b3167bbedd52434ca08905
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -33,7 +36,6 @@ function Round(args: RoundArgs): RoundNarration {
     postDefender: undefined,
   };
   if (attacker.effect && attacker.effect.stage === "pre") {
-   
     roundNarration.preAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "pre") {
@@ -77,7 +79,7 @@ function Round(args: RoundArgs): RoundNarration {
     roundNarration.postAttacker = effectExecutor(args, "attacker");
   }
   if (defender.effect && defender.effect.stage === "after") {
-    roundNarration.postDefender = effectExecutor(args, "defender",);
+    roundNarration.postDefender = effectExecutor(args, "defender");
   }
 
   return roundNarration;
