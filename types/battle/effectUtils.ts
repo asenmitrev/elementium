@@ -49,7 +49,6 @@ export type EffectNarration = {
   value: number;
   stat: Land | null;
   effect: "buff" | "debuff";
-  target: UnitTypeSimple | null;
 };
 
 export type BattleResult = {
