@@ -5,6 +5,7 @@ import { predefinedNeutrals } from "../predefined/neutrals";
 import { authenticateToken } from "../middleware/auth";
 import { BattleResult } from "../models/battleResult.model";
 import { Unit } from "../models/unit.model";
+import { Land } from "types";
 const router: Router = express.Router();
 
 router.post(
@@ -51,6 +52,37 @@ router.post(
   }
 );
 
+router.post("/", authenticateToken, async (req: Request, res: Response) => {
+  const { attackerHeroId, defenderHeroId } = req.body;
+  const attackerHero = await Hero.findById(attackerHeroId);
+  const defenderHero = await Hero.findById(defenderHeroId);
+  if (!attackerHero || !defenderHero) {
+    res.status(404).json({ error: "Hero not found" });
+    return;
+  }
+  console.log(attackerHero?.player, defenderHero?.player);
+  const attackerUnits = await Unit.find({ holder: attackerHero!._id });
+  const defenderUnits = await Unit.find({ holder: defenderHero!._id });
+  const battleResult = await battle({
+    attackerDeck: attackerUnits.map((unit) => unit.type),
+    defenderDeck: defenderUnits.map((unit) => unit.type),
+    attackerGraveyard: [],
+    defenderGraveyard: [],
+    attackerHeroTypeUserFacing: attackerHero.type,
+    defenderHeroTypeUserFacing: defenderHero.type,
+    defenderCastle: predefinedNeutrals,
+    land: ["earth", "fire", "water"][Math.floor(Math.random() * 3)] as Land,
+  });
+  const newBattle = new BattleResult({
+    ...battleResult,
+    playerAttacker: attackerHero.player,
+    playerDefender: defenderHero.player,
+    defender: defenderHero._id,
+    attacker: attackerHero._id,
+  });
+  await newBattle.save();
+  res.json(newBattle);
+});
 router.get(
   "/:battleId",
   authenticateToken,

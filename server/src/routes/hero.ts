@@ -38,6 +38,9 @@ router.get("/map", authenticateToken, async (req: Request, res: Response) => {
   try {
     const heroes = await Hero.aggregate([
       {
+        $match: { player: { $ne: new ObjectId(req.user!.userId) } },
+      },
+      {
         $lookup: {
           from: "units",
           localField: "_id",

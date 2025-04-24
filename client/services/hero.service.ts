@@ -30,6 +30,20 @@ export class HeroService {
     return response.data;
   }
 
+  static async getAllMapHeroes(
+    cookie: string
+  ): Promise<(Hero & { units: Unit[] })[]> {
+    const response = await axios.get<(Hero & { units: Unit[] })[]>(
+      `${API_URL}/heroes/map`,
+      {
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+        },
+      }
+    );
+    return response.data;
+  }
+
   static async getPredefinedHeroes(
     cookie: string
   ): Promise<(HeroType & { units: UnitType[] })[]> {

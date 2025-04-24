@@ -50,6 +50,10 @@ const HeroSchema = new Schema(
       type: Number,
       default: 1,
     },
+    player: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     experienceTillLevelUp: {
       type: Number,
       default: 100,
