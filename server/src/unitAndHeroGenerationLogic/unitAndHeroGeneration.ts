@@ -203,8 +203,9 @@ export function createHeroType(race: UnitRaceData) {
       "/" +
       race?.race +
       "/" +
-      Math.random() * (race?.maxImages - 1) +
-      1;
+      Math.floor(Math.random() * (race?.maxImages - 1) + 1) +
+      ".jpeg"
+      
   }
   const newHeroType: HeroType = {
     water,
