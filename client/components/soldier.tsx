@@ -2,11 +2,60 @@ import { Card } from "@/components/ui/card";
 import { Droplets, Mountain, Flame } from "lucide-react";
 import { UnitType, UnitTypeSimple } from "types";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function SoldierCard({
   unit,
+  previousUnit,
+  showChanges = false,
 }: {
   unit: UnitType | UnitTypeSimple;
+  previousUnit?: UnitType | UnitTypeSimple | null;
+  showChanges?: boolean;
 }) {
+  // Helper function to determine stat change styling and animation
+  const getStatDisplay = (
+    stat: "earth" | "fire" | "water",
+    currentValue: number,
+    previousValue?: number
+  ) => {
+    if (!showChanges || !previousValue) {
+      return <span className="font-medium">{currentValue}</span>;
+    }
+
+    const hasChanged = currentValue !== previousValue;
+    const isIncrease = currentValue > previousValue;
+    const difference = isIncrease
+      ? `+${currentValue - previousValue}`
+      : `${currentValue - previousValue}`;
+
+    return (
+      <div className="flex items-center">
+        <span
+          className={`font-medium ${
+            hasChanged ? (isIncrease ? "text-green-400" : "text-red-400") : ""
+          }`}
+        >
+          {currentValue}
+        </span>
+        <AnimatePresence>
+          {hasChanged && (
+            <motion.span
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 5 }}
+              exit={{ opacity: 0 }}
+              className={`ml-1 text-xs font-bold ${
+                isIncrease ? "text-green-400" : "text-red-400"
+              }`}
+            >
+              {difference}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
   return (
     <Card className="w-full max-w-md overflow-hidden">
       <div className="relative group">
@@ -31,21 +80,62 @@ export default function SoldierCard({
                 {unit.effect?.explanation}
               </div>
               <div className="grid grid-cols-3 gap-4 text-sm">
-                <div className="flex items-center gap-2 text-white">
+                <div
+                  className={`flex items-center gap-2 text-white ${
+                    showChanges &&
+                    previousUnit &&
+                    unit.earth !== previousUnit.earth
+                      ? "animate-pulse"
+                      : ""
+                  }`}
+                >
                   <Mountain className="w-4 h-4 text-green-300" />
-                  <span className="font-medium">{unit.earth}</span>
+                  {getStatDisplay("earth", unit.earth, previousUnit?.earth)}
                 </div>
-                <div className="flex items-center gap-2 text-white">
+                <div
+                  className={`flex items-center gap-2 text-white ${
+                    showChanges &&
+                    previousUnit &&
+                    unit.fire !== previousUnit.fire
+                      ? "animate-pulse"
+                      : ""
+                  }`}
+                >
                   <Flame className="w-4 h-4 text-orange-300" />
-                  <span className="font-medium">{unit.fire}</span>
+                  {getStatDisplay("fire", unit.fire, previousUnit?.fire)}
                 </div>
-                <div className="flex items-center gap-2 text-white">
+                <div
+                  className={`flex items-center gap-2 text-white ${
+                    showChanges &&
+                    previousUnit &&
+                    unit.water !== previousUnit.water
+                      ? "animate-pulse"
+                      : ""
+                  }`}
+                >
                   <Droplets className="w-4 h-4 text-blue-300" />
-                  <span className="font-medium">{unit.water}</span>
+                  {getStatDisplay("water", unit.water, previousUnit?.water)}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Animation overlay for significant stat changes */}
+          {showChanges &&
+            previousUnit &&
+            (unit.earth !== previousUnit.earth ||
+              unit.fire !== previousUnit.fire ||
+              unit.water !== previousUnit.water) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  boxShadow: "0 0 30px 4px rgba(255, 255, 255, 0.7) inset",
+                  zIndex: 10,
+                }}
+              />
+            )}
         </div>
       </div>
     </Card>
