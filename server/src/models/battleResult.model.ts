@@ -48,6 +48,10 @@ const BattleEvaluationSchema = new Schema({
 
 // Define RoundNarration Schema
 const RoundNarrationSchema = new Schema({
+  startingRound: {
+    attacker: UnitTypeSimpleSchema,
+    defender: UnitTypeSimpleSchema,
+  },
   preAttacker: {
     type: EffectNarrationSchema,
     default: undefined,
@@ -55,6 +59,10 @@ const RoundNarrationSchema = new Schema({
   preDefender: {
     type: EffectNarrationSchema,
     default: undefined,
+  },
+  preRound: {
+    attacker: UnitTypeSimpleSchema,
+    defender: UnitTypeSimpleSchema,
   },
   battle: {
     type: BattleEvaluationSchema,
@@ -67,6 +75,10 @@ const RoundNarrationSchema = new Schema({
   postDefender: {
     type: EffectNarrationSchema,
     default: undefined,
+  },
+  postRound: {
+    attacker: UnitTypeSimpleSchema,
+    defender: UnitTypeSimpleSchema,
   },
 });
 
