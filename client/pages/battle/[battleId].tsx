@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import BattleSummary from "@/components/battle-summary";
+import { useSession } from "next-auth/react";
 
 interface BattlePageProps {
   battle: BattleResult;
@@ -146,7 +147,6 @@ export default function BattlePage({ battle }: BattlePageProps) {
   const [phase, setPhase] = useState<BattlePhase>("starting");
   const [autoPlay, setAutoPlay] = useState(false);
   const [phaseDelay, setPhaseDelay] = useState(1500); // milliseconds between phases
-
   // Function to advance through battle phases
   const advancePhase = () => {
     if (phase === "starting") {
@@ -582,6 +582,31 @@ export default function BattlePage({ battle }: BattlePageProps) {
               </div>
             </div>
 
+            {/* Battle Result */}
+            {(phase === "battle" || phase === "post" || phase === "complete") &&
+              currentRoundData?.battle && (
+                <div className="text-center mb-4">
+                  {currentRoundData.battle.winner && (
+                    <>
+                      <p className="text-md mb-1">
+                        {currentRoundData.battle.winner.name} defeated{" "}
+                        {currentRoundData.battle.winner.name === attacker?.name
+                          ? defender?.name
+                          : attacker?.name}
+                      </p>
+                      <p
+                        className={`text-lg font-bold ${
+                          currentRoundData.battle.winner.name === attacker?.name
+                            ? "text-red-400"
+                            : "text-emerald-400"
+                        }`}
+                      >
+                        Winner: {currentRoundData.battle.winner.name}
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             {/* Decks and Graveyards */}
             <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
               {/* Attacker Deck and Graveyard */}
@@ -722,32 +747,6 @@ export default function BattlePage({ battle }: BattlePageProps) {
             </div>
           </div>
         )}
-
-        {/* Battle Result */}
-        {(phase === "battle" || phase === "post" || phase === "complete") &&
-          currentRoundData?.battle && (
-            <div className="text-center mb-4">
-              {currentRoundData.battle.winner && (
-                <>
-                  <p className="text-md mb-1">
-                    {currentRoundData.battle.winner.name} defeated{" "}
-                    {currentRoundData.battle.winner.name === attacker?.name
-                      ? defender?.name
-                      : attacker?.name}
-                  </p>
-                  <p
-                    className={`text-lg font-bold ${
-                      currentRoundData.battle.winner.name === attacker?.name
-                        ? "text-red-400"
-                        : "text-emerald-400"
-                    }`}
-                  >
-                    Winner: {currentRoundData.battle.winner.name}
-                  </p>
-                </>
-              )}
-            </div>
-          )}
 
         {/* Castle Narrations */}
         {battle.HeroTypeUserFacingCastleNarrations.length > 0 && (
