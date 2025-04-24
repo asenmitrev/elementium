@@ -1,6 +1,6 @@
 import { UnitType, Hero, HeroType } from "types";
 
-const neutralUnits: UnitType[] = [
+export const neutralUnits: UnitType[] = [
   {
     water: 1,
     earth: 1,

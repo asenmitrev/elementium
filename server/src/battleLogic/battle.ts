@@ -1,5 +1,6 @@
 import { HeroType, Land, UnitType, UnitTypeSimple } from "../../../types";
 import { effectExplanations, GeneralArguments } from "../../../types/battle/effects";
+import { neutralUnits } from "../predefined/neutrals";
 import {
   BattleEvaluationArgs,
   BattleResult,
@@ -9,11 +10,9 @@ import {
   RoundArgs,
 } from "../../../types/battle/effectUtils";
 import { BattleEvaluation, RoundNarration } from "../../../types/battle/main";
-<<<<<<< HEAD
 import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 import { effectMethods } from "../../../types/battle/effects";
-=======
->>>>>>> 2fb37e65e12c5c96f8b3167bbedd52434ca08905
+import { UnitRaceData, unitRaces } from "types/unitRaces";
 
 function Round(args: RoundArgs): RoundNarration {
   const {
@@ -357,19 +356,21 @@ function killCard(killCardArgs: KillCardArgs) {
   }
 }
 
-// let theBattle = battle(
-//   {
-//     attackerDeck: [
-//       createUnitType(),createUnitType(),createUnitType()
-//     ],
-//     defenderDeck: [
-//       createUnitType(),createUnitType(),createUnitType()
-//     ],
-//     attackerGraveyard: [],
-//     defenderGraveyard: [],
-//     attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
-//     defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
-//     defenderCastle: undefined,
-//     land: "fire",
-//   }
-// )
+let theBattle = battle(
+  {
+    attackerDeck: [
+      createUnitType(),createUnitType(),createUnitType()
+    ],
+    defenderDeck: [
+      createUnitType(),createUnitType(),createUnitType()
+    ],
+    attackerGraveyard: [],
+    defenderGraveyard: [],
+    attackerHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat') as UnitRaceData),
+    defenderHeroTypeUserFacing:  createHeroType(unitRaces.get('earth-goat')  as UnitRaceData),
+    defenderCastle: undefined,
+    land: "fire",
+  }
+)
+
+console.log(theBattle)
