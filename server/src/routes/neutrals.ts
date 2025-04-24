@@ -15,6 +15,13 @@ import {
 
 const router: Router = express.Router();
 
+const heroUnits = Array.from({ length: 3 }, () => {
+  const unitType = createUnitType();
+  return unitType;
+});
+
+console.log(JSON.stringify(heroUnits, null, 2));
+
 // Get all heroes for a user
 router.get("/create-neutrals", async (req: Request, res: Response) => {
   try {
