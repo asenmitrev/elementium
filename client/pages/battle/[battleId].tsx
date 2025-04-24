@@ -273,14 +273,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
             {battle.remainingAttackerDeck.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
                 {battle.remainingAttackerDeck.map((unit, index) => (
-                  <div key={index} className="border p-2 rounded text-sm">
-                    <div className="font-medium">{unit.name}</div>
-                    <div className="flex justify-between mt-1 text-xs">
-                      <span className="text-red-500">F:{unit.fire}</span>
-                      <span className="text-blue-500">W:{unit.water}</span>
-                      <span className="text-green-500">E:{unit.earth}</span>
-                    </div>
-                  </div>
+                  <SoldierCard key={index} unit={unit} />
                 ))}
               </div>
             ) : (
@@ -295,14 +288,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
             {battle.remainingDefenderDeck.length > 0 ? (
               <div className="grid grid-cols-2 gap-3">
                 {battle.remainingDefenderDeck.map((unit, index) => (
-                  <div key={index} className="border p-2 rounded text-sm">
-                    <div className="font-medium">{unit.name}</div>
-                    <div className="flex justify-between mt-1 text-xs">
-                      <span className="text-red-500">F: {unit.fire}</span>
-                      <span className="text-blue-500">W: {unit.water}</span>
-                      <span className="text-green-500">E: {unit.earth}</span>
-                    </div>
-                  </div>
+                  <SoldierCard key={index} unit={unit} />
                 ))}
               </div>
             ) : (
