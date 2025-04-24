@@ -3,6 +3,7 @@ import { Unit } from "../models/unit.model";
 import { authenticateToken } from "../middleware/auth";
 import { Hero } from "../models/hero.model";
 import { Castle } from "../models/castle.model";
+import { predefinedNeutrals } from "../predefined/neutrals";
 
 const router: Router = express.Router();
 

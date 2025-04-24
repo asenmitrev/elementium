@@ -45,6 +45,7 @@ export class TokenService {
     try {
       return jwt.verify(token, this.secretKey) as jwt.JwtPayload;
     } catch (error) {
+      console.error("Error verifying token:", error);
       throw new Error("Invalid token");
     }
   }

@@ -18,6 +18,9 @@ async function refreshAccessToken(nextAuthJWTCookie: JWT): Promise<JWT> {
       body: JSON.stringify({
         refreshToken: nextAuthJWTCookie.data.tokens.refresh,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     const accessToken: {
       accessToken: {
@@ -36,6 +39,9 @@ async function refreshAccessToken(nextAuthJWTCookie: JWT): Promise<JWT> {
     nextAuthJWTCookie.data.validity.valid_until =
       new Date().getTime() + accessToken.accessToken.expiresIn;
     nextAuthJWTCookie.data.tokens.access = accessToken.accessToken.token;
+    nextAuthJWTCookie.data.tokens.refresh = accessToken.refreshToken.token;
+    nextAuthJWTCookie.data.validity.refresh_until =
+      new Date().getTime() + accessToken.refreshToken.expiresIn;
 
     // Clone the object to ensure it has a new ref id
     return { ...nextAuthJWTCookie };
@@ -101,6 +107,7 @@ export const authOptions: AuthOptions = {
             valid_until: new Date().getTime() + tokens.accessToken.expiresIn,
             refresh_until: new Date().getTime() + tokens.refreshToken.expiresIn,
           };
+
           // Return the object that next-auth calls 'User'
           // (which we've defined in next-auth.d.ts)
           return {
@@ -142,13 +149,13 @@ export const authOptions: AuthOptions = {
       }
 
       // The current access token is still valid
-      if (Date.now() < token.data.validity.valid_until * 1000) {
+      if (Date.now() < token.data.validity.valid_until - 30 * 1000) {
         console.debug("Access token is still valid");
         return token;
       }
 
       // The refresh token is still valid
-      if (Date.now() < token.data.validity.refresh_until * 1000) {
+      if (Date.now() < token.data.validity.refresh_until - 30 * 1000) {
         console.debug("Access token is being refreshed");
         return await refreshAccessToken(token);
       }
@@ -170,6 +177,7 @@ export const authOptions: AuthOptions = {
       user: User;
     }) {
       session.user = token.data.user;
+      session.user.accessToken = token.data.tokens.access;
       session.validity = token.data.validity;
       session.error = token.error;
       return session;

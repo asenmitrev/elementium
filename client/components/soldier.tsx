@@ -1,8 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Droplets, Mountain, Flame } from "lucide-react";
-import { UnitType } from "types";
+import { UnitType, UnitTypeSimple } from "types";
 import Image from "next/image";
-export default function SoldierCard({ unit }: { unit: UnitType }) {
+export default function SoldierCard({
+  unit,
+}: {
+  unit: UnitType | UnitTypeSimple;
+}) {
   return (
     <Card className="w-full max-w-md overflow-hidden">
       <div className="relative group">

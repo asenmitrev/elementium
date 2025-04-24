@@ -1,4 +1,5 @@
-import { Land, UnitType } from "..";
+import { Land, UnitType, UnitTypeSimple } from "..";
+import { RoundNarration } from "./main";
 
 export type AdditiveArg = {
   type: "additive";
@@ -48,4 +49,12 @@ export type EffectNarration = {
   value: number;
   stat: Land | null;
   effect: "buff" | "debuff";
+};
+
+export type BattleResult = {
+  winner: "attacker" | "defender" | "draw";
+  remainingAttackerDeck: UnitTypeSimple[];
+  remainingDefenderDeck: UnitTypeSimple[];
+  HeroTypeUserFacingCastleNarrations: string[];
+  rounds: RoundNarration[];
 };
