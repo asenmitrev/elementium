@@ -51,6 +51,26 @@ const RoundNarrationSchema = new Schema({
   startingRound: {
     attacker: UnitTypeSimpleSchema,
     defender: UnitTypeSimpleSchema,
+    attackerDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    attackerGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    land: {
+      type: String,
+      required: true,
+    },
   },
   preAttacker: {
     type: EffectNarrationSchema,
@@ -63,6 +83,26 @@ const RoundNarrationSchema = new Schema({
   preRound: {
     attacker: UnitTypeSimpleSchema,
     defender: UnitTypeSimpleSchema,
+    attackerDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    attackerGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    land: {
+      type: String,
+      required: true,
+    },
   },
   battle: {
     type: BattleEvaluationSchema,
@@ -79,6 +119,26 @@ const RoundNarrationSchema = new Schema({
   postRound: {
     attacker: UnitTypeSimpleSchema,
     defender: UnitTypeSimpleSchema,
+    attackerDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderDeck: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    attackerGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    defenderGraveyard: {
+      type: [UnitTypeSimpleSchema],
+      default: [],
+    },
+    land: {
+      type: String,
+      required: true,
+    },
   },
 });
 
