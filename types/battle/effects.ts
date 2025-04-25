@@ -159,14 +159,14 @@ export const effectExplanations = {
 
     return narration;
   },
-  debuffActiveEffect: function (effectMethods: DebuffEnemyEffectMethod) {
+  debuffActiveEffect: function (effectMethods: DebuffActiveEffectMethod) {
     let narration = "";
     if (effectMethods.stage === "pre") {
       narration += "Before the battle";
     } else {
       narration += "After the battle";
     }
-    narration += ` debuff your active stat by ${effectMethods.methodArgs.value}`;
+    narration += ` debuff you enemies active stat by ${effectMethods.methodArgs.value}`;
 
     return narration;
   },
