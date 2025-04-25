@@ -148,6 +148,7 @@ export default function BattlePage({ battle }: BattlePageProps) {
   const [autoPlay, setAutoPlay] = useState(false);
   const [phaseDelay, setPhaseDelay] = useState(1500); // milliseconds between phases
   // Function to advance through battle phases
+  console.log(battle);
   const advancePhase = () => {
     if (phase === "starting") {
       setPhase("pre");
