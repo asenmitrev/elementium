@@ -237,7 +237,7 @@ export const effectExplanations = {
     return narration;
   },
   revive: function (effectMethods: ReviveEffectMethod) {
-    return "If you have less power than the enemy place your card at the end of your deck instead of the graveyard but lose this effect for the rest of the battle.";
+    return "After the battle if you have less power than the enemy place your card at the end of your deck instead of the graveyard but lose this effect for the rest of the battle.";
   },
 };
 
@@ -733,6 +733,7 @@ export const effectGeneration = function (
   effect: EffectMethods | null;
   remainder: number;
 } {
+  const defaultPoints = points;
   const chosenEffect = getRandomEffectCost(effectKeys);
   const possibleStages: Array<"pre" | "after"> = [];
   if (points >= chosenEffect.stages.pre) {
@@ -744,14 +745,23 @@ export const effectGeneration = function (
   //Pick stage and pay
   const randomStageIndex = Math.floor(Math.random() * possibleStages.length);
   const chosenStage = possibleStages[randomStageIndex] as "pre" | "after";
+ 
+  if(!chosenStage){
+      //vurni ot funkciqta shtoto ne stigat parite
+      return {
+        remainder: defaultPoints ,
+        effect: null,
+      };
+  }
   points -= chosenEffect.stages[chosenStage];
+
 
   let boughtOptions = buyOptions(points, chosenEffect.methodArgs);
 
   if (boughtOptions === undefined) {
     //vurni ot funkciqta shtoto ne stigat parite
     return {
-      remainder: points,
+      remainder: defaultPoints ,
       effect: null,
     };
   }
@@ -779,7 +789,7 @@ export const effectGeneration = function (
       methodArgs: combinedMethodArgs,
       explanation: effectExplanations[
         chosenEffect.key as keyof typeof effectExplanations
-      ]({ ...chosenEffect, methodArgs: combinedMethodArgs } as any) as string,
+      ]({ ...chosenEffect, methodArgs: combinedMethodArgs, stage:chosenStage } as any) as string,
     },
   };
 };

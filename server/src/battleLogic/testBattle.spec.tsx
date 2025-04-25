@@ -65,6 +65,8 @@ describe('distributePoints', () => {
     })
 })
 
+
+
 describe('Create Unit Type tests', () => {
     it('Check for undefined in special explanations', () => {
         for (let i = 0; i < 500; i++) {
@@ -81,6 +83,31 @@ describe('Create Unit Type tests', () => {
             if (unit.effect) {
                 assert(unit.effect.stage !== undefined, 
                     `Unit effect should have a stage property: ${JSON.stringify(unit.effect)} ${i}`);
+            }
+        }
+    });
+});
+
+
+describe('Create Unit Type tests', () => {
+    // ... existing tests ...
+
+    it('Check if effect explanation matches stage', () => {
+        for (let i = 0; i < 500; i++) {
+            const unit = createUnitType();
+            if (unit.effect) {
+                if (unit.effect.stage === 'pre') {
+                    assert(unit.effect.explanation?.includes('Before the battle'), 
+                        `Pre-battle effect should contain "Before the battle" in explanation: ${unit.effect.explanation} ${i}`);
+                    assert(!unit.effect.explanation?.includes('After the battle'), 
+                        `Pre-battle effect should not contain "After the battle" in explanation: ${unit.effect.explanation} ${i}`);
+                }
+                if (unit.effect.stage === 'after') {
+                    assert(unit.effect.explanation?.includes('After the battle'), 
+                        `After-battle effect should contain "After the battle" in explanation: ${unit.effect.explanation} ${i}`);
+                    assert(!unit.effect.explanation?.includes('Before the battle'), 
+                        `After-battle effect should not contain "Before the battle" in explanation: ${unit.effect.explanation} ${i}`);
+                }
             }
         }
     });
