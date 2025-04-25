@@ -165,7 +165,7 @@ export function battle(args: {
       UnitTypeUserFacing.earth += defenderHeroTypeUserFacing.earth;
       UnitTypeUserFacing.fire += defenderHeroTypeUserFacing.fire;
     });
-    HeroTypeUserFacingCastleNarrations.push(`The attackeres HeroTypeUserFacing buffed his soldieres with 
+    HeroTypeUserFacingCastleNarrations.push(`The attackeres HeroTypeUserFacing buffed his soldiers with 
             +${defenderHeroTypeUserFacing.water} for water
             +${defenderHeroTypeUserFacing.fire} for fire
             +${defenderHeroTypeUserFacing.earth} for earth`);
@@ -177,7 +177,7 @@ export function battle(args: {
       UnitTypeUserFacing.earth += defenderCastle.earth;
       UnitTypeUserFacing.fire += defenderCastle.fire;
     });
-    HeroTypeUserFacingCastleNarrations.push(`The attackeres HeroTypeUserFacing buffed his soldieres with 
+    HeroTypeUserFacingCastleNarrations.push(`The attackers HeroTypeUserFacing buffed his soldiers with 
             +${defenderCastle.water} for water
             +${defenderCastle.fire} for fire
             +${defenderCastle.earth} for earth`);

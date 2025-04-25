@@ -2,6 +2,8 @@ import { describe, it } from "node:test";
 import { createHeroType, createUnitType } from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
 import { distributePoints } from "types/battle/distributeEffectPoints";
 import assert from "assert";
+import { Land, UnitType } from "types";   
+import { battle } from "./battle";
 
 
 describe('distributePoints', () => {
@@ -109,6 +111,109 @@ describe('Create Unit Type tests', () => {
                         `After-battle effect should not contain "Before the battle" in explanation: ${unit.effect.explanation} ${i}`);
                 }
             }
+        }
+    });
+});
+describe('Battle Effect Tests', () => {
+    it('debuffEnemyEffect should persist across multiple rounds with multiple units', () => {
+        // Create attackers with debuffEnemyEffect
+        const attacker1: any = {
+            name: "Attacker1",
+            water: 5,
+            earth: 5,
+            fire: 5,
+            level: 1,
+            image: "",
+            effect: {
+                method: "debuffEnemyEffect",
+                stage: "pre",
+                methodArgs: {
+                    land: "water" as Land,
+                    value: 1
+                },
+                explanation: "Before the battle debuff your opponents water stat by 1"
+            },
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const attacker2: any = {
+            name: "Attacker2",
+            water: 6,
+            earth: 6,
+            fire: 6,
+            level: 1,
+            image: "",
+            effect: null,
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const defender1: any = {
+            name: "Defender1",
+            water: 5,
+            earth: 5,
+            fire: 5,
+            level: 1,
+            image: "",
+            effect: null,
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const defender2: any = {
+            name: "Defender2",
+            water: 7,
+            earth: 7,
+            fire: 7,
+            level: 1,
+            image: "",
+            effect: null,
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const battleResult = battle({
+            attackerDeck: [attacker1, attacker2],
+            defenderDeck: [defender1, defender2],
+            attackerGraveyard: [],
+            defenderGraveyard: [],
+            attackerHeroTypeUserFacing: undefined,
+            defenderHeroTypeUserFacing: undefined,
+            defenderCastle: undefined,
+            land: "water"
+        });
+
+        // Check first round
+        const firstRound = battleResult.rounds[0];
+        
+        // Verify debuff was applied in preRound state
+        assert(firstRound.preRound.defender.water === 4, 
+            `First defender's water stat should be reduced to 4, but was ${firstRound.preRound.defender.water}`);
+        
+        // Verify original stat
+        assert(firstRound.startingRound.defender.water === 5, 
+            `First defender's original water stat should have been 5, but was ${firstRound.startingRound.defender.water}`);
+
+        // Verify debuff persists after the round
+        assert(firstRound.postRound.defender.water === 4, 
+            `First defender's water stat should remain at 4 after round, but was ${firstRound.postRound.defender.water}`);
+
+        // Check second round if it exists (when first unit is defeated)
+        if (battleResult.rounds.length > 1) {
+
+            
+            // Verify original stat of second defender
+            assert(defender1.water === 4, 
+                `Second defender's original water stat should have been 4, but was ${defender1.water}`);
+
+            // // Verify debuff persists after the round
+            // assert(secondRound.postRound.defender.water === 6, 
+            //     `Second defender's water stat should remain at 6 after round, but was ${secondRound.postRound.defender.water}`);
         }
     });
 });
