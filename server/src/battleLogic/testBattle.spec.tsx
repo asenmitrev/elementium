@@ -115,8 +115,8 @@ describe('Create Unit Type tests', () => {
     });
 });
 describe('Battle Effect Tests', () => {
-    it('debuffEnemyEffect should persist across multiple rounds with multiple units', () => {
-        // Create attackers with debuffEnemyEffect
+    it('buffActiveEffect should persist across multiple rounds with multiple units', () => {
+        // Create attackers with buffActiveEffect
         const attacker1: any = {
             name: "Attacker1",
             water: 5,
@@ -125,13 +125,13 @@ describe('Battle Effect Tests', () => {
             level: 1,
             image: "",
             effect: {
-                method: "debuffEnemyEffect",
+                method: "buffActiveEffect",
                 stage: "pre",
                 methodArgs: {
                     land: "water" as Land,
                     value: 1
                 },
-                explanation: "Before the battle debuff your opponents water stat by 1"
+                explanation: "Before the battle buff your active stat by 1"
             },
             specialExplanation: "",
             race: undefined,
@@ -191,29 +191,29 @@ describe('Battle Effect Tests', () => {
         // Check first round
         const firstRound = battleResult.rounds[0];
         
-        // Verify debuff was applied in preRound state
-        assert(firstRound.preRound.defender.water === 4, 
-            `First defender's water stat should be reduced to 4, but was ${firstRound.preRound.defender.water}`);
+        // Verify buff was applied in preRound state
+        assert(firstRound.preRound.attacker.water === 6, 
+            `First attacker's water stat should be increased to 6, but was ${firstRound.preRound.attacker.water}`);
         
         // Verify original stat
-        assert(firstRound.startingRound.defender.water === 5, 
-            `First defender's original water stat should have been 5, but was ${firstRound.startingRound.defender.water}`);
+        assert(firstRound.startingRound.attacker.water === 5, 
+            `First attacker's original water stat should have been 5, but was ${firstRound.startingRound.attacker.water}`);
 
-        // Verify debuff persists after the round
-        assert(firstRound.postRound.defender.water === 4, 
-            `First defender's water stat should remain at 4 after round, but was ${firstRound.postRound.defender.water}`);
+        // Verify buff persists after the round
+        assert(firstRound.postRound.attacker.water === 6, 
+            `First attacker's water stat should remain at 6 after round, but was ${firstRound.postRound.attacker.water}`);
 
         // Check second round if it exists (when first unit is defeated)
         if (battleResult.rounds.length > 1) {
-
+            const secondRound = battleResult.rounds[1];
             
-            // Verify original stat of second defender
-            assert(defender1.water === 4, 
-                `Second defender's original water stat should have been 4, but was ${defender1.water}`);
+            // Verify second attacker's stats (should not be buffed as it has no effect)
+            assert(secondRound.startingRound.attacker.water === 6, 
+                `Second attacker's water stat should be 6, but was ${secondRound.startingRound.attacker.water}`);
 
-            // // Verify debuff persists after the round
-            // assert(secondRound.postRound.defender.water === 6, 
-            //     `Second defender's water stat should remain at 6 after round, but was ${secondRound.postRound.defender.water}`);
+            // Verify no buff is applied to second attacker
+            assert(secondRound.preRound.attacker.water === 6, 
+                `Second attacker's water stat should remain at 6, but was ${secondRound.preRound.attacker.water}`);
         }
     });
 });
