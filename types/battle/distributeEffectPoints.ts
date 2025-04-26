@@ -89,6 +89,12 @@ export function distributePoints(points:number, methodArgs:MethodArgsConfig):{re
         } 
     })
 
+    Object.keys(methodArgs).forEach((arg) => {
+        if(!effectValueDistribution[arg] && methodArgs[arg].type === 'additive'){
+            effectValueDistribution[arg]++;
+        } 
+    })
+
     // Return the effectValueDistribution object and the remaining points
     return {
         effectValueDistribution,
