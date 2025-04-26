@@ -85,7 +85,7 @@ export const unitRaces: Map<UnitRaceKey, UnitRaceData> = new Map([
     
     ['earth-forestSpirit', {
         type:"earth",
-        race:"forstSpirit",
+        race:"forestSpirit",
         weights: {
             'earth': 0.4,
             'water': 0.2,
