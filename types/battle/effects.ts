@@ -166,7 +166,7 @@ export const effectExplanations = {
     } else {
       narration += "After the battle";
     }
-    narration += ` debuff you enemies active stat by ${effectMethods.methodArgs.value}`;
+    narration += ` debuff your enemies active stat by ${effectMethods.methodArgs.value}`;
 
     return narration;
   },
@@ -360,7 +360,7 @@ export const effectMethods = {
     if (perspective === "attacker") {
       me[ActiveLand] += EMethods.methodArgs.value;
       return {
-        text: `${me.name} got it's ${ActiveLand} stat debuffed by ${EMethods.methodArgs.value}.`,
+        text: `${me.name} got it's ${ActiveLand} stat buffed by ${EMethods.methodArgs.value}.`,
         value: EMethods.methodArgs.value,
         stat: ActiveLand,
         effect: "buff",
@@ -381,7 +381,7 @@ export const effectMethods = {
     if (perspective === "defender") {
       me[ActiveLand] += EMethods.methodArgs.value;
       return {
-        text: `${me.name} got it's ${ActiveLand} stat debuffed by ${EMethods.methodArgs.value}.`,
+        text: `${me.name} got it's ${ActiveLand} stat buffed by ${EMethods.methodArgs.value}.`,
         value: EMethods.methodArgs.value,
         stat: ActiveLand,
         effect: "buff",
@@ -400,7 +400,7 @@ export const effectMethods = {
   ): EffectNarration {
     const { enemy, ActiveLand } = generalArguments;
     const methodArgs = EMethods.methodArgs;
-    enemy[ActiveLand] += methodArgs.value;
+    enemy[ActiveLand] -= methodArgs.value;
     return {
       text: `${enemy.name} got it's ${ActiveLand} stat debuffed by ${methodArgs.value}.`,
       value: methodArgs.value,

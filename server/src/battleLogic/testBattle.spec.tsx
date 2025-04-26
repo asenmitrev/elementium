@@ -4,6 +4,8 @@ import { distributePoints } from "types/battle/distributeEffectPoints";
 import assert from "assert";
 import { Land, UnitType } from "types";   
 import { battle } from "./battle";
+import { buyOptions } from "../unitAndHeroGenerationLogic/buyOptions";
+import { MethodArgsConfig } from "types/battle/effectUtils";
 
 
 describe('distributePoints', () => {
@@ -115,8 +117,8 @@ describe('Create Unit Type tests', () => {
     });
 });
 describe('Battle Effect Tests', () => {
-    it('buffActiveEffect should persist across multiple rounds with multiple units', () => {
-        // Create attackers with buffActiveEffect
+    it('debuffActiveEffect should persist across multiple rounds with multiple units', () => {
+        // Create attackers with debuffActiveEffect
         const attacker1: any = {
             name: "Attacker1",
             water: 5,
@@ -125,13 +127,13 @@ describe('Battle Effect Tests', () => {
             level: 1,
             image: "",
             effect: {
-                method: "buffActiveEffect",
+                method: "debuffActiveEffect",
                 stage: "pre",
                 methodArgs: {
                     land: "water" as Land,
                     value: 1
                 },
-                explanation: "Before the battle buff your active stat by 1"
+                explanation: "Before the battle debuff enemy's active stat by 1"
             },
             specialExplanation: "",
             race: undefined,
@@ -191,29 +193,111 @@ describe('Battle Effect Tests', () => {
         // Check first round
         const firstRound = battleResult.rounds[0];
         
-        // Verify buff was applied in preRound state
-        assert(firstRound.preRound.attacker.water === 6, 
-            `First attacker's water stat should be increased to 6, but was ${firstRound.preRound.attacker.water}`);
+        // Verify debuff was applied in preRound state
+        assert(firstRound.preRound.defender.water === 4, 
+            `First defender's water stat should be decreased to 4, but was ${firstRound.preRound.defender.water}`);
         
         // Verify original stat
-        assert(firstRound.startingRound.attacker.water === 5, 
-            `First attacker's original water stat should have been 5, but was ${firstRound.startingRound.attacker.water}`);
+        assert(firstRound.startingRound.defender.water === 5, 
+            `First defender's original water stat should have been 5, but was ${firstRound.startingRound.defender.water}`);
 
-        // Verify buff persists after the round
-        assert(firstRound.postRound.attacker.water === 6, 
-            `First attacker's water stat should remain at 6 after round, but was ${firstRound.postRound.attacker.water}`);
+        // Verify debuff persists after the round
+        assert(firstRound.postRound.defender.water === 4, 
+            `First defender's water stat should remain at 4 after round, but was ${firstRound.postRound.defender.water}`);
 
-        // Check second round if it exists (when first unit is defeated)
+        // Check second round if it exists (when first defender is defeated)
         if (battleResult.rounds.length > 1) {
             const secondRound = battleResult.rounds[1];
             
-            // Verify second attacker's stats (should not be buffed as it has no effect)
-            assert(secondRound.startingRound.attacker.water === 6, 
-                `Second attacker's water stat should be 6, but was ${secondRound.startingRound.attacker.water}`);
+            // Verify second defender's stats (should not be debuffed as first attacker is defeated)
+            assert(secondRound.startingRound.defender.water === 7, 
+                `Second defender's water stat should be 7, but was ${secondRound.startingRound.defender.water}`);
 
-            // Verify no buff is applied to second attacker
-            assert(secondRound.preRound.attacker.water === 6, 
-                `Second attacker's water stat should remain at 6, but was ${secondRound.preRound.attacker.water}`);
+            // Verify no debuff is applied to second defender
+            assert(secondRound.preRound.defender.water === 7, 
+                `Second defender's water stat should remain at 7, but was ${secondRound.preRound.defender.water}`);
         }
+    });
+});
+
+describe('buyOptions', () => {
+    it('should return undefined when points are insufficient for any option combination', () => {
+        for (let i = 0; i < 500; i++) {
+            // Generate random test parameters
+            const points = Math.floor(Math.random() * 3); // 0-2 points
+            const numSelectableArgs = Math.floor(Math.random() * 3) + 1; // 1-3 selectable args
+            
+            // Create method args where minimum cost is always higher than points
+            const methodArgs: MethodArgsConfig = {};
+            for (let j = 1; j <= numSelectableArgs; j++) {
+                methodArgs[`arg${j}`] = {
+                    type: "selectable",
+                    options: {
+                        [`option${j}A`]: {
+                            cost: points + 3 // Always more expensive than available points
+                        },
+                        [`option${j}B`]: {
+                            cost: points + 5 // Even more expensive
+                        }
+                    }
+                };
+            }
+
+            const result = buyOptions(points, methodArgs);
+            
+            assert(result === undefined, 
+                `Test iteration ${i}: Expected undefined when points=${points} ` +
+                `but got ${JSON.stringify(result)}`);
+        }
+    });
+
+
+    it('revive effect should place unit back in deck when losing', () => {
+        const attacker: any = {
+            name: "Attacker",
+            water: 3,
+            earth: 3,
+            fire: 3,
+            level: 1,
+            image: "",
+            effect: {
+                method: "revive",
+                stage: "after",
+                methodArgs: {},
+                explanation: "After the battle if you have less power than the enemy place your card at the end of your deck instead of the graveyard but lose this effect for the rest of the battle."
+            },
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const defender: any = {
+            name: "Defender",
+            water: 5,
+            earth: 5,
+            fire: 5,
+            level: 1,
+            image: "",
+            effect: null,
+            specialExplanation: "",
+            race: undefined,
+            evolutions: []
+        };
+
+        const battleResult = battle({
+            attackerDeck: [attacker],
+            defenderDeck: [defender],
+            attackerGraveyard: [],
+            defenderGraveyard: [],
+            attackerHeroTypeUserFacing: undefined,
+            defenderHeroTypeUserFacing: undefined,
+            defenderCastle: undefined,
+            land: "water"
+        });
+        const round0 = battleResult.rounds[0];
+       // battleResult.rounds[0].postAttacker
+        // Check if the unit was revived
+        assert(round0.postRound.attackerDeck.length === 1, 
+            `Attacker should be placed back in deck, but deck size is ${round0.postRound.attackerDeck.length}`);
     });
 });
