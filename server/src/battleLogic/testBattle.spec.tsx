@@ -43,7 +43,7 @@ describe('distributePoints', () => {
             // Calculate total cost
             let totalCost = result.remainderPoints;
             Object.entries(result.effectValueDistribution).forEach(([prop, value]) => {
-                totalCost += value * props[prop].costPerValue;
+                totalCost += (value-1) * props[prop].costPerValue;
             });
             
             assert(totalCost === totalPoints, 
@@ -61,8 +61,8 @@ describe('distributePoints', () => {
                 }
             });
             
-            const totalCost = (result.effectValueDistribution.prop1 * 1) + 
-                             (result.effectValueDistribution.prop2 * 3) + result.remainderPoints;
+            const totalCost = ((result.effectValueDistribution.prop1 - 1) * 1) + 
+                             ((result.effectValueDistribution.prop2-1) * 3) + result.remainderPoints;
             
             assert(totalCost === 10, `Test iteration ${i}: Total cost ${totalCost} should equal exactly 10 points`);
         }
@@ -78,6 +78,23 @@ describe('Create Unit Type tests', () => {
             if (unit.effect?.explanation) {
                 assert(!unit.effect?.explanation.includes('undefined'), 
                     `Effect explanation contains 'undefined': ${unit.effect.explanation} ${i}`);
+            }
+        }
+    });
+    
+    it('Effect method args should have values of 1 or more', () => {
+        for (let i = 0; i < 500; i++) {
+            const unit = createUnitType();
+            if (unit.effect?.methodArgs) {
+                Object.entries(unit.effect.methodArgs).forEach(([key, value]) => {
+                    if (typeof value === 'number') {
+                        assert(value >= 1, 
+                            `Effect method arg ${key} should be >= 1, but was ${value} in unit: ${JSON.stringify(unit)}`);
+                    } else if (typeof value === 'object' && value !== null && 'value' in value) {
+                        assert((value as { value: number }).value >= 1,
+                            `Effect method arg ${key}.value should be >= 1, but was ${(value as { value: number }).value} in unit: ${JSON.stringify(unit)}`);
+                    }
+                });
             }
         }
     });
@@ -301,3 +318,4 @@ describe('buyOptions', () => {
             `Attacker should be placed back in deck, but deck size is ${round0.postRound.attackerDeck.length}`);
     });
 });
+

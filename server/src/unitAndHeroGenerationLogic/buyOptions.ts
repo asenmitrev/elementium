@@ -38,7 +38,6 @@ export function buyOptions(points: number, methodArgs: MethodArgsConfig): BuyOpt
         }
     })
     if(points<cheapestCost){
-        console.log("You can't afford any full set of args");
         return undefined;
     }
     //Attempt 10 times to find random set of options that fits the price.

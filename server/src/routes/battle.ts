@@ -60,7 +60,6 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     res.status(404).json({ error: "Hero not found" });
     return;
   }
-  console.log(attackerHero?.player, defenderHero?.player);
   const attackerUnits = await Unit.find({ holder: attackerHero!._id });
   const defenderUnits = await Unit.find({ holder: defenderHero!._id });
   const battleResult = await battle({

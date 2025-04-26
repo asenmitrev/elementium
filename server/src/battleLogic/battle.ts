@@ -416,5 +416,3 @@ let theBattle = battle(
     land: "fire",
   }
 )
-
-console.log(theBattle.rounds)
