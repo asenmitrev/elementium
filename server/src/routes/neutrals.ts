@@ -20,7 +20,6 @@ const heroUnits = Array.from({ length: 3 }, () => {
   return unitType;
 });
 
-
 // Get all heroes for a user
 router.get("/create-neutrals", async (req: Request, res: Response) => {
   try {
@@ -30,8 +29,8 @@ router.get("/create-neutrals", async (req: Request, res: Response) => {
     const newHero = new Hero({
       type: heroType,
       name: heroType.name,
-      x: Math.floor(Math.random() * 100) + 1,
-      y: Math.floor(Math.random() * 100) + 1,
+      x: Math.floor(Math.random() * 200) - 100,
+      y: Math.floor(Math.random() * 200) - 100,
       level: 0,
       experienceTillLevelUp: 100,
       mission: null,

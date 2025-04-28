@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<MapProps> = async (
 export default function Map({ allHeroes, myHero }: MapProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(allHeroes);
+  console.log(myHero);
 
   const handleBattle = async (
     attackerHeroId: string,
@@ -83,7 +83,11 @@ export default function Map({ allHeroes, myHero }: MapProps) {
     <ProtectedRoute>
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">World Map Heroes</h1>
-        <MapVibe heroes={allHeroes} onBattle={handleMapBattle} />
+        <MapVibe
+          heroes={allHeroes}
+          onBattle={handleMapBattle}
+          myHero={myHero}
+        />
         {/* 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {allHeroes.map((hero, index) => (

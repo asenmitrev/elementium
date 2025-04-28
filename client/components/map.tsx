@@ -112,6 +112,7 @@ const generateMapData = (): TerrainType[][] => {
 interface MapProps {
   initialScale?: number;
   heroes?: Hero[];
+  myHero?: Hero;
   onHeroClick?: (hero: Hero) => void;
   onBattle?: (hero: Hero, terrain: TerrainType) => void;
 }
@@ -214,6 +215,7 @@ const HeroModal: React.FC<HeroModalProps> = ({
 const Map: React.FC<MapProps> = ({
   initialScale = 1,
   heroes = [],
+  myHero,
   onHeroClick,
   onBattle,
 }) => {
@@ -244,17 +246,33 @@ const Map: React.FC<MapProps> = ({
   const mapWidth = mapData[0].length;
   const mapHeight = mapData.length;
 
-  // Center the map on initial load
+  // Center the map on myHero on initial load
   useEffect(() => {
-    if (containerRef.current) {
+    if (
+      containerRef.current &&
+      myHero &&
+      myHero.x !== null &&
+      myHero.y !== null
+    ) {
       const { width, height } = containerRef.current.getBoundingClientRect();
-      // Center position so (0,0) is at the center of the viewport
+      // Calculate pixel position of myHero
+      const heroPixelX = myHero.x * tileSize;
+      const heroPixelY = myHero.y * tileSize;
+      setPosition({
+        x: width / 2 - heroPixelX,
+        y: height / 2 - heroPixelY,
+      });
+    } else if (containerRef.current) {
+      // fallback: center (0,0)
+      const { width, height } = containerRef.current.getBoundingClientRect();
       setPosition({
         x: width / 2,
         y: height / 2,
       });
     }
-  }, []);
+    // Only run on mount or if myHero changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myHero, tileSize]);
 
   // Calculate which tiles are visible in the viewport
   const calculateVisibleTiles = useCallback(() => {
@@ -649,47 +667,111 @@ const Map: React.FC<MapProps> = ({
     return tiles;
   };
 
-  // Update hero markers to account for zoom
+  // Update hero markers to account for myHero
   const renderHeroMarkers = () => {
-    return heroes
-      .filter(
-        (hero) =>
-          hero.x !== null &&
-          hero.y !== null &&
-          hero.x >= visibleTiles.startX &&
-          hero.x <= visibleTiles.endX &&
-          hero.y >= visibleTiles.startY &&
-          hero.y <= visibleTiles.endY
-      )
-      .map((hero) => (
-        <div
-          key={hero._id}
-          className="absolute hero-marker rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-10"
-          style={{
-            width: `${Math.max(40, 20 * scale)}px`,
-            height: `${Math.max(40, 20 * scale)}px`,
-            transform: `translate3d(${
-              hero.x! * tileSize +
-              position.x +
-              tileSize / 2 -
-              Math.max(20, 10 * scale)
-            }px, ${
-              hero.y! * tileSize +
-              position.y +
-              tileSize / 2 -
-              Math.max(20, 10 * scale)
-            }px, 0)`,
-            fontSize: `${Math.max(10, scale * 10)}px`,
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleHeroClick(hero);
-          }}
-          title={hero.name}
-        >
-          <span className="font-bold">{hero.name}</span>
-        </div>
-      ));
+    // Combine myHero (if present) and other heroes, but avoid duplicate if myHero is in heroes
+    const allMarkers = [
+      ...(heroes?.filter((h) => !myHero || h._id !== myHero._id) ?? []),
+    ];
+    console.log(allMarkers);
+    return (
+      <>
+        {/* Render other heroes */}
+        {allMarkers
+          .filter(
+            (hero) =>
+              hero.x !== null &&
+              hero.y !== null &&
+              hero.x >= visibleTiles.startX &&
+              hero.x <= visibleTiles.endX &&
+              hero.y >= visibleTiles.startY &&
+              hero.y <= visibleTiles.endY
+          )
+          .map((hero) => (
+            <div
+              key={hero._id}
+              className="absolute hero-marker rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-10"
+              style={{
+                width: `${Math.max(40, 20 * scale)}px`,
+                height: `${Math.max(40, 20 * scale)}px`,
+                transform: `translate3d(${
+                  hero.x! * tileSize +
+                  position.x +
+                  tileSize / 2 -
+                  Math.max(20, 10 * scale)
+                }px, ${
+                  hero.y! * tileSize +
+                  position.y +
+                  tileSize / 2 -
+                  Math.max(20, 10 * scale)
+                }px, 0)`,
+                fontSize: `${Math.max(10, scale * 10)}px`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleHeroClick(hero);
+              }}
+              title={hero.name}
+            >
+              <span className="font-bold">{hero.name}</span>
+            </div>
+          ))}
+        {/* Render myHero with a different icon/color */}
+        {myHero &&
+          myHero.x !== null &&
+          myHero.y !== null &&
+          myHero.x >= visibleTiles.startX &&
+          myHero.x <= visibleTiles.endX &&
+          myHero.y >= visibleTiles.startY &&
+          myHero.y <= visibleTiles.endY && (
+            <div
+              key={myHero._id}
+              className="absolute hero-marker rounded-full bg-blue-600 border-4 border-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-20 shadow-lg"
+              style={{
+                width: `${Math.max(48, 24 * scale)}px`,
+                height: `${Math.max(48, 24 * scale)}px`,
+                transform: `translate3d(${
+                  myHero.x! * tileSize +
+                  position.x +
+                  tileSize / 2 -
+                  Math.max(24, 12 * scale)
+                }px, ${
+                  myHero.y! * tileSize +
+                  position.y +
+                  tileSize / 2 -
+                  Math.max(24, 12 * scale)
+                }px, 0)`,
+                fontSize: `${Math.max(12, scale * 12)}px`,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleHeroClick(myHero);
+              }}
+              title={myHero.name + " (You)"}
+            >
+              <span className="font-bold text-white">You</span>
+              {/* Optionally, add an icon */}
+              <svg
+                className="ml-1"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="white"
+                  strokeWidth="2"
+                  fill="none"
+                />
+                <circle cx="12" cy="12" r="5" fill="white" />
+              </svg>
+            </div>
+          )}
+      </>
+    );
   };
 
   return (
@@ -722,7 +804,7 @@ const Map: React.FC<MapProps> = ({
         </div>
 
         {/* Zoom indicator */}
-        <div className="absolute left-4 bottom-4 bg-white bg-opacity-80 px-3 py-1 rounded-full text-sm">
+        <div className="absolute left-4 bottom-4 bg-black bg-opacity-80 px-3 py-1 rounded-full text-sm">
           Zoom: {Math.round(scale * 100)}%
         </div>
 
@@ -730,7 +812,7 @@ const Map: React.FC<MapProps> = ({
         <div className="absolute right-4 bottom-4 flex flex-col gap-2 z-30">
           <button
             onClick={zoomIn}
-            className="bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
             title="Zoom in"
           >
             <svg
@@ -750,7 +832,7 @@ const Map: React.FC<MapProps> = ({
           </button>
           <button
             onClick={resetZoom}
-            className="bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
             title="Reset zoom"
           >
             <svg
@@ -770,7 +852,7 @@ const Map: React.FC<MapProps> = ({
           </button>
           <button
             onClick={zoomOut}
-            className="bg-white p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
             title="Zoom out"
           >
             <svg
