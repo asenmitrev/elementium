@@ -1,5 +1,6 @@
 import axios from "axios";
 import { HeroType, UnitType } from "types";
+import { TerrainType } from "@/components/map";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005";
 
@@ -25,13 +26,21 @@ export class BattleService {
   static async startBattle(
     attackerHeroId: string,
     defenderHeroId: string,
-    cookie: string
+    cookie: string,
+    terrain?: TerrainType
   ): Promise<any> {
+    // Convert TerrainType enum to the server's Land string
+    let landType = null;
+    if (terrain) {
+      landType = terrain; // TerrainType enum values match the server's expected values
+    }
+
     const response = await axios.post(
       `${API_URL}/battle`,
       {
         attackerHeroId,
         defenderHeroId,
+        terrain: landType,
       },
       {
         headers: { Authorization: `Bearer ${cookie}` },

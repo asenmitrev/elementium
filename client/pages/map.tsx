@@ -9,6 +9,8 @@ import Hero from "@/components/hero";
 import { BattleService } from "@/services/battle.service";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { default as MapVibe, TerrainType } from "@/components/map";
+
 interface MapProps {
   allHeroes: (IHero & { units: Unit[] })[];
   myHero: IHero & { units: Unit[] };
@@ -54,25 +56,35 @@ export const getServerSideProps: GetServerSideProps<MapProps> = async (
 export default function Map({ allHeroes, myHero }: MapProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(myHero);
+  console.log(allHeroes);
 
   const handleBattle = async (
     attackerHeroId: string,
-    defenderHeroId: string
+    defenderHeroId: string,
+    terrain?: TerrainType
   ) => {
     const battle = await BattleService.startBattle(
       attackerHeroId,
       defenderHeroId,
-      session?.user.accessToken || ""
+      session?.user.accessToken || "",
+      terrain
     );
+    console.log("Battle started on terrain:", terrain);
     console.log(battle);
     router.push(`/battle/${battle._id}`);
   };
+
+  // Handle battle with terrain information
+  const handleMapBattle = (hero: IHero, terrain: TerrainType) => {
+    handleBattle(myHero._id, hero._id, terrain);
+  };
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">World Map Heroes</h1>
-
+        <MapVibe heroes={allHeroes} onBattle={handleMapBattle} />
+        {/* 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {allHeroes.map((hero, index) => (
             <div className="flex flex-col items-center justify-center">
@@ -90,7 +102,7 @@ export default function Map({ allHeroes, myHero }: MapProps) {
               </button>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </ProtectedRoute>
   );
