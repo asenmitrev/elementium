@@ -544,11 +544,11 @@ const Map: React.FC<MapProps> = ({
   const getTileColor = (type: TerrainType): string => {
     switch (type) {
       case TerrainType.WATER:
-        return "bg-blue-500";
+        return "/images/tiles/water.png";
       case TerrainType.EARTH:
-        return "bg-green-500";
+        return "/images/tiles/earth.png";
       case TerrainType.FIRE:
-        return "bg-red-500";
+        return "/images/tiles/fire.png";
       default:
         return "bg-gray-300";
     }
@@ -595,13 +595,13 @@ const Map: React.FC<MapProps> = ({
           mapData[mapY][mapX] !== undefined
         ) {
           const type = mapData[mapY][mapX];
+          const imagePath = getTileColor(type);
           tiles.push(
             <div
               key={`${x}-${y}`}
               className={clsx(
                 "absolute",
-                isDragging || isZooming ? "" : "transition-colors duration-200",
-                getTileColor(type)
+                isDragging || isZooming ? "" : "transition-colors duration-200"
               )}
               style={{
                 width: tileSize * scaleAdjustedSkipFactor,
@@ -610,6 +610,9 @@ const Map: React.FC<MapProps> = ({
                   y * tileSize + position.y
                 }px, 0)`,
                 willChange: isDragging || isZooming ? "transform" : "auto",
+                backgroundImage: `url(${imagePath})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
               }}
               title={`${type} (${x},${y})`}
             />
