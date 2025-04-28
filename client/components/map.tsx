@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { clsx } from "clsx";
 import { Hero } from "types";
 import HeroCard from "./hero";
+import { createNoise2D } from "simplex-noise";
 
 // Define terrain types
 export enum TerrainType {
@@ -22,11 +23,10 @@ const generateMapData = (): TerrainType[][] => {
   const mapHeight = 500;
   const map: TerrainType[][] = [];
 
-  // Simple Perlin-like noise implementation
+  const createNoise = createNoise2D();
   const noise = (nx: number, ny: number) => {
-    // Generate a value between 0 and 1 based on coordinates
-    const value = Math.sin(nx * 10) * Math.sin(ny * 10) * 0.5 + 0.5;
-    return value;
+    // Simplex noise returns values in [-1, 1], so shift to [0, 1]
+    return (createNoise(nx * 5, ny * 5) + 1) / 2;
   };
 
   // Generate initial random map with more natural-looking clusters
