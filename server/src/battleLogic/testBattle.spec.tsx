@@ -107,6 +107,22 @@ describe('Create Unit Type tests', () => {
             }
         }
     });
+
+    it('Check effect explanation does not contain opposite stage text', () => {
+        for (let i = 0; i < 500; i++) {
+            const unit = createUnitType();
+            if (unit.effect) {
+                if (unit.effect.stage === 'pre') {
+                    assert(!unit.effect.explanation?.includes('After'), 
+                        `Pre-battle effect should not contain "After" in explanation: ${unit.effect.explanation} ${i}`);
+                }
+                if (unit.effect.stage === 'after') {
+                    assert(!unit.effect.explanation?.includes('Before'), 
+                        `After-battle effect should not contain "Before" in explanation: ${unit.effect.explanation} ${i}`);
+                }
+            }
+        }
+    });
 });
 
 
