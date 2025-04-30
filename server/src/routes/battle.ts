@@ -53,7 +53,7 @@ router.post(
 );
 
 router.post("/", authenticateToken, async (req: Request, res: Response) => {
-  const { attackerHeroId, defenderHeroId } = req.body;
+  const { attackerHeroId, defenderHeroId, terrain } = req.body;
   const attackerHero = await Hero.findById(attackerHeroId);
   const defenderHero = await Hero.findById(defenderHeroId);
   if (!attackerHero || !defenderHero) {
@@ -62,6 +62,18 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
   }
   const attackerUnits = await Unit.find({ holder: attackerHero!._id });
   const defenderUnits = await Unit.find({ holder: defenderHero!._id });
+
+  // Map the terrain from client to the Land type
+  let landType: Land;
+  if (terrain === "water") {
+    landType = "water";
+  } else if (terrain === "fire") {
+    landType = "fire";
+  } else {
+    // Default to earth for any other value or if no terrain is provided
+    landType = "earth";
+  }
+  console.log("Land type:", landType, terrain);
   const battleResult = await battle({
     attackerDeck: attackerUnits.map((unit) => unit.type),
     defenderDeck: defenderUnits.map((unit) => unit.type),
@@ -70,7 +82,7 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     attackerHeroTypeUserFacing: attackerHero.type,
     defenderHeroTypeUserFacing: defenderHero.type,
     defenderCastle: predefinedNeutrals,
-    land: ["earth", "fire", "water"][Math.floor(Math.random() * 3)] as Land,
+    land: landType,
   });
   const newBattle = new BattleResult({
     ...battleResult,

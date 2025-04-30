@@ -32,6 +32,7 @@
     "react-hook-form": "^7.54.2",
     "remark": "^14.0.2",
     "remark-html": "^15.0.1",
+    "simplex-noise": "^4.0.3",
     "sonner": "^2.0.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"

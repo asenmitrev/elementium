@@ -90,8 +90,8 @@ function generateValidCoordinates(
     // Generate coordinates between -1000 and 1000
     // but at least 100 units from center
     const sign = () => (Math.random() < 0.5 ? -1 : 1);
-    const x = sign() * (Math.floor(Math.random() * 900) + 100); // 100 to 1000
-    const y = sign() * (Math.floor(Math.random() * 900) + 100);
+    const x = sign() * Math.floor(Math.random() * 100); // 0 to 100
+    const y = sign() * Math.floor(Math.random() * 100);
 
     // Check distance from center
     const distanceFromCenter = Math.sqrt(x * x + y * y);
