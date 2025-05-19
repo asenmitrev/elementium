@@ -119,11 +119,11 @@ router.post(
 
       await newHero.save();
       const units: Partial<IUnit>[] = heroType.units.map((unit) => ({
+        ...unit,
         holder: newHero._id,
         holderModel: "Hero",
         experienceTillLevelUp: 100,
         player: req.user!.userId,
-        type: unit,
       }));
       await Unit.insertMany(units);
       res.status(201).json(newHero);

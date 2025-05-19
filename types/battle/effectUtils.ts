@@ -56,7 +56,7 @@ export type BattleResult = {
   remainingAttackerDeck: UnitTypeSimple[];
   remainingDefenderDeck: UnitTypeSimple[];
   HeroTypeUserFacingCastleNarrations: string[];
-  playerAttacker: string;
-  playerDefender: string;
+  playerAttacker?: string;
+  playerDefender?: string;
   rounds: RoundNarration[];
 };

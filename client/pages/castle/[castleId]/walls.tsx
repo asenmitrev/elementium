@@ -94,7 +94,7 @@ export default function Walls({ initialCastle, heroes }: WallsProps) {
               <Hero
                 key={hero._id}
                 hero={hero.type}
-                units={hero.units?.map((unit) => unit.type) ?? []}
+                units={hero.units}
                 link={`/hero/${hero._id}`}
               />
             ))}

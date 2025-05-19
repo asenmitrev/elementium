@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import type { GetServerSideProps } from "next";
 import { motion } from "framer-motion";
-import { HeroType, UnitType } from "types";
+import { HeroType, Unit, UnitType } from "types";
 import { HeroService } from "@/services/hero.service";
 import HeroCard from "@/components/hero";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
@@ -15,7 +15,7 @@ import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 
 interface ChooseHeroProps {
-  initialHeroes: (HeroType & { units: UnitType[] })[];
+  initialHeroes: (HeroType & { units: Unit[] })[];
 }
 
 export const getServerSideProps: GetServerSideProps<ChooseHeroProps> = async (

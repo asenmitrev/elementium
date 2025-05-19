@@ -46,7 +46,7 @@ export class HeroService {
 
   static async getPredefinedHeroes(
     cookie: string
-  ): Promise<(HeroType & { units: UnitType[] })[]> {
+  ): Promise<(HeroType & { units: Unit[] })[]> {
     const response = await axios.get(`${API_URL}/heroes/predefined-units`, {
       headers: {
         Authorization: `Bearer ${cookie}`,
