@@ -129,9 +129,9 @@ router.post(
     // Generate a random neutral hero and units
     const allRaces = [...unitRaces.values()];
     const randomRace = allRaces[Math.floor(Math.random() * allRaces.length)];
-    const neutralHeroType = createHeroType(randomRace);
-    const neutralUnits = Array.from({ length: 3 }, () =>
-      createUnitType(randomRace)
+    const attackerLevel = Math.ceil(Math.random() * (defenderHero.level + 1));
+    const neutralUnits = Array.from({ length: 1 }, () =>
+      createUnitType(randomRace, attackerLevel)
     );
 
     // Map the terrain from client to the Land type
@@ -150,7 +150,7 @@ router.post(
       defenderDeck: defenderUnits.map((unit) => unit.type),
       attackerGraveyard: [],
       defenderGraveyard: [],
-      attackerHeroTypeUserFacing: neutralHeroType,
+      attackerHeroTypeUserFacing: undefined,
       defenderHeroTypeUserFacing: defenderHero.type,
       defenderCastle: predefinedNeutrals,
       land: landType,
