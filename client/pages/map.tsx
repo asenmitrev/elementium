@@ -54,7 +54,11 @@ export default function Map({ myHero: initialHero }: MapProps) {
   const [battleModalOpen, setBattleModalOpen] = useState(false);
   const [currentBattleId, setCurrentBattleId] = useState<string | null>(null);
 
-  const handleHeroMove = async (x: number, y: number) => {
+  const handleHeroMove = async (
+    x: number,
+    y: number,
+    terrainType: TerrainType
+  ) => {
     if (!session?.user.accessToken || !myHero) return;
 
     try {
@@ -70,11 +74,12 @@ export default function Map({ myHero: initialHero }: MapProps) {
         x,
         y,
       }));
+
       // Check for battle and start it if it occurs
       const battleResult = await BattleService.startMapBattle(
         myHero._id,
         session.user.accessToken,
-        TerrainType.EARTH
+        terrainType
       );
 
       if (battleResult.battleOccurred) {

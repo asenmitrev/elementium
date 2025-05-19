@@ -122,7 +122,11 @@ interface MapProps {
     x: number | null;
     y: number | null;
   };
-  onHeroMove?: (x: number, y: number) => Promise<void>;
+  onHeroMove?: (
+    x: number,
+    y: number,
+    terrainType: TerrainType
+  ) => Promise<void>;
 }
 
 const Map: React.FC<MapProps> = ({ initialScale = 1, myHero, onHeroMove }) => {
@@ -539,8 +543,9 @@ const Map: React.FC<MapProps> = ({ initialScale = 1, myHero, onHeroMove }) => {
         worldY >= 0 &&
         worldY < mapHeight
       ) {
+        const terrainType = mapData[worldY][worldX];
         setIsMoving(true);
-        onHeroMove(mapX, mapY)
+        onHeroMove(mapX, mapY, terrainType)
           .then(() => {
             setIsMoving(false);
           })
