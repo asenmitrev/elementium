@@ -43,6 +43,7 @@ router.post("/login", async (req: Request, res: Response): Promise<void> => {
 
     // Set cookies
     res.status(201).json({
+      userId: user._id,
       accessToken: {
         token: accessToken,
         expiresIn: 14 * 60 * 1000,
@@ -100,6 +101,7 @@ router.post("/register", async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(201).json({
+      userId: user._id,
       accessToken: {
         token: accessToken,
         expiresIn: 15 * 60 * 1000,
@@ -214,6 +216,7 @@ router.post("/refresh", async (req: Request, res: Response): Promise<void> => {
 
       // Return new tokens
       res.status(200).json({
+        userId: user._id,
         accessToken: {
           token: newAccessToken,
           expiresIn: 14 * 60 * 1000,

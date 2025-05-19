@@ -9,6 +9,7 @@ declare module "next-auth" {
     onboardingStep: number;
     accessToken: string;
     refreshToken: string;
+    userId: string;
   }
 
   /**

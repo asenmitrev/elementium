@@ -144,6 +144,7 @@ function CompactUnitCard({
 }
 
 export default function BattlePage({ battle }: BattlePageProps) {
+  const { data: session } = useSession();
   const [currentRound, setCurrentRound] = useState(0);
   const [phase, setPhase] = useState<BattlePhase>("starting");
   const [autoPlay, setAutoPlay] = useState(false);
@@ -313,6 +314,8 @@ export default function BattlePage({ battle }: BattlePageProps) {
 
   const isAttackerWinner = battle.winner === "attacker";
   const isDefenderWinner = battle.winner === "defender";
+  const isCurrentUserAttacker = battle.playerAttacker === session?.user?.userId;
+  const isCurrentUserDefender = battle.playerDefender === session?.user?.userId;
   const winnerColor = isAttackerWinner
     ? "from-red-400 to-orange-600"
     : isDefenderWinner
@@ -327,7 +330,11 @@ export default function BattlePage({ battle }: BattlePageProps) {
           <h1
             className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${winnerColor}`}
           >
-            {isAttackerWinner
+            {isAttackerWinner && isCurrentUserAttacker
+              ? "You Won"
+              : isDefenderWinner && isCurrentUserDefender
+              ? "You Won"
+              : isAttackerWinner
               ? "Attacker Won"
               : isDefenderWinner
               ? "Defender Won"

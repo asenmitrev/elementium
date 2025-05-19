@@ -94,6 +94,7 @@ export const authOptions: AuthOptions = {
               token: string;
               expiresIn: number;
             };
+            userId: string;
           } = await res.json();
 
           // Extract the user from the access token
@@ -101,6 +102,7 @@ export const authOptions: AuthOptions = {
             onboardingStep: tokens.onboardingStep,
             accessToken: tokens.accessToken.token,
             refreshToken: tokens.refreshToken.token,
+            userId: tokens.userId,
           };
           // Extract the auth validity from the tokens
           const validity: AuthValidity = {
