@@ -65,8 +65,12 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
     res.status(404).json({ error: "Hero not found" });
     return;
   }
-  const attackerUnits = await Unit.find({ holder: attackerHero!._id });
-  const defenderUnits = await Unit.find({ holder: defenderHero!._id });
+  const attackerUnits = await Unit.find({ holder: attackerHero!._id }).sort({
+    order: 1,
+  });
+  const defenderUnits = await Unit.find({ holder: defenderHero!._id }).sort({
+    order: 1,
+  });
 
   // Map the terrain from client to the Land type
   let landType: Land;
@@ -118,7 +122,9 @@ router.post(
       res.status(404).json({ error: "Hero not found" });
       return;
     }
-    const defenderUnits = await Unit.find({ holder: defenderHero!._id });
+    const defenderUnits = await Unit.find({ holder: defenderHero!._id }).sort({
+      order: 1,
+    });
 
     // Generate a random neutral hero and units
     const allRaces = [...unitRaces.values()];
