@@ -138,4 +138,22 @@ export class HeroService {
     );
     return response.data;
   }
+
+  static async getNeutralHeroes(cookie: string): Promise<Hero[]> {
+    const response = await axios.get(`${API_URL}/hero/map`, {
+      headers: { Authorization: `Bearer ${cookie}` },
+    });
+    return response.data;
+  }
+
+  static async updateHeroPosition(
+    heroId: string,
+    data: { x: number; y: number },
+    cookie: string
+  ): Promise<Hero> {
+    const response = await axios.put(`${API_URL}/hero/${heroId}`, data, {
+      headers: { Authorization: `Bearer ${cookie}` },
+    });
+    return response.data;
+  }
 }

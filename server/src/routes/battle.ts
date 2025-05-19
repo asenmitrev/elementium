@@ -6,6 +6,11 @@ import { authenticateToken } from "../middleware/auth";
 import { BattleResult } from "../models/battleResult.model";
 import { Unit } from "../models/unit.model";
 import { Land } from "types";
+import {
+  createHeroType,
+  createUnitType,
+} from "../unitAndHeroGenerationLogic/unitAndHeroGeneration";
+import { unitRaces } from "types/unitRaces";
 const router: Router = express.Router();
 
 router.post(
@@ -94,6 +99,69 @@ router.post("/", authenticateToken, async (req: Request, res: Response) => {
   await newBattle.save();
   res.json(newBattle);
 });
+
+router.post(
+  "/map-battle",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    const { attackerHeroId, terrain } = req.body;
+
+    // 25% chance of battle
+    if (Math.random() >= 0.25) {
+      return res.json({ battleOccurred: false });
+    }
+
+    // Find the attacker's hero and units
+    const attackerHero = await Hero.findById(attackerHeroId);
+    if (!attackerHero) {
+      res.status(404).json({ error: "Hero not found" });
+      return;
+    }
+    const attackerUnits = await Unit.find({ holder: attackerHero!._id });
+
+    // Generate a random neutral hero and units
+    const allRaces = [...unitRaces.values()];
+    const randomRace = allRaces[Math.floor(Math.random() * allRaces.length)];
+    const neutralHeroType = createHeroType(randomRace);
+    const neutralUnits = Array.from({ length: 3 }, () =>
+      createUnitType(randomRace)
+    );
+
+    // Map the terrain from client to the Land type
+    let landType: Land;
+    if (terrain === "water") {
+      landType = "water";
+    } else if (terrain === "fire") {
+      landType = "fire";
+    } else {
+      // Default to earth for any other value or if no terrain is provided
+      landType = "earth";
+    }
+
+    const battleResult = await battle({
+      attackerDeck: attackerUnits.map((unit) => unit.type),
+      defenderDeck: neutralUnits,
+      attackerGraveyard: [],
+      defenderGraveyard: [],
+      attackerHeroTypeUserFacing: attackerHero.type,
+      defenderHeroTypeUserFacing: neutralHeroType,
+      defenderCastle: undefined,
+      land: landType,
+    });
+
+    const newBattle = new BattleResult({
+      ...battleResult,
+      playerAttacker: attackerHero.player,
+      playerDefender: null, // No player for neutral
+      defender: null, // No defender hero document
+      attacker: attackerHero._id,
+    });
+    await newBattle.save();
+
+    res.json({ battleOccurred: true, battle: newBattle });
+  }
+);
+
 router.get(
   "/:battleId",
   authenticateToken,
