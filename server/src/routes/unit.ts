@@ -3,7 +3,7 @@ import { Unit } from "../models/unit.model";
 import { authenticateToken } from "../middleware/auth";
 import { Hero } from "../models/hero.model";
 import { Castle } from "../models/castle.model";
-import { predefinedNeutrals } from "../predefined/neutrals";
+import { ObjectId } from "mongodb";
 
 const router: Router = express.Router();
 
@@ -167,6 +167,53 @@ router.patch(
     } catch (error) {
       console.error("Error transferring unit:", error);
       res.status(500).json({ error: "Error transferring unit" });
+    }
+  }
+);
+
+// Reorder units within a hero
+router.patch(
+  "/reorder",
+  authenticateToken,
+  async (req: Request, res: Response) => {
+    try {
+      const { heroId, unitIds } = req.body;
+
+      // Verify hero exists and belongs to user
+      const hero = await Hero.findOne({
+        _id: new ObjectId(heroId),
+        player: new ObjectId(req.user!.userId),
+      });
+
+      if (!hero) {
+        res.status(404).json({ error: "Hero not found" });
+        return;
+      }
+
+      // Verify all units belong to the hero
+      const units = await Unit.find({
+        holder: hero._id,
+      });
+      if (units.length !== unitIds.length) {
+        res.status(400).json({ error: "Invalid unit IDs" });
+        return;
+      }
+      for (let i = 0; i < unitIds.length; i++) {
+        const unit = units.find((unit) => unit._id.equals(unitIds[i]));
+        if (unit) {
+          unit.order = i;
+          await unit.save();
+        }
+      }
+      // Update the order of units in the hero's units array
+      // The order of unitIds in the request determines the new order
+      hero.units = units.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      await hero.save();
+
+      res.json(hero);
+    } catch (error) {
+      console.error("Error reordering units:", error);
+      res.status(500).json({ error: "Error reordering units" });
     }
   }
 );

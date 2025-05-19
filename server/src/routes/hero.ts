@@ -25,6 +25,11 @@ router.get("/", authenticateToken, async (req: Request, res: Response) => {
           as: "units",
         },
       },
+      {
+        $addFields: {
+          units: { $sortArray: { input: "$units", sortBy: { order: 1 } } },
+        },
+      },
     ]).exec();
     res.json(heroes);
   } catch (error) {
@@ -111,9 +116,9 @@ router.post(
         mission: null,
         alive: true,
       });
-      await newHero.save();
 
-      const units: IUnit[] = heroType.units.map((unit) => ({
+      await newHero.save();
+      const units: Partial<IUnit>[] = heroType.units.map((unit) => ({
         holder: newHero._id,
         holderModel: "Hero",
         experienceTillLevelUp: 100,
@@ -148,6 +153,9 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
     const hero = await Hero.findOne({
       _id: req.params.id,
       player: req.user!.userId,
+    }).populate({
+      path: "units",
+      options: { sort: { order: 1 } },
     });
     if (!hero) {
       res.status(404).json({ error: "Hero not found" });
@@ -155,7 +163,8 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
     }
 
     const units = await Unit.find({ holder: hero!._id });
-    hero.units = units;
+    hero.units = units.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    console.log(hero.units);
     res.json(hero);
   } catch (error) {
     console.error("Error fetching hero:", error);

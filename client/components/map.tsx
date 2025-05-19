@@ -173,7 +173,7 @@ const HeroModal: React.FC<HeroModalProps> = ({
           <div className="mt-4">
             <HeroCard
               hero={hero.type}
-              units={hero.units?.map((unit) => unit.type) || []}
+              units={hero.units ?? []}
               heroId={hero._id}
               noLink={true}
             />

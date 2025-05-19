@@ -46,7 +46,7 @@ export default function HeroPage({ hero }: HeroPageProps) {
         <div>
           <Hero
             hero={hero.type}
-            units={hero.units.map((unit) => unit.type)}
+            units={hero.units}
             showArmy={false}
             link={"/heroes"}
           />
@@ -56,7 +56,7 @@ export default function HeroPage({ hero }: HeroPageProps) {
         {/* Hero Card */}
         {/* Soldiers List */}
         {hero.units.length > 0 ? (
-          <SoldierList soldiers={hero.units.map((unit) => unit.type)} />
+          <SoldierList soldiers={hero.units} heroId={hero._id} />
         ) : (
           <div className="flex text-gray-500 py-4">
             This hero does not have an army.

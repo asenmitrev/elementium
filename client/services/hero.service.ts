@@ -118,4 +118,24 @@ export class HeroService {
       },
     });
   }
+
+  static async reorderUnits(
+    heroId: string,
+    unitIds: string[],
+    cookie: string
+  ): Promise<Hero & { units: Unit[] }> {
+    const response = await axios.patch(
+      `${API_URL}/units/reorder`,
+      {
+        heroId,
+        unitIds,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${cookie}`,
+        },
+      }
+    );
+    return response.data;
+  }
 }

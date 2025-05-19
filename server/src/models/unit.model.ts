@@ -31,6 +31,10 @@ const UnitSchema = new Schema(
       type: Number,
       default: 100,
     },
+    order: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

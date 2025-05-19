@@ -1,8 +1,23 @@
 import { Card } from "@/components/ui/card";
-import { Droplets, Mountain, Flame } from "lucide-react";
+import { Droplets, Mountain, Flame, GripVertical } from "lucide-react";
 import { UnitType, UnitTypeSimple } from "types";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDrag, useDrop, DragSourceMonitor } from "react-dnd";
+import { useRef } from "react";
+
+interface SoldierProps {
+  unit: UnitType | UnitTypeSimple;
+  previousUnit?: UnitType | UnitTypeSimple | null;
+  showChanges?: boolean;
+  battlefieldElement?: string | null;
+  compact?: boolean;
+  index?: number;
+  moveUnit?: (dragIndex: number, hoverIndex: number) => void;
+  heroId?: string;
+  onDragEnd?: () => void;
+  isReordering?: boolean;
+}
 
 export default function SoldierCard({
   unit,
@@ -10,13 +25,84 @@ export default function SoldierCard({
   showChanges = false,
   battlefieldElement = null,
   compact = false,
-}: {
-  unit: UnitType | UnitTypeSimple;
-  previousUnit?: UnitType | UnitTypeSimple | null;
-  showChanges?: boolean;
-  battlefieldElement?: string | null;
-  compact?: boolean;
-}) {
+  index,
+  moveUnit,
+  heroId,
+  onDragEnd,
+  isReordering = false,
+}: SoldierProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [{ isDragging }, drag] = useDrag({
+    type: "UNIT",
+    item: { index },
+    collect: (monitor: DragSourceMonitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+    end: (item, monitor) => {
+      if (onDragEnd && !isReordering && monitor.didDrop()) {
+        onDragEnd();
+      }
+    },
+    canDrag: !isReordering,
+  });
+
+  const [, drop] = useDrop({
+    accept: "UNIT",
+    hover: (item: { index: number }, monitor) => {
+      if (!ref.current || !moveUnit || typeof index !== "number") {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Determine rectangle on screen
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+
+      // Get vertical and horizontal middle
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleX =
+        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+
+      // Get pixels to the top and left
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      const hoverClientX = clientOffset.x - hoverBoundingRect.left;
+
+      // Calculate the distance from the center
+      const distanceFromCenter = Math.sqrt(
+        Math.pow(hoverClientX - hoverMiddleX, 2) +
+          Math.pow(hoverClientY - hoverMiddleY, 2)
+      );
+
+      // Only perform the move when the mouse has crossed the center threshold
+      const centerThreshold = Math.min(hoverMiddleX, hoverMiddleY) * 0.5;
+
+      if (distanceFromCenter < centerThreshold) {
+        return;
+      }
+
+      // Time to actually perform the action
+      moveUnit(dragIndex, hoverIndex);
+
+      // Note: we're mutating the monitor item here!
+      // Generally it's better to avoid mutations,
+      // but it's good here for the sake of performance
+      // to avoid expensive index searches.
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
+
   // Helper function to determine stat change styling and animation
   const getStatDisplay = (
     stat: "earth" | "fire" | "water",
@@ -65,6 +151,11 @@ export default function SoldierCard({
       <div
         className={`relative ${compact ? "aspect-[4/2.5]" : "aspect-[4/3]"}`}
       >
+        {moveUnit && (
+          <div className="absolute top-1 left-1 z-10 cursor-move">
+            <GripVertical className="w-4 h-4 text-white/50 hover:text-white" />
+          </div>
+        )}
         <Image
           src={`/images/units/${unit.image}`}
           alt={unit.name}
@@ -207,7 +298,10 @@ export default function SoldierCard({
 
   return (
     <Card
-      className={`w-full ${compact ? "max-w-sm" : "max-w-md"} overflow-hidden`}
+      ref={ref}
+      className={`w-full ${compact ? "max-w-sm" : "max-w-md"} overflow-hidden ${
+        isDragging ? "opacity-50" : ""
+      }`}
     >
       {cardContent}
     </Card>

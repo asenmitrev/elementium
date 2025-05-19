@@ -37,6 +37,7 @@ export type Building = {
 };
 
 export type UnitType = {
+  _id?: string;
   effect: EffectMethods | null;
   earth: number;
   fire: number;
@@ -61,10 +62,12 @@ export type UnitTypeSimple = {
 };
 
 export type Unit = {
+  _id: string;
   type: UnitType;
   holder: Castle | Hero;
   experienceTillLevelUp: number;
   player?: string;
+  order?: number;
 };
 
 export type HeroType = {

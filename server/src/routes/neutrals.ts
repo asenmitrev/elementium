@@ -43,7 +43,7 @@ router.get("/create-neutrals", async (req: Request, res: Response) => {
       return unitType;
     });
 
-    const units: IUnit[] = unitTypes.map((unit) => ({
+    const units: Partial<IUnit>[] = unitTypes.map((unit) => ({
       holder: newHero._id,
       holderModel: "Hero",
       experienceTillLevelUp: 100,

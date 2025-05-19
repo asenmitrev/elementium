@@ -13,7 +13,7 @@ const HeroList: React.FC<HeroListProps> = ({ heroes }) => {
         <Hero
           key={index}
           hero={hero.type}
-          units={hero.units?.map((unit) => unit.type) ?? []}
+          units={hero.units}
           heroId={hero._id}
         />
       ))}
