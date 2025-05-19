@@ -23,7 +23,8 @@ const generateMapData = (): TerrainType[][] => {
   const mapHeight = 500;
   const map: TerrainType[][] = [];
 
-  const createNoise = createNoise2D();
+  // Use a fixed seed for deterministic terrain
+  const createNoise = createNoise2D(() => 0.5); // Fixed seed for deterministic noise
   const noise = (nx: number, ny: number) => {
     // Simplex noise returns values in [-1, 1], so shift to [0, 1]
     return (createNoise(nx * 5, ny * 5) + 1) / 2;
@@ -57,9 +58,11 @@ const generateMapData = (): TerrainType[][] => {
 
   // Create more water bodies for larger map
   for (let i = 0; i < 50; i++) {
-    const centerX = Math.floor(Math.random() * mapWidth);
-    const centerY = Math.floor(Math.random() * mapHeight);
-    const size = Math.floor(Math.random() * 15) + 8; // 8-23 tiles
+    const centerX = Math.floor(mapWidth * (0.1 + (0.8 * (i % 10)) / 10));
+    const centerY = Math.floor(
+      mapHeight * (0.1 + (0.8 * Math.floor(i / 10)) / 5)
+    );
+    const size = 15; // Fixed size for water bodies
 
     for (let y = centerY - size / 2; y < centerY + size / 2; y++) {
       for (let x = centerX - size / 2; x < centerX + size / 2; x++) {
@@ -82,9 +85,11 @@ const generateMapData = (): TerrainType[][] => {
 
   // Create more volcanic regions for larger map
   for (let i = 0; i < 40; i++) {
-    const centerX = Math.floor(Math.random() * mapWidth);
-    const centerY = Math.floor(Math.random() * mapHeight);
-    const size = Math.floor(Math.random() * 12) + 5; // 5-17 tiles
+    const centerX = Math.floor(mapWidth * (0.1 + (0.8 * (i % 10)) / 10));
+    const centerY = Math.floor(
+      mapHeight * (0.1 + (0.8 * Math.floor(i / 10)) / 4)
+    );
+    const size = 10; // Fixed size for volcanic regions
 
     for (let y = centerY - size / 2; y < centerY + size / 2; y++) {
       for (let x = centerX - size / 2; x < centerX + size / 2; x++) {
@@ -111,114 +116,16 @@ const generateMapData = (): TerrainType[][] => {
 // Map component props
 interface MapProps {
   initialScale?: number;
-  heroes?: Hero[];
-  myHero?: Hero;
-  onHeroClick?: (hero: Hero) => void;
-  onBattle?: (hero: Hero, terrain: TerrainType) => void;
-}
-
-// Hero Modal Component
-interface HeroModalProps {
-  hero: Hero | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onBattle?: (hero: Hero, terrain: TerrainType) => void;
-  getTerrainAtCoordinates: (x: number, y: number) => TerrainType | null;
-}
-
-const HeroModal: React.FC<HeroModalProps> = ({
-  hero,
-  isOpen,
-  onClose,
-  onBattle,
-  getTerrainAtCoordinates,
-}) => {
-  if (!isOpen || !hero) return null;
-
-  const handleBattle = () => {
-    if (onBattle && hero.x !== null && hero.y !== null) {
-      const terrain = getTerrainAtCoordinates(hero.x, hero.y);
-      onBattle(hero, terrain || TerrainType.EARTH); // Default to EARTH if terrain can't be determined
-      onClose(); // Close the modal after starting battle
-    }
+  myHero?: {
+    _id: string;
+    name: string;
+    x: number | null;
+    y: number | null;
   };
+  onHeroMove?: (x: number, y: number) => Promise<void>;
+}
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">{hero.name}</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="mt-4">
-            <HeroCard
-              hero={hero.type}
-              units={hero.units ?? []}
-              heroId={hero._id}
-              noLink={true}
-            />
-          </div>
-
-          <div className="mt-4">
-            <p className="text-sm text-gray-500">Location</p>
-            <p className="font-medium text-black">
-              {hero.x !== null && hero.y !== null
-                ? `(${hero.x}, ${hero.y})`
-                : "Not on map"}
-            </p>
-            {hero.x !== null && hero.y !== null && (
-              <p className="text-sm text-gray-500 mt-1">
-                Land type:{" "}
-                <span className="font-semibold text-black">
-                  {getTerrainAtCoordinates(hero.x, hero.y) ?? "Unknown"}
-                </span>
-              </p>
-            )}
-          </div>
-
-          {onBattle && hero.x !== null && hero.y !== null && (
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleBattle}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-              >
-                Battle
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Map: React.FC<MapProps> = ({
-  initialScale = 1,
-  heroes = [],
-  myHero,
-  onHeroClick,
-  onBattle,
-}) => {
+const Map: React.FC<MapProps> = ({ initialScale = 1, myHero, onHeroMove }) => {
   const [mapData] = useState(generateMapData());
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -235,44 +142,26 @@ const Map: React.FC<MapProps> = ({
     endX: 0,
     endY: 0,
   });
-  const [selectedHero, setSelectedHero] = useState<Hero | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const requestRef = useRef<number | null>(null);
   const [scale, setScale] = useState(initialScale);
   const [isZooming, setIsZooming] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
 
   const baseTileSize = 30; // Base tile size before scaling
   const tileSize = baseTileSize * scale; // Apply scale to tile size
   const mapWidth = mapData[0].length;
   const mapHeight = mapData.length;
 
-  // Center the map on myHero on initial load
+  // Center the map on initial load
   useEffect(() => {
-    if (
-      containerRef.current &&
-      myHero &&
-      myHero.x !== null &&
-      myHero.y !== null
-    ) {
-      const { width, height } = containerRef.current.getBoundingClientRect();
-      // Calculate pixel position of myHero
-      const heroPixelX = myHero.x * tileSize;
-      const heroPixelY = myHero.y * tileSize;
-      setPosition({
-        x: width / 2 - heroPixelX,
-        y: height / 2 - heroPixelY,
-      });
-    } else if (containerRef.current) {
-      // fallback: center (0,0)
+    if (containerRef.current) {
       const { width, height } = containerRef.current.getBoundingClientRect();
       setPosition({
         x: width / 2,
         y: height / 2,
       });
     }
-    // Only run on mount or if myHero changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myHero, tileSize]);
+  }, [tileSize]);
 
   // Calculate which tiles are visible in the viewport
   const calculateVisibleTiles = useCallback(() => {
@@ -517,48 +406,6 @@ const Map: React.FC<MapProps> = ({
     }, 200);
   }, []);
 
-  // Get terrain type at a specific coordinate
-  const getTerrainAtCoordinates = useCallback(
-    (x: number, y: number): TerrainType | null => {
-      const mapX = x + Math.floor(mapWidth / 2);
-      const mapY = y + Math.floor(mapHeight / 2);
-
-      if (
-        mapX >= 0 &&
-        mapX < mapWidth &&
-        mapY >= 0 &&
-        mapY < mapHeight &&
-        mapData[mapY] &&
-        mapData[mapY][mapX] !== undefined
-      ) {
-        return mapData[mapY][mapX];
-      }
-      return null;
-    },
-    [mapData, mapWidth, mapHeight]
-  );
-
-  const handleHeroClick = (hero: Hero) => {
-    setSelectedHero(hero);
-    setIsModalOpen(true);
-
-    if (onHeroClick) {
-      onHeroClick(hero);
-    }
-  };
-
-  const handleBattleClick = (hero: Hero) => {
-    if (onBattle && hero.x !== null && hero.y !== null) {
-      const terrain = getTerrainAtCoordinates(hero.x, hero.y);
-      onBattle(hero, terrain || TerrainType.EARTH); // Default to EARTH if terrain can't be determined
-    }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedHero(null);
-  };
-
   const getTileColor = (type: TerrainType): string => {
     switch (type) {
       case TerrainType.WATER:
@@ -667,220 +514,215 @@ const Map: React.FC<MapProps> = ({
     return tiles;
   };
 
-  // Update hero markers to account for myHero
-  const renderHeroMarkers = () => {
-    // Combine myHero (if present) and other heroes, but avoid duplicate if myHero is in heroes
-    const allMarkers = [
-      ...(heroes?.filter((h) => !myHero || h._id !== myHero._id) ?? []),
-    ];
-    console.log(allMarkers);
-    return (
-      <>
-        {/* Render other heroes */}
-        {allMarkers
-          .filter(
-            (hero) =>
-              hero.x !== null &&
-              hero.y !== null &&
-              hero.x >= visibleTiles.startX &&
-              hero.x <= visibleTiles.endX &&
-              hero.y >= visibleTiles.startY &&
-              hero.y <= visibleTiles.endY
-          )
-          .map((hero) => (
-            <div
-              key={hero._id}
-              className="absolute hero-marker rounded-full bg-yellow-400 border-2 border-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-10"
-              style={{
-                width: `${Math.max(40, 20 * scale)}px`,
-                height: `${Math.max(40, 20 * scale)}px`,
-                transform: `translate3d(${
-                  hero.x! * tileSize +
-                  position.x +
-                  tileSize / 2 -
-                  Math.max(20, 10 * scale)
-                }px, ${
-                  hero.y! * tileSize +
-                  position.y +
-                  tileSize / 2 -
-                  Math.max(20, 10 * scale)
-                }px, 0)`,
-                fontSize: `${Math.max(10, scale * 10)}px`,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleHeroClick(hero);
-              }}
-              title={hero.name}
-            >
-              <span className="font-bold">{hero.name}</span>
-            </div>
-          ))}
-        {/* Render myHero with a different icon/color */}
-        {myHero &&
-          myHero.x !== null &&
-          myHero.y !== null &&
-          myHero.x >= visibleTiles.startX &&
-          myHero.x <= visibleTiles.endX &&
-          myHero.y >= visibleTiles.startY &&
-          myHero.y <= visibleTiles.endY && (
-            <div
-              key={myHero._id}
-              className="absolute hero-marker rounded-full bg-blue-600 border-4 border-white flex items-center justify-center cursor-pointer hover:scale-110 transition-transform z-20 shadow-lg"
-              style={{
-                width: `${Math.max(48, 24 * scale)}px`,
-                height: `${Math.max(48, 24 * scale)}px`,
-                transform: `translate3d(${
-                  myHero.x! * tileSize +
-                  position.x +
-                  tileSize / 2 -
-                  Math.max(24, 12 * scale)
-                }px, ${
-                  myHero.y! * tileSize +
-                  position.y +
-                  tileSize / 2 -
-                  Math.max(24, 12 * scale)
-                }px, 0)`,
-                fontSize: `${Math.max(12, scale * 12)}px`,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleHeroClick(myHero);
-              }}
-              title={myHero.name + " (You)"}
-            >
-              <span className="font-bold text-white">You</span>
-              {/* Optionally, add an icon */}
-              <svg
-                className="ml-1"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="white"
-                  strokeWidth="2"
-                  fill="none"
-                />
-                <circle cx="12" cy="12" r="5" fill="white" />
-              </svg>
-            </div>
-          )}
-      </>
-    );
-  };
+  // Handle map click to move hero
+  const handleMapClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (isDragging || !containerRef.current || !onHeroMove || !myHero) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      // Convert click coordinates to map coordinates
+      const mapX = Math.floor((clickX - position.x) / tileSize);
+      const mapY = Math.floor((clickY - position.y) / tileSize);
+
+      // Check if the clicked position is within map bounds
+      const mapWidth = mapData[0].length;
+      const mapHeight = mapData.length;
+      const worldX = mapX + Math.floor(mapWidth / 2);
+      const worldY = mapY + Math.floor(mapHeight / 2);
+
+      if (
+        worldX >= 0 &&
+        worldX < mapWidth &&
+        worldY >= 0 &&
+        worldY < mapHeight
+      ) {
+        setIsMoving(true);
+        onHeroMove(mapX, mapY)
+          .then(() => {
+            setIsMoving(false);
+          })
+          .catch((error) => {
+            console.error("Failed to move hero:", error);
+            setIsMoving(false);
+          });
+      }
+    },
+    [isDragging, position, tileSize, mapData, onHeroMove, myHero]
+  );
+
+  // Center the map on myHero on initial load
+  useEffect(() => {
+    if (
+      containerRef.current &&
+      myHero &&
+      myHero.x !== null &&
+      myHero.y !== null
+    ) {
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      // Calculate pixel position of myHero
+      const heroPixelX = myHero.x * tileSize;
+      const heroPixelY = myHero.y * tileSize;
+      setPosition({
+        x: width / 2 - heroPixelX,
+        y: height / 2 - heroPixelY,
+      });
+    } else if (containerRef.current) {
+      // fallback: center (0,0)
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      setPosition({
+        x: width / 2,
+        y: height / 2,
+      });
+    }
+  }, [myHero, tileSize]);
 
   return (
-    <>
-      <div
-        className="relative overflow-hidden w-full h-screen border border-gray-300 rounded-md"
-        ref={containerRef}
-        onMouseDown={handleDragStart}
-        onMouseMove={handleDragMove}
-        onWheel={handleWheel}
-        style={{ cursor: isDragging ? "grabbing" : "grab" }}
-      >
-        <div className="absolute inset-0">
-          {renderVisibleTiles()}
-          {!isDragging && renderHeroMarkers()}
+    <div
+      className="relative overflow-hidden w-full h-screen border border-gray-300 rounded-md"
+      ref={containerRef}
+      onMouseDown={handleDragStart}
+      onMouseMove={handleDragMove}
+      onMouseUp={handleDragEnd}
+      onWheel={handleWheel}
+      onClick={handleMapClick}
+      style={{ cursor: isDragging ? "grabbing" : "grab" }}
+    >
+      <div className="absolute inset-0">
+        {renderVisibleTiles()}
 
-          {/* Origin marker showing (0,0) */}
+        {/* Hero marker */}
+        {myHero && myHero.x !== null && myHero.y !== null && (
           <div
-            className="absolute rounded-full bg-black border-2 border-white z-20"
+            className={clsx(
+              "absolute hero-marker rounded-full bg-blue-600 border-4 border-white flex items-center justify-center z-20 shadow-lg transition-transform duration-300",
+              isMoving && "animate-pulse"
+            )}
             style={{
-              width: `${Math.max(8, 4 * scale)}px`,
-              height: `${Math.max(8, 4 * scale)}px`,
+              width: `${Math.max(48, 24 * scale)}px`,
+              height: `${Math.max(48, 24 * scale)}px`,
               transform: `translate3d(${
-                position.x - Math.max(4, 2 * scale)
-              }px, ${position.y - Math.max(4, 2 * scale)}px, 0)`,
-              willChange: isDragging || isZooming ? "transform" : "auto",
+                myHero.x * tileSize +
+                position.x +
+                tileSize / 2 -
+                Math.max(24, 12 * scale)
+              }px, ${
+                myHero.y * tileSize +
+                position.y +
+                tileSize / 2 -
+                Math.max(24, 12 * scale)
+              }px, 0)`,
+              fontSize: `${Math.max(12, scale * 12)}px`,
             }}
-            title="Origin (0,0)"
-          />
-        </div>
+            title={myHero.name + " (You)"}
+          >
+            <span className="font-bold text-white">You</span>
+            <svg
+              className="ml-1"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="white"
+                strokeWidth="2"
+                fill="none"
+              />
+              <circle cx="12" cy="12" r="5" fill="white" />
+            </svg>
+          </div>
+        )}
 
-        {/* Zoom indicator */}
-        <div className="absolute left-4 bottom-4 bg-black bg-opacity-80 px-3 py-1 rounded-full text-sm">
-          Zoom: {Math.round(scale * 100)}%
-        </div>
-
-        {/* Zoom controls */}
-        <div className="absolute right-4 bottom-4 flex flex-col gap-2 z-30">
-          <button
-            onClick={zoomIn}
-            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
-            title="Zoom in"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={resetZoom}
-            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
-            title="Reset zoom"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={zoomOut}
-            className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
-            title="Zoom out"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M18 12H6"
-              />
-            </svg>
-          </button>
-        </div>
+        {/* Origin marker showing (0,0) */}
+        <div
+          className="absolute rounded-full bg-black border-2 border-white z-20"
+          style={{
+            width: `${Math.max(8, 4 * scale)}px`,
+            height: `${Math.max(8, 4 * scale)}px`,
+            transform: `translate3d(${position.x - Math.max(4, 2 * scale)}px, ${
+              position.y - Math.max(4, 2 * scale)
+            }px, 0)`,
+            willChange: isDragging || isZooming ? "transform" : "auto",
+          }}
+          title="Origin (0,0)"
+        />
       </div>
 
-      <HeroModal
-        hero={selectedHero}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onBattle={onBattle}
-        getTerrainAtCoordinates={getTerrainAtCoordinates}
-      />
-    </>
+      {/* Zoom indicator */}
+      <div className="absolute left-4 bottom-4 bg-black bg-opacity-80 px-3 py-1 rounded-full text-sm">
+        Zoom: {Math.round(scale * 100)}%
+      </div>
+
+      {/* Zoom controls */}
+      <div className="absolute right-4 bottom-4 flex flex-col gap-2 z-30">
+        <button
+          onClick={zoomIn}
+          className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+          title="Zoom in"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={resetZoom}
+          className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+          title="Reset zoom"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={zoomOut}
+          className="bg-black p-2 rounded-full shadow hover:bg-gray-100 focus:outline-none"
+          title="Zoom out"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M18 12H6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
   );
 };
 

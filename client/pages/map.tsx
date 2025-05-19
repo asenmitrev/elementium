@@ -1,18 +1,16 @@
 import { GetServerSideProps } from "next";
 import ProtectedRoute from "@/components/protected-route";
-import { HeroService } from "@/services/hero.service";
-import type { Hero as IHero, Unit } from "types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { requireAuth } from "@/utils/check-onboarding";
-import Hero from "@/components/hero";
-import { BattleService } from "@/services/battle.service";
+import { default as MapVibe } from "@/components/map";
+import { HeroService } from "@/services/hero.service";
+import type { Hero as IHero, Unit } from "types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { default as MapVibe, TerrainType } from "@/components/map";
+import { useState } from "react";
 
 interface MapProps {
-  allHeroes: (IHero & { units: Unit[] })[];
   myHero: IHero & { units: Unit[] };
 }
 
@@ -27,23 +25,17 @@ export const getServerSideProps: GetServerSideProps<MapProps> = async (
   }
 
   try {
-    // Fetch all heroes on the map
-    const allHeroes = await HeroService.getAllMapHeroes(
-      session?.user.accessToken || ""
-    );
-
     const myHeroes = await HeroService.getHeroes(
       session?.user.accessToken || ""
     );
 
     return {
       props: {
-        allHeroes,
         myHero: myHeroes[0],
       },
     };
   } catch (error) {
-    console.error("Error fetching heroes for map:", error);
+    console.error("Error fetching hero for map:", error);
     return {
       redirect: {
         destination: "/error",
@@ -53,60 +45,38 @@ export const getServerSideProps: GetServerSideProps<MapProps> = async (
   }
 };
 
-export default function Map({ allHeroes, myHero }: MapProps) {
+export default function Map({ myHero: initialHero }: MapProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(myHero);
+  const [myHero, setMyHero] = useState(initialHero);
 
-  const handleBattle = async (
-    attackerHeroId: string,
-    defenderHeroId: string,
-    terrain?: TerrainType
-  ) => {
-    const battle = await BattleService.startBattle(
-      attackerHeroId,
-      defenderHeroId,
-      session?.user.accessToken || "",
-      terrain
-    );
-    console.log("Battle started on terrain:", terrain);
-    console.log(battle);
-    router.push(`/battle/${battle._id}`);
-  };
+  const handleHeroMove = async (x: number, y: number) => {
+    if (!session?.user.accessToken || !myHero) return;
 
-  // Handle battle with terrain information
-  const handleMapBattle = (hero: IHero, terrain: TerrainType) => {
-    handleBattle(myHero._id, hero._id, terrain);
+    try {
+      const updatedHero = await HeroService.updateHero(
+        myHero._id,
+        { x, y },
+        session.user.accessToken
+      );
+
+      // Update the hero's position in state
+      setMyHero((prev) => ({
+        ...prev!,
+        x,
+        y,
+      }));
+    } catch (error) {
+      console.error("Failed to move hero:", error);
+      throw error;
+    }
   };
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6">World Map Heroes</h1>
-        <MapVibe
-          heroes={allHeroes}
-          onBattle={handleMapBattle}
-          myHero={myHero}
-        />
-        {/* 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {allHeroes.map((hero, index) => (
-            <div className="flex flex-col items-center justify-center">
-              <Hero
-                key={index}
-                hero={hero.type}
-                units={hero.units?.map((unit) => unit.type) ?? []}
-                heroId={hero._id}
-              />
-              <button
-                onClick={() => handleBattle(myHero._id, hero._id)}
-                className="bg-blue-500 text-white p-2 rounded-md"
-              >
-                Battle
-              </button>
-            </div>
-          ))}
-        </div> */}
+        <h1 className="text-3xl font-bold mb-6">World Map</h1>
+        <MapVibe myHero={myHero} onHeroMove={handleHeroMove} />
       </div>
     </ProtectedRoute>
   );

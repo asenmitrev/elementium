@@ -176,15 +176,21 @@ router.get("/:id", authenticateToken, async (req: Request, res: Response) => {
 router.patch("/:id", authenticateToken, async (req: Request, res: Response) => {
   try {
     const hero = await Hero.findOneAndUpdate(
-      { _id: req.params.id, player: req.user!.id },
+      { _id: req.params.id, player: req.user!.userId },
       { $set: req.body },
       { new: true }
-    );
+    ).populate({
+      path: "units",
+      options: { sort: { order: 1 } },
+    });
 
     if (!hero) {
       res.status(404).json({ error: "Hero not found" });
       return;
     }
+
+    const units = await Unit.find({ holder: hero._id });
+    hero.units = units.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     res.json(hero);
   } catch (error) {
