@@ -6,13 +6,21 @@ import { useSession } from "next-auth/react";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { HeroService } from "@/services/hero.service";
 import Soldier from "./soldier";
+import CardSlot from "./card-slot";
 
 interface SoldierListProps {
   soldiers: Unit[];
   heroId?: string;
+  maxSlots?: number;
+  onAddUnit?: () => void;
 }
 
-const SoldierList: React.FC<SoldierListProps> = ({ soldiers, heroId }) => {
+const SoldierList: React.FC<SoldierListProps> = ({
+  soldiers,
+  heroId,
+  maxSlots = 0,
+  onAddUnit,
+}) => {
   const { data: session } = useSession();
   const [localSoldiers, setLocalSoldiers] = useState(soldiers);
   const [isReordering, setIsReordering] = useState(false);
@@ -60,8 +68,6 @@ const SoldierList: React.FC<SoldierListProps> = ({ soldiers, heroId }) => {
         unitIds,
         session.user.accessToken
       );
-      // Update local state with the server's response
-      // setLocalSoldiers(updatedHero.units.map((unit) => unit.type));
       hasChanges.current = false;
     } catch (error) {
       console.error("Error reordering units:", error);
@@ -72,9 +78,12 @@ const SoldierList: React.FC<SoldierListProps> = ({ soldiers, heroId }) => {
     }
   }, [localSoldiers, heroId, session?.user.accessToken, soldiers]);
 
+  // Calculate number of empty slots to show
+  const emptySlots = Math.max(0, maxSlots - localSoldiers.length);
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {localSoldiers.map((soldier, index) => (
           <Soldier
             key={soldier._id || index}
@@ -83,6 +92,13 @@ const SoldierList: React.FC<SoldierListProps> = ({ soldiers, heroId }) => {
             moveUnit={moveUnit}
             onDragEnd={handleDragEnd}
             isReordering={isReordering}
+          />
+        ))}
+        {Array.from({ length: emptySlots }).map((_, index) => (
+          <CardSlot
+            key={`empty-${index}`}
+            onClick={onAddUnit}
+            className="aspect-[4/3]"
           />
         ))}
       </div>
