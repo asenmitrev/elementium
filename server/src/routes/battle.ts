@@ -37,7 +37,7 @@ router.post(
 
     const battleResult = await battle({
       defenderDeck: hero.units?.map((unit) => unit.type) ?? [],
-      attackerDeck: predefinedNeutrals.units.map((unit) => unit),
+      attackerDeck: predefinedNeutrals.units.map((unit) => unit.type),
       attackerGraveyard: [],
       defenderGraveyard: [],
       defenderHeroTypeUserFacing: hero.type,
@@ -104,20 +104,21 @@ router.post(
   "/map-battle",
   authenticateToken,
   async (req: Request, res: Response) => {
-    const { attackerHeroId, terrain } = req.body;
+    const { defenderHeroId, terrain } = req.body;
 
     // 25% chance of battle
     if (Math.random() >= 0.25) {
-      return res.json({ battleOccurred: false });
+      res.json({ battleOccurred: false });
+      return;
     }
 
     // Find the attacker's hero and units
-    const attackerHero = await Hero.findById(attackerHeroId);
-    if (!attackerHero) {
+    const defenderHero = await Hero.findById(defenderHeroId);
+    if (!defenderHero) {
       res.status(404).json({ error: "Hero not found" });
       return;
     }
-    const attackerUnits = await Unit.find({ holder: attackerHero!._id });
+    const defenderUnits = await Unit.find({ holder: defenderHero!._id });
 
     // Generate a random neutral hero and units
     const allRaces = [...unitRaces.values()];
@@ -139,22 +140,22 @@ router.post(
     }
 
     const battleResult = await battle({
-      attackerDeck: attackerUnits.map((unit) => unit.type),
-      defenderDeck: neutralUnits,
+      attackerDeck: neutralUnits,
+      defenderDeck: defenderUnits.map((unit) => unit.type),
       attackerGraveyard: [],
       defenderGraveyard: [],
-      attackerHeroTypeUserFacing: attackerHero.type,
-      defenderHeroTypeUserFacing: neutralHeroType,
-      defenderCastle: undefined,
+      attackerHeroTypeUserFacing: neutralHeroType,
+      defenderHeroTypeUserFacing: defenderHero.type,
+      defenderCastle: predefinedNeutrals,
       land: landType,
     });
 
     const newBattle = new BattleResult({
       ...battleResult,
-      playerAttacker: attackerHero.player,
-      playerDefender: null, // No player for neutral
-      defender: null, // No defender hero document
-      attacker: attackerHero._id,
+      playerAttacker: null, // No player for neutral
+      playerDefender: defenderHero.player,
+      defender: defenderHero._id,
+      attacker: null, // No attacker hero document
     });
     await newBattle.save();
 

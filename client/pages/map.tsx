@@ -70,7 +70,6 @@ export default function Map({ myHero: initialHero }: MapProps) {
         x,
         y,
       }));
-
       // Check for battle and start it if it occurs
       const battleResult = await BattleService.startMapBattle(
         myHero._id,

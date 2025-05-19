@@ -57,7 +57,7 @@ export class HeroService {
 
   static async getPredefinedNeutrals(
     cookie: string
-  ): Promise<HeroType & { units: UnitType[] }> {
+  ): Promise<HeroType & { units: Unit[] }> {
     const response = await axios.get(`${API_URL}/heroes/onboarding-neutrals`, {
       headers: { Authorization: `Bearer ${cookie}` },
     });

@@ -17,6 +17,7 @@ interface SoldierProps {
   heroId?: string;
   onDragEnd?: () => void;
   isReordering?: boolean;
+  draggable?: boolean;
 }
 
 export default function SoldierCard({
@@ -30,6 +31,7 @@ export default function SoldierCard({
   heroId,
   onDragEnd,
   isReordering = false,
+  draggable = true,
 }: SoldierProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [{ isDragging }, drag] = useDrag({
@@ -43,7 +45,7 @@ export default function SoldierCard({
         onDragEnd();
       }
     },
-    canDrag: !isReordering,
+    canDrag: draggable && !isReordering,
   });
 
   const [, drop] = useDrop({

@@ -19,7 +19,8 @@ import {
 import Image from "next/image";
 import BattleSummary from "@/components/battle-summary";
 import { useSession } from "next-auth/react";
-
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 interface BattlePageProps {
   battle: BattleResult;
 }
@@ -430,13 +431,16 @@ export default function BattlePage({ battle }: BattlePageProps) {
                 {attacker ? (
                   <div className="relative">
                     <div className="bg-black/30 p-2 rounded-lg">
-                      <SoldierCard
-                        unit={attacker}
-                        previousUnit={prevAttacker}
-                        showChanges={phase !== "starting"}
-                        battlefieldElement={land}
-                        compact={true}
-                      />
+                      <DndProvider backend={HTML5Backend}>
+                        <SoldierCard
+                          unit={attacker}
+                          previousUnit={prevAttacker}
+                          showChanges={phase !== "starting"}
+                          battlefieldElement={land}
+                          draggable={false}
+                          compact={true}
+                        />
+                      </DndProvider>
                       {attacker.specialExplanation && (
                         <div className="mt-1 text-xs italic text-gray-300">
                           {attacker.specialExplanation}
@@ -516,13 +520,16 @@ export default function BattlePage({ battle }: BattlePageProps) {
                 {defender ? (
                   <div className="relative">
                     <div className="bg-black/30 p-2 rounded-lg">
-                      <SoldierCard
-                        unit={defender}
-                        previousUnit={prevDefender}
-                        showChanges={phase !== "starting"}
-                        battlefieldElement={land}
-                        compact={true}
-                      />
+                      <DndProvider backend={HTML5Backend}>
+                        <SoldierCard
+                          unit={defender}
+                          previousUnit={prevDefender}
+                          showChanges={phase !== "starting"}
+                          battlefieldElement={land}
+                          draggable={false}
+                          compact={true}
+                        />
+                      </DndProvider>
                       {defender.specialExplanation && (
                         <div className="mt-1 text-xs italic text-gray-300">
                           {defender.specialExplanation}
@@ -773,20 +780,23 @@ export default function BattlePage({ battle }: BattlePageProps) {
             >
               Attacker's Remaining Army
             </h2>
-            {battle.remainingAttackerDeck.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {battle.remainingAttackerDeck.map((unit, index) => (
-                  <SoldierCard
-                    key={index}
-                    unit={unit}
-                    battlefieldElement={land}
-                    compact={true}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-sm">No units remaining</p>
-            )}
+            <DndProvider backend={HTML5Backend}>
+              {battle.remainingAttackerDeck.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {battle.remainingAttackerDeck.map((unit, index) => (
+                    <SoldierCard
+                      key={index}
+                      unit={unit}
+                      battlefieldElement={land}
+                      compact={true}
+                      draggable={false}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No units remaining</p>
+              )}
+            </DndProvider>
           </div>
 
           <div className={isAttackerWinner ? "opacity-75" : ""}>
@@ -797,20 +807,23 @@ export default function BattlePage({ battle }: BattlePageProps) {
             >
               Defender's Remaining Army
             </h2>
-            {battle.remainingDefenderDeck.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                {battle.remainingDefenderDeck.map((unit, index) => (
-                  <SoldierCard
-                    key={index}
-                    unit={unit}
-                    battlefieldElement={land}
-                    compact={true}
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-sm">No units remaining</p>
-            )}
+            <DndProvider backend={HTML5Backend}>
+              {battle.remainingDefenderDeck.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {battle.remainingDefenderDeck.map((unit, index) => (
+                    <SoldierCard
+                      key={index}
+                      unit={unit}
+                      battlefieldElement={land}
+                      compact={true}
+                      draggable={false}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No units remaining</p>
+              )}
+            </DndProvider>
           </div>
         </div>
       </div>

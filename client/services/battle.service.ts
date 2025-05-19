@@ -50,14 +50,14 @@ export class BattleService {
   }
 
   static async startMapBattle(
-    attackerHeroId: string,
+    defenderHeroId: string,
     cookie: string,
     terrain?: TerrainType
   ): Promise<{ battleOccurred: boolean; battle?: any }> {
     const response = await axios.post(
       `${API_URL}/battle/map-battle`,
       {
-        attackerHeroId,
+        defenderHeroId,
         terrain,
       },
       {
